@@ -1,0 +1,538 @@
+/* =========================================================
+   A.F. BOOKSTORE
+   Shop Page
+========================================================= */
+
+
+/* ================= SHOP HERO ================= */
+
+.shop-hero {
+    min-height: 65vh;
+
+    padding: 180px 8% 100px;
+
+    display: flex;
+    align-items: flex-end;
+
+    background:
+        radial-gradient(
+            circle at 75% 50%,
+            #252525 0%,
+            #111 40%,
+            #0b0b0b 75%
+        );
+
+    border-bottom: 1px solid #202020;
+}
+
+
+.shop-hero h1 {
+    max-width: 800px;
+
+    font-family: var(--serif);
+    font-size: clamp(4rem, 8vw, 8rem);
+    font-weight: 400;
+    line-height: .8;
+    letter-spacing: -4px;
+}
+
+
+.shop-hero h1 em {
+    font-style: italic;
+}
+
+
+.shop-hero > div > p:last-child {
+    max-width: 450px;
+
+    margin-top: 35px;
+
+    color: #777;
+
+    font-size: 12px;
+    line-height: 2;
+}
+
+
+/* ================= SHOP SECTION ================= */
+
+.shop-section {
+    width: 84%;
+    max-width: 1400px;
+
+    margin: auto;
+
+    padding: 90px 0 150px;
+}
+
+
+/* ================= TOOLBAR ================= */
+
+.shop-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    padding-bottom: 30px;
+
+    border-bottom: 1px solid #292929;
+}
+
+
+.book-count {
+    display: flex;
+    gap: 12px;
+
+    color: #555;
+
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+
+.book-count span:first-child {
+    color: var(--white);
+}
+
+
+/* ================= FILTERS ================= */
+
+.filters {
+    display: flex;
+    gap: 40px;
+}
+
+
+.filter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.filter label {
+    color: #555;
+
+    font-size: 8px;
+    letter-spacing: 2px;
+}
+
+
+.filter select {
+    min-width: 150px;
+
+    padding: 8px 0;
+
+    background: transparent;
+
+    border: none;
+    border-bottom: 1px solid #444;
+
+    outline: none;
+
+    color: #aaa;
+
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+
+.filter select option {
+    background: #111;
+    color: white;
+}
+
+
+/* ================= SHOP GRID ================= */
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 60px 30px;
+
+    padding-top: 60px;
+}
+
+
+/* ================= BOOK CARD ================= */
+
+.shop-book-card {
+    cursor: pointer;
+}
+
+
+.shop-book-image {
+    position: relative;
+
+    height: 430px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background: #151515;
+}
+
+
+.shop-book-cover {
+    width: 67%;
+    height: 82%;
+
+    padding: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    font-family: var(--serif);
+    font-size: 25px;
+    line-height: 1;
+
+    color: #111;
+
+    box-shadow:
+        0 20px 35px rgba(0,0,0,.5);
+
+    transition:
+        transform .5s ease;
+}
+
+
+.shop-book-card:hover
+.shop-book-cover {
+
+    transform:
+        translateY(-8px)
+        rotate(1deg)
+        scale(1.02);
+
+}
+
+
+/* ================= BOOK OVERLAY ================= */
+
+.shop-book-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding: 25px;
+
+    background:
+        linear-gradient(
+            transparent 35%,
+            rgba(0,0,0,.75)
+        );
+
+    opacity: 0;
+
+    transition: opacity .3s ease;
+}
+
+
+.shop-book-card:hover
+.shop-book-overlay {
+
+    opacity: 1;
+
+}
+
+
+.add-cart-btn {
+    width: 100%;
+
+    padding: 14px;
+
+    background: var(--white);
+    color: var(--black);
+
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    transform: translateY(10px);
+
+    transition: transform .3s ease;
+}
+
+
+.shop-book-card:hover
+.add-cart-btn {
+
+    transform: translateY(0);
+
+}
+
+
+/* ================= BOOK INFO ================= */
+
+.shop-book-info {
+
+    padding-top: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+
+.shop-book-title {
+
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+
+    line-height: 1.1;
+}
+
+
+.shop-book-author {
+
+    margin-top: 6px;
+
+    color: #5f5f5f;
+
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+
+.shop-book-price {
+
+    white-space: nowrap;
+
+    font-family: var(--serif);
+    font-size: 19px;
+}
+
+
+/* ================= CATEGORY ================= */
+
+.shop-book-category {
+
+    display: inline-block;
+
+    margin-top: 12px;
+
+    color: #555;
+
+    font-size: 7px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+/* ================= LOADING ================= */
+
+.loading {
+
+    grid-column: 1 / -1;
+
+    min-height: 300px;
+
+    display: grid;
+    place-items: center;
+
+    color: #555;
+
+    font-family: var(--serif);
+    font-size: 25px;
+    font-style: italic;
+}
+
+
+/* ================= NO RESULTS ================= */
+
+.no-results {
+
+    display: none;
+
+    min-height: 400px;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.no-results.visible {
+    display: flex;
+}
+
+
+.no-results span {
+    color: #444;
+
+    font-family: var(--serif);
+    font-size: 50px;
+}
+
+
+.no-results h2 {
+
+    margin-top: 15px;
+
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 400;
+
+}
+
+
+.no-results p {
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-size: 10px;
+
+}
+
+
+/* ================= NAV ACTIVE ================= */
+
+.nav-links a.active {
+    color: var(--white);
+}
+
+
+.nav-links a.active::after {
+    width: 100%;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1000px) {
+
+    .shop-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .shop-toolbar {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 30px;
+    }
+
+
+    .filters {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+
+    .shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 50px 20px;
+    }
+
+
+    .shop-book-image {
+        height: 350px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .shop-hero {
+        min-height: 60vh;
+
+        padding: 150px 8% 80px;
+    }
+
+
+    .shop-hero h1 {
+
+        font-size: 4rem;
+
+        letter-spacing: -2px;
+
+    }
+
+
+    .shop-section {
+        width: 84%;
+
+        padding-top: 60px;
+    }
+
+
+    .filters {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 20px;
+    }
+
+
+    .filter {
+        justify-content: space-between;
+    }
+
+
+    .filter select {
+        width: 180px;
+    }
+
+
+    .shop-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 40px 12px;
+    }
+
+
+    .shop-book-image {
+        height: 270px;
+    }
+
+
+    .shop-book-cover {
+        width: 72%;
+        height: 80%;
+
+        padding: 15px;
+
+        font-size: 19px;
+    }
+
+
+    .shop-book-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+
+    .shop-book-title {
+        font-size: 19px;
+    }
+
+}

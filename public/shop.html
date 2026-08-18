@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Shop — A.F. Bookstore</title>
+
+    <meta
+        name="description"
+        content="Explore the A.F. Bookstore collection."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/shop.css">
+
+</head>
+
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <nav class="navbar">
+
+            <a href="index.html" class="logo">
+
+                <span>A.F.</span>
+
+                <small>BOOKSTORE</small>
+
+            </a>
+
+
+            <div class="nav-links">
+
+                <a href="index.html">Home</a>
+
+                <a href="shop.html" class="active">
+                    Books
+                </a>
+
+                <a href="index.html#categories">
+                    Categories
+                </a>
+
+                <a href="index.html#about">
+                    About
+                </a>
+
+            </div>
+
+
+            <div class="nav-actions">
+
+                <button
+                    class="icon-btn"
+                    id="searchBtn"
+                    aria-label="Search"
+                >
+                    ⌕
+                </button>
+
+
+                <button
+                    class="cart-btn"
+                    id="cartBtn"
+                    aria-label="Shopping cart"
+                >
+
+                    <span>Cart</span>
+
+                    <b id="cartCount">0</b>
+
+                </button>
+
+
+                <button
+                    class="menu-btn"
+                    id="menuBtn"
+                    aria-label="Open menu"
+                >
+
+                    <span></span>
+                    <span></span>
+
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- ================= MOBILE MENU ================= -->
+
+    <div class="mobile-menu" id="mobileMenu">
+
+        <button
+            class="close-menu"
+            id="closeMenu"
+        >
+            ×
+        </button>
+
+
+        <div class="mobile-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="shop.html">
+                Books
+            </a>
+
+            <a href="index.html#categories">
+                Categories
+            </a>
+
+            <a href="index.html#about">
+                About
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <div
+        class="search-overlay"
+        id="searchOverlay"
+    >
+
+        <div class="search-container">
+
+            <button
+                class="close-search"
+                id="closeSearch"
+            >
+                ×
+            </button>
+
+            <p>SEARCH THE COLLECTION</p>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search for a book..."
+                autocomplete="off"
+            >
+
+            <div id="searchResults"></div>
+
+        </div>
+
+    </div>
+
+
+    <main>
+
+        <!-- ================= SHOP HERO ================= -->
+
+        <section class="shop-hero">
+
+            <div>
+
+                <p class="eyebrow">
+                    THE COLLECTION
+                </p>
+
+                <h1>
+                    Find your next
+                    <em>story.</em>
+                </h1>
+
+                <p>
+                    Explore our collection of stories,
+                    mysteries, romances and worlds beyond
+                    imagination.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SHOP ================= -->
+
+        <section class="shop-section">
+
+
+            <!-- FILTER BAR -->
+
+            <div class="shop-toolbar">
+
+                <div class="book-count">
+
+                    <span id="bookCount">
+                        12
+                    </span>
+
+                    <span>
+                        BOOKS
+                    </span>
+
+                </div>
+
+
+                <div class="filters">
+
+                    <div class="filter">
+
+                        <label for="categoryFilter">
+                            CATEGORY
+                        </label>
+
+                        <select id="categoryFilter">
+
+                            <option value="all">
+                                All books
+                            </option>
+
+                            <option value="Fiction">
+                                Fiction
+                            </option>
+
+                            <option value="Romance">
+                                Romance
+                            </option>
+
+                            <option value="Mystery">
+                                Mystery
+                            </option>
+
+                            <option value="Fantasy">
+                                Fantasy
+                            </option>
+
+                            <option value="Gothic">
+                                Gothic
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter">
+
+                        <label for="sortFilter">
+                            SORT BY
+                        </label>
+
+                        <select id="sortFilter">
+
+                            <option value="featured">
+                                Featured
+                            </option>
+
+                            <option value="price-low">
+                                Price: Low to High
+                            </option>
+
+                            <option value="price-high">
+                                Price: High to Low
+                            </option>
+
+                            <option value="title">
+                                Title: A-Z
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOOK GRID -->
+
+            <div
+                class="shop-grid"
+                id="shopGrid"
+            >
+
+                <div class="loading">
+                    Loading collection...
+                </div>
+
+            </div>
+
+
+            <!-- NO RESULTS -->
+
+            <div
+                class="no-results"
+                id="noResults"
+            >
+
+                <span>∅</span>
+
+                <h2>
+                    Nothing found.
+                </h2>
+
+                <p>
+                    Try another category or search.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <div class="footer-top">
+
+            <div class="footer-brand">
+
+                <a href="index.html" class="logo">
+
+                    <span>A.F.</span>
+
+                    <small>BOOKSTORE</small>
+
+                </a>
+
+                <p>
+                    Stories worth keeping.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <div>
+
+                    <h4>Explore</h4>
+
+                    <a href="shop.html">
+                        Books
+                    </a>
+
+                    <a href="index.html#categories">
+                        Categories
+                    </a>
+
+                    <a href="index.html#about">
+                        About
+                    </a>
+
+                </div>
+
+
+                <div>
+
+                    <h4>Help</h4>
+
+                    <a href="#">
+                        Contact
+                    </a>
+
+                    <a href="#">
+                        Shipping
+                    </a>
+
+                    <a href="#">
+                        FAQ
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 A.F. Bookstore
+            </span>
+
+            <span>
+                Made for readers.
+            </span>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ================= CART ================= -->
+
+    <aside
+        class="cart-sidebar"
+        id="cartSidebar"
+    >
+
+        <div class="cart-header">
+
+            <h2>
+                Your <em>cart</em>
+            </h2>
+
+            <button id="closeCart">
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            class="cart-items"
+            id="cartItems"
+        ></div>
+
+
+        <div class="cart-footer">
+
+            <div class="cart-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="cartTotal">
+                    ₦0
+                </strong>
+
+            </div>
+
+
+            <button class="checkout-btn">
+
+                Proceed to checkout
+
+                <span>→</span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <div
+        class="overlay"
+        id="overlay"
+    ></div>
+
+
+    <script src="js/shop.js"></script>
+
+</body>
+
+</html>

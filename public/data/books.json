@@ -1,0 +1,122 @@
+[
+    {
+        "id": 1,
+        "title": "The Silent Patient",
+        "author": "Alex Michaelides",
+        "price": 8500,
+        "category": "Mystery",
+        "rating": 5,
+        "description": "A psychological mystery surrounding a woman who refuses to speak after being accused of murdering her husband.",
+        "cover": "images/books/silent-patient.jpg"
+    },
+    {
+        "id": 2,
+        "title": "The Midnight Library",
+        "author": "Matt Haig",
+        "price": 7500,
+        "category": "Fiction",
+        "rating": 5,
+        "description": "Between life and death there is a library, and within that library the shelves go on forever.",
+        "cover": "images/books/midnight-library.jpg"
+    },
+    {
+        "id": 3,
+        "title": "Normal People",
+        "author": "Sally Rooney",
+        "price": 9000,
+        "category": "Romance",
+        "rating": 4,
+        "description": "A story about two people whose lives remain deeply connected through love, friendship and time.",
+        "cover": "images/books/normal-people.jpg"
+    },
+    {
+        "id": 4,
+        "title": "The Secret History",
+        "author": "Donna Tartt",
+        "price": 10500,
+        "category": "Fiction",
+        "rating": 5,
+        "description": "A group of students at an elite college become entangled in a dark secret that changes everything.",
+        "cover": "images/books/secret-history.jpg"
+    },
+    {
+        "id": 5,
+        "title": "The Seven Husbands of Evelyn Hugo",
+        "author": "Taylor Jenkins Reid",
+        "price": 9500,
+        "category": "Romance",
+        "rating": 5,
+        "description": "A reclusive Hollywood icon finally tells the story of her extraordinary life and complicated loves.",
+        "cover": "images/books/evelyn-hugo.jpg"
+    },
+    {
+        "id": 6,
+        "title": "The Hobbit",
+        "author": "J.R.R. Tolkien",
+        "price": 8000,
+        "category": "Fantasy",
+        "rating": 5,
+        "description": "Bilbo Baggins leaves his comfortable life behind and joins an unexpected adventure through Middle-earth.",
+        "cover": "images/books/the-hobbit.jpg"
+    },
+    {
+        "id": 7,
+        "title": "Pride and Prejudice",
+        "author": "Jane Austen",
+        "price": 6500,
+        "category": "Romance",
+        "rating": 5,
+        "description": "Elizabeth Bennet navigates love, society and the complicated first impressions surrounding Mr. Darcy.",
+        "cover": "images/books/pride-prejudice.jpg"
+    },
+    {
+        "id": 8,
+        "title": "The Picture of Dorian Gray",
+        "author": "Oscar Wilde",
+        "price": 7000,
+        "category": "Gothic",
+        "rating": 5,
+        "description": "A young man's portrait bears the consequences of a life devoted to beauty, pleasure and corruption.",
+        "cover": "images/books/dorian-gray.jpg"
+    },
+    {
+        "id": 9,
+        "title": "Frankenstein",
+        "author": "Mary Shelley",
+        "price": 6000,
+        "category": "Gothic",
+        "rating": 5,
+        "description": "A scientist creates life and discovers that his greatest achievement may become his greatest nightmare.",
+        "cover": "images/books/frankenstein.jpg"
+    },
+    {
+        "id": 10,
+        "title": "The Alchemist",
+        "author": "Paulo Coelho",
+        "price": 7000,
+        "category": "Fiction",
+        "rating": 4,
+        "description": "A young shepherd follows a recurring dream in search of treasure and discovers something much greater.",
+        "cover": "images/books/alchemist.jpg"
+    },
+    {
+        "id": 11,
+        "title": "It Ends with Us",
+        "author": "Colleen Hoover",
+        "price": 8500,
+        "category": "Romance",
+        "rating": 4,
+        "description": "A powerful story about love, difficult choices and finding the courage to break painful cycles.",
+        "cover": "images/books/it-ends-with-us.jpg"
+    },
+    {
+        "id": 12,
+        "title": "The Name of the Wind",
+        "author": "Patrick Rothfuss",
+        "price": 11000,
+        "category": "Fantasy",
+        "rating": 5,
+        "description": "A legendary musician and magician recounts the remarkable events that shaped his life.",
+        "cover": "images/books/name-of-the-wind.jpg"
+    }
+]

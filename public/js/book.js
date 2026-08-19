@@ -663,7 +663,7 @@ function showNotFound() {
 }
 
 
-/* ================= MOBILE MENU ================= */
+/* ================= MOBILE MENU ================= 
 
 const menuBtn =
     document.getElementById(
@@ -721,7 +721,7 @@ if (
 }
 
 
-/* ================= MOBILE LINKS ================= */
+/* ================= MOBILE LINKS ================= 
 
 document
     .querySelectorAll(

@@ -1282,86 +1282,7 @@ blockquote {
 }
 
 
-/* =========================================================
-   SEARCH
-========================================================= */
 
-.search-overlay {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: var(--z-search);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 30px;
-
-    background: rgba(5, 5, 5, .97);
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition: opacity var(--transition);
-}
-
-.search-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.search-container {
-    position: relative;
-
-    width: min(700px, 100%);
-}
-
-.search-container p {
-    margin-bottom: 20px;
-
-    color: #666;
-
-    font-size: 9px;
-    letter-spacing: 3px;
-}
-
-.search-container input {
-    width: 100%;
-
-    padding: 20px 0;
-
-    background: transparent;
-
-    border: none;
-    border-bottom: 1px solid #444;
-
-    outline: none;
-
-    color: white;
-
-    font-family: var(--serif);
-
-    font-size: 40px;
-}
-
-.search-container input:focus {
-    border-bottom-color: var(--white);
-}
-
-.close-search {
-    position: absolute;
-
-    top: -70px;
-    right: 0;
-
-    min-width: 40px;
-    min-height: 40px;
-
-    font-size: 30px;
-}
 
 
 /* =========================================================
@@ -1604,9 +1525,5 @@ blockquote {
 
     .mobile-links a {
         font-size: 45px;
-    }
-
-    .search-container input {
-        font-size: 30px;
     }
 }

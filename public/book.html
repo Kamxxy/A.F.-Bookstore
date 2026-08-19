@@ -31,7 +31,8 @@
     >
 
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <!--link rel="stylesheet" href="css/shop.css"-->
     <link rel="stylesheet" href="css/book.css">
 
 </head>
@@ -45,7 +46,7 @@
 
         <nav class="navbar">
 
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
 
                 <span>A.F.</span>
 
@@ -56,22 +57,20 @@
 
             <div class="nav-links">
 
-                <a href="index.html">
+                <a href="/">
                     Home
                 </a>
 
                 <a
-                    href="shop.html"
+                    href="/shop"
                     class="active"
                 >
                     Books
                 </a>
 
-                <a href="index.html#categories">
-                    Categories
-                </a>
+                
 
-                <a href="index.html#about">
+                <a href="/about">
                     About
                 </a>
 
@@ -128,19 +127,15 @@
 
         <div class="mobile-links">
 
-            <a href="index.html">
+            <a href="/">
                 Home
             </a>
 
-            <a href="shop.html">
+            <a href="/shop">
                 Books
             </a>
 
-            <a href="index.html#categories">
-                Categories
-            </a>
-
-            <a href="index.html#about">
+            <a href="/about">
                 About
             </a>
 
@@ -186,7 +181,7 @@
                 </div>
 
 
-                <a href="shop.html">
+                <a href="/shop">
                     View all books →
                 </a>
 
@@ -208,18 +203,24 @@
     <aside
         class="cart-sidebar"
         id="cartSidebar"
+        aria-hidden="true"
     >
 
         <div class="cart-header">
-
-            <h2>
-                Your <em>cart</em>
-            </h2>
-
-            <button id="closeCart">
+        
+            <div>
+                <span class="cart-eyebrow">YOUR COLLECTION</span>
+                <h2>Your Bag</h2>
+            </div>
+        
+            <button
+                type="button"
+                id="closeCart"
+                aria-label="Close Shopping cart"
+            >
                 ×
             </button>
-
+        
         </div>
 
 
@@ -272,7 +273,7 @@
             <div class="footer-brand">
 
                 <a
-                    href="index.html"
+                    href="/"
                     class="logo"
                 >
 
@@ -295,15 +296,11 @@
 
                     <h4>Explore</h4>
 
-                    <a href="shop.html">
+                    <a href="/shop">
                         Books
                     </a>
 
-                    <a href="index.html#categories">
-                        Categories
-                    </a>
-
-                    <a href="index.html#about">
+                    <a href="/about">
                         About
                     </a>
 
@@ -348,6 +345,8 @@
     </footer>
 
 
+    <script src="js/books.js"></script>
+    <script src="js/cart.js"></script>
     <script src="js/book.js"></script>
 
 </body>

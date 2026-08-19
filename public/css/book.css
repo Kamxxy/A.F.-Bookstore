@@ -1,13 +1,15 @@
 /* =========================================================
    A.F. BOOKSTORE
    Individual Book Page
+   Phase 1
 ========================================================= */
 
 
-/* ================= BOOK DETAILS ================= */
+/* =========================================================
+   BOOK DETAILS
+========================================================= */
 
 .book-details {
-
     min-height: 100vh;
 
     padding: 160px 8% 100px;
@@ -15,7 +17,7 @@
     display: grid;
 
     grid-template-columns:
-        minmax(300px, 0.8fr)
+        minmax(300px, .8fr)
         minmax(400px, 1.2fr);
 
     align-items: center;
@@ -23,97 +25,75 @@
     gap: 10%;
 
     background:
-
         radial-gradient(
             circle at 25% 50%,
             #202020 0%,
             #111 35%,
             #0b0b0b 70%
         );
-
 }
 
 
-/* ================= BOOK COVER ================= */
+/* =========================================================
+   BOOK COVER
+========================================================= */
 
 .book-cover-area {
-
     display: flex;
-
-    justify-content: center;
-
     align-items: center;
-
+    justify-content: center;
 }
 
-
 .book-cover-large {
-
     width: min(350px, 80%);
 
     aspect-ratio: 2 / 3;
 
+    padding: 40px;
+
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
-    padding: 40px;
+    background: #d6d2c8;
+
+    color: #111;
 
     text-align: center;
 
     font-family: var(--serif);
 
-    font-size: clamp(
-        25px,
-        3vw,
-        40px
-    );
+    font-size: clamp(25px, 3vw, 40px);
 
     line-height: 1;
 
-    color: #111;
-
     box-shadow:
-
-        0 40px 70px
-        rgba(0,0,0,.65);
+        0 40px 70px rgba(0, 0, 0, .65);
 
     transform:
-
         perspective(1000px)
         rotateY(-5deg);
 
-    transition:
-
-        transform .6s ease;
-
+    transition: transform var(--transition-slow);
 }
 
-
 .book-cover-large:hover {
-
     transform:
-
         perspective(1000px)
         rotateY(0deg)
         translateY(-10px);
-
 }
 
 
-/* ================= BOOK INFORMATION ================= */
+/* =========================================================
+   BOOK INFORMATION
+========================================================= */
 
-.book-info {
-
+.product-info {
     max-width: 700px;
-
 }
 
-
-.book-category {
-
+.product-category {
     display: inline-block;
 
     margin-bottom: 25px;
@@ -121,87 +101,59 @@
     color: #666;
 
     font-size: 9px;
-
     letter-spacing: 3px;
-
     text-transform: uppercase;
-
 }
 
-
-.book-title {
-
+.product-title {
     font-family: var(--serif);
 
-    font-size: clamp(
-        4rem,
-        7vw,
-        8rem
-    );
+    font-size: clamp(4rem, 7vw, 8rem);
 
     font-weight: 400;
 
     line-height: .82;
 
     letter-spacing: -4px;
-
 }
 
-
-.book-author {
-
+.product-author {
     margin-top: 25px;
 
     color: #777;
 
     font-size: 10px;
-
     letter-spacing: 2px;
-
     text-transform: uppercase;
-
 }
 
-
-.book-rating {
-
+.product-rating {
     margin-top: 30px;
 
     color: #aaa;
 
     font-size: 13px;
-
     letter-spacing: 4px;
-
 }
 
-
-.book-rating span {
-
+.product-rating span {
     margin-left: 10px;
 
     color: #555;
 
     font-size: 9px;
-
     letter-spacing: 1px;
-
 }
 
-
-.book-price {
-
+.product-price {
     margin-top: 30px;
 
     font-family: var(--serif);
 
     font-size: 35px;
-
 }
 
-
-.book-description {
-
+.product-description {
     max-width: 550px;
 
     margin-top: 30px;
@@ -209,268 +161,219 @@
     color: #777;
 
     font-size: 12px;
-
     line-height: 2;
-
 }
 
 
-/* ================= PURCHASE ================= */
+/* =========================================================
+   PURCHASE
+========================================================= */
 
 .purchase-row {
-
     display: flex;
-
     align-items: center;
 
     gap: 15px;
 
     margin-top: 40px;
-
 }
 
 
-/* ================= QUANTITY ================= */
+/* =========================================================
+   QUANTITY
+========================================================= */
 
 .quantity {
-
     height: 52px;
 
     display: flex;
-
     align-items: center;
 
     border: 1px solid #333;
-
 }
 
-
 .quantity button {
-
     width: 45px;
-
     height: 100%;
 
     color: #888;
 
     font-size: 18px;
 
+    transition: color var(--transition);
 }
 
-
-.quantity button:hover {
-
+.quantity button:hover,
+.quantity button:focus-visible {
     color: white;
-
 }
-
 
 .quantity span {
-
     min-width: 35px;
 
     text-align: center;
 
     font-size: 11px;
-
 }
 
 
-/* ================= ADD BUTTON ================= */
+/* =========================================================
+   ADD TO CART
+========================================================= */
 
 .book-add-btn {
-
     height: 52px;
 
     padding: 0 35px;
 
     background: var(--white);
-
     color: var(--black);
 
     font-size: 9px;
 
     letter-spacing: 2px;
-
     text-transform: uppercase;
 
     transition:
-
-        transform .3s ease,
-
-        background .3s ease;
-
+        transform var(--transition),
+        background var(--transition);
 }
 
-
-.book-add-btn:hover {
-
+.book-add-btn:hover,
+.book-add-btn:focus-visible {
     transform: translateY(-3px);
 
     background: #ddd;
-
 }
 
 
-/* ================= BOOK META ================= */
+/* =========================================================
+   BOOK META
+========================================================= */
 
 .book-meta {
-
     display: grid;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 
     max-width: 600px;
 
     margin-top: 60px;
-
     padding-top: 30px;
 
     border-top: 1px solid #292929;
-
 }
 
-
 .meta-item {
-
     display: flex;
-
     flex-direction: column;
 
     gap: 7px;
-
 }
 
-
 .meta-label {
-
     color: #444;
 
     font-size: 7px;
 
     letter-spacing: 2px;
-
     text-transform: uppercase;
-
 }
 
-
 .meta-value {
-
     color: #aaa;
 
     font-size: 10px;
-
 }
 
 
-/* ================= RELATED ================= */
+/* =========================================================
+   RELATED BOOKS
+========================================================= */
 
 .related-books {
-
-    width: 84%;
-
-    max-width: 1400px;
+    width: var(--content-width);
+    max-width: var(--container);
 
     margin: auto;
 
     padding: 100px 0 150px;
-
 }
 
-
 .related-header {
-
     display: flex;
-
-    justify-content: space-between;
-
     align-items: flex-end;
+    justify-content: space-between;
 
     padding-bottom: 35px;
 
     border-bottom: 1px solid #292929;
-
 }
 
-
 .related-header h2 {
-
     margin-top: 15px;
 
     font-family: var(--serif);
 
     font-size: 60px;
-
     font-weight: 400;
 
     line-height: .9;
-
 }
-
 
 .related-header h2 em {
-
     font-style: italic;
-
 }
 
-
 .related-header > a {
-
     color: #777;
 
     font-size: 9px;
-
     letter-spacing: 1px;
 
+    transition: color var(--transition);
 }
 
-
-.related-header > a:hover {
-
+.related-header > a:hover,
+.related-header > a:focus-visible {
     color: white;
-
 }
 
 
-/* ================= RELATED GRID ================= */
+/* =========================================================
+   RELATED GRID
+========================================================= */
 
 .related-grid {
-
     display: grid;
 
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 25px;
 
     padding-top: 50px;
-
 }
 
 
-/* ================= RELATED CARD ================= */
+/* =========================================================
+   RELATED CARD
+========================================================= */
 
 .related-card {
-
     cursor: pointer;
-
 }
 
-
 .related-cover {
-
     height: 380px;
 
+    padding: 30px;
+
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
-    padding: 30px;
+    background: #d6d2c8;
+    color: #111;
 
     text-align: center;
 
@@ -480,45 +383,26 @@
 
     line-height: 1;
 
-    color: #111;
-
-    transition:
-
-        transform .4s ease;
-
+    transition: transform .4s ease;
 }
 
-
-.related-card:hover
-.related-cover {
-
-    transform:
-
-        translateY(-8px);
-
+.related-card:hover .related-cover,
+.related-card:focus-within .related-cover {
+    transform: translateY(-8px);
 }
-
 
 .related-info {
-
     padding-top: 18px;
-
 }
 
-
 .related-title {
-
     font-family: var(--serif);
 
     font-size: 22px;
-
     font-weight: 400;
-
 }
 
-
 .related-author {
-
     margin-top: 5px;
 
     color: #555;
@@ -526,27 +410,23 @@
     font-size: 8px;
 
     letter-spacing: 1px;
-
     text-transform: uppercase;
-
 }
 
-
 .related-price {
-
     margin-top: 8px;
 
     font-family: var(--serif);
 
     font-size: 18px;
-
 }
 
 
-/* ================= LOADING ================= */
+/* =========================================================
+   LOADING
+========================================================= */
 
 .book-loading {
-
     grid-column: 1 / -1;
 
     text-align: center;
@@ -556,158 +436,105 @@
     font-family: var(--serif);
 
     font-size: 30px;
-
     font-style: italic;
-
 }
 
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 900px) {
 
     .book-details {
-
         grid-template-columns: 1fr;
 
         padding-top: 150px;
 
         gap: 70px;
-
     }
-
 
     .book-cover-large {
-
         width: 280px;
-
     }
 
-
-    .book-info {
-
+    .product-info {
         max-width: 700px;
-
     }
 
-
-    .book-title {
-
+    .product-title {
         font-size: 5rem;
-
     }
-
 
     .related-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
+        grid-template-columns: repeat(2, 1fr);
     }
-
 }
 
 
 @media (max-width: 500px) {
 
     .book-details {
-
-        padding:
-
-            130px 8%
-            80px;
-
+        padding: 130px 8% 80px;
     }
 
-
     .book-cover-large {
-
         width: 230px;
 
         padding: 25px;
-
     }
 
-
-    .book-title {
-
+    .product-title {
         font-size: 4rem;
 
         letter-spacing: -2px;
-
     }
 
-
     .purchase-row {
-
         align-items: stretch;
 
         flex-direction: column;
-
     }
 
-
     .quantity {
-
         width: 100%;
 
         justify-content: center;
-
     }
-
 
     .book-add-btn {
-
         width: 100%;
-
     }
 
-
     .book-meta {
-
         grid-template-columns: 1fr;
 
         gap: 20px;
-
     }
 
-
     .related-header {
-
         align-items: flex-start;
 
         flex-direction: column;
 
         gap: 25px;
-
     }
-
 
     .related-header h2 {
-
         font-size: 45px;
-
     }
-
 
     .related-grid {
-
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
 
         gap: 15px;
-
     }
 
-
     .related-cover {
-
         height: 260px;
 
         padding: 15px;
 
         font-size: 18px;
-
     }
-
 }

@@ -1,12 +1,17 @@
 /* =========================================================
    A.F. BOOKSTORE
-   Main Stylesheet
+   Global Stylesheet
+   Phase 1 Foundation
 ========================================================= */
 
 
-/* ================= RESET ================= */
+/* =========================================================
+   RESET
+========================================================= */
 
-* {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -14,14 +19,42 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
-    background: #0b0b0b;
-    color: #f1eee8;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    background: var(--black);
+    color: var(--white);
+
     font-family: "Inter", sans-serif;
     font-weight: 300;
     line-height: 1.6;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
 }
 
 a {
@@ -29,48 +62,103 @@ a {
     text-decoration: none;
 }
 
-button {
-    font: inherit;
-    color: inherit;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
 
-img {
-    max-width: 100%;
-    display: block;
-}
-
-
-/* ================= VARIABLES ================= */
+/* =========================================================
+   DESIGN TOKENS
+========================================================= */
 
 :root {
+
+    /* Colors */
     --black: #0b0b0b;
+    --black-deep: #080808;
     --dark: #111111;
     --dark-light: #171717;
+    --dark-medium: #202020;
+
     --white: #f1eee8;
+    --white-soft: #ddd9d0;
+
     --muted: #8c8a86;
+    --muted-dark: #66635f;
+
     --line: #2a2a2a;
+    --line-light: #414141;
+
+    /* Typography */
     --serif: "Cormorant Garamond", serif;
+    --sans: "Inter", sans-serif;
+
+    /* Layout */
+    --container: 1400px;
+    --content-width: 84%;
+    --nav-width: 90%;
+
+    /* Effects */
+    --transition-fast: .2s ease;
+    --transition: .3s ease;
+    --transition-slow: .5s ease;
+
+    /* Z-index */
+    --z-header: 100;
+    --z-overlay: 900;
+    --z-cart: 1000;
+    --z-menu: 1500;
+    --z-search: 2000;
 }
 
 
-/* ================= HEADER ================= */
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+:focus-visible {
+    outline: 1px solid var(--white);
+    outline-offset: 5px;
+}
+
+::selection {
+    background: var(--white);
+    color: var(--black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .header {
     position: absolute;
     top: 0;
     left: 0;
+
     width: 100%;
-    z-index: 100;
+
+    z-index: var(--z-header);
 }
 
 .navbar {
-    width: min(1400px, 90%);
-    margin: auto;
+    width: min(var(--container), var(--nav-width));
 
     height: 100px;
+
+    margin: auto;
 
     display: flex;
     align-items: center;
@@ -78,16 +166,20 @@ img {
 }
 
 
-/* ================= LOGO ================= */
+/* =========================================================
+   LOGO
+========================================================= */
 
 .logo {
     display: flex;
     flex-direction: column;
+
     line-height: 1;
 }
 
 .logo span {
     font-family: var(--serif);
+
     font-size: 2rem;
     letter-spacing: -1px;
 }
@@ -95,13 +187,16 @@ img {
 .logo small {
     margin-top: 5px;
 
+    color: var(--muted);
+
     font-size: 7px;
     letter-spacing: 4px;
-    color: var(--muted);
 }
 
 
-/* ================= NAV LINKS ================= */
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
 .nav-links {
     display: flex;
@@ -111,11 +206,12 @@ img {
 .nav-links a {
     position: relative;
 
-    font-size: 12px;
-    letter-spacing: 1px;
     color: #b7b5b0;
 
-    transition: color .3s ease;
+    font-size: 12px;
+    letter-spacing: 1px;
+
+    transition: color var(--transition);
 }
 
 .nav-links a::after {
@@ -130,19 +226,28 @@ img {
 
     background: var(--white);
 
-    transition: width .3s ease;
+    transition: width var(--transition);
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links a:focus-visible {
     color: var(--white);
 }
 
-.nav-links a:hover::after {
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after,
+.nav-links a.active::after {
     width: 100%;
 }
 
+.nav-links a.active {
+    color: var(--white);
+}
 
-/* ================= NAV ACTIONS ================= */
+
+/* =========================================================
+   NAV ACTIONS
+========================================================= */
 
 .nav-actions {
     display: flex;
@@ -151,22 +256,31 @@ img {
 }
 
 .icon-btn {
-    font-size: 25px;
+    min-width: 40px;
+    min-height: 40px;
+
+    display: grid;
+    place-items: center;
+
     color: #c8c6c1;
+
+    font-size: 25px;
 }
 
 .cart-btn {
+    min-height: 40px;
+
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 8px;
 
     font-size: 11px;
     letter-spacing: 1px;
 }
 
 .cart-btn b {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
 
     display: grid;
     place-items: center;
@@ -180,15 +294,36 @@ img {
 
 .menu-btn {
     display: none;
+
+    min-width: 40px;
+    min-height: 40px;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.menu-btn span {
+    width: 25px;
+    height: 1px;
+
+    display: block;
+
+    background: var(--white);
 }
 
 
-/* ================= HERO ================= */
+/* =========================================================
+   HERO
+========================================================= */
 
 .hero {
     position: relative;
 
     min-height: 100vh;
+
     padding: 180px 8% 100px;
 
     display: flex;
@@ -208,6 +343,7 @@ img {
 
 .hero-content {
     position: relative;
+
     z-index: 2;
 
     max-width: 650px;
@@ -225,9 +361,11 @@ img {
 
 .hero h1 {
     font-family: var(--serif);
+
     font-size: clamp(4rem, 7vw, 7.5rem);
     font-weight: 400;
     line-height: .82;
+
     letter-spacing: -3px;
 }
 
@@ -250,12 +388,18 @@ h2 em {
 }
 
 
-/* ================= BUTTONS ================= */
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .primary-btn,
 .secondary-btn {
+    min-height: 48px;
+
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+
     gap: 25px;
 
     padding: 15px 22px;
@@ -267,12 +411,14 @@ h2 em {
     text-transform: uppercase;
 
     transition:
-        background .3s ease,
-        color .3s ease,
-        border-color .3s ease;
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
 }
 
-.primary-btn:hover {
+.primary-btn:hover,
+.primary-btn:focus-visible {
     background: var(--white);
     color: var(--black);
     border-color: var(--white);
@@ -284,7 +430,9 @@ h2 em {
 }
 
 
-/* ================= HERO BOOK ================= */
+/* =========================================================
+   HERO BOOK
+========================================================= */
 
 .hero-book {
     position: relative;
@@ -318,11 +466,11 @@ h2 em {
 
     box-shadow:
         -20px 30px 50px rgba(0, 0, 0, .55),
-        inset 0 0 0 1px rgba(0,0,0,.15);
+        inset 0 0 0 1px rgba(0, 0, 0, .15);
 
     transform: rotate(4deg);
 
-    transition: transform .5s ease;
+    transition: transform var(--transition-slow);
 }
 
 .hero-book:hover .book-cover {
@@ -341,7 +489,9 @@ h2 em {
     background: #030303;
 
     transform: rotate(-5deg);
+
     filter: blur(15px);
+
     opacity: .7;
 }
 
@@ -360,6 +510,7 @@ h2 em {
     flex-direction: column;
 
     font-family: var(--serif);
+
     text-align: center;
 
     line-height: .8;
@@ -380,7 +531,9 @@ h2 em {
 }
 
 
-/* ================= SCROLL ================= */
+/* =========================================================
+   SCROLL INDICATOR
+========================================================= */
 
 .hero-scroll {
     position: absolute;
@@ -406,12 +559,14 @@ h2 em {
 }
 
 
-/* ================= INTRO ================= */
+/* =========================================================
+   INTRO
+========================================================= */
 
 .intro {
     width: min(1200px, 84%);
-    margin: auto;
 
+    margin: auto;
     padding: 150px 0;
 
     display: grid;
@@ -420,6 +575,7 @@ h2 em {
 
 .intro-number {
     color: #4b4b4b;
+
     font-size: 11px;
     letter-spacing: 2px;
 }
@@ -432,6 +588,7 @@ h2 em {
 .section-heading h2,
 .about h2 {
     font-family: var(--serif);
+
     font-size: clamp(3rem, 5vw, 5.5rem);
     font-weight: 400;
     line-height: .95;
@@ -449,13 +606,16 @@ h2 em {
 }
 
 
-/* ================= BOOK SECTION ================= */
+/* =========================================================
+   BOOK SECTION
+========================================================= */
 
 .books-section {
-    width: 84%;
-    max-width: 1400px;
+    width: var(--content-width);
+    max-width: var(--container);
 
     margin: auto;
+
     padding-bottom: 160px;
 }
 
@@ -475,6 +635,13 @@ h2 em {
     font-size: 9px;
     letter-spacing: 2px;
     text-transform: uppercase;
+
+    transition: color var(--transition);
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+    color: var(--white);
 }
 
 .text-link span {
@@ -482,22 +649,49 @@ h2 em {
 }
 
 
-/* ================= BOOK GRID ================= */
+/* =========================================================
+   BOOK CARD SYSTEM
+========================================================= */
 
 .books-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 50px 30px;
 }
 
+
+/* =========================================================
+   BOOK CARD
+========================================================= */
+
 .book-card {
+    position: relative;
+
+    min-width: 0;
+
     cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+
+    transition:
+        transform var(--transition);
 }
+
+
+/* =========================================================
+   BOOK IMAGE
+========================================================= */
 
 .book-image {
     position: relative;
 
-    height: 410px;
+    width: 100%;
+
+    aspect-ratio: 3 / 4;
 
     margin-bottom: 20px;
 
@@ -507,12 +701,27 @@ h2 em {
 
     overflow: hidden;
 
-    background: #171717;
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #222 0%,
+            #171717 55%,
+            #111 100%
+        );
 }
 
+
+/* =========================================================
+   BOOK COVER
+========================================================= */
+
 .book-placeholder {
-    width: 65%;
-    height: 80%;
+    position: relative;
+
+    width: 68%;
+    height: 84%;
+
+    overflow: hidden;
 
     display: flex;
     align-items: center;
@@ -526,21 +735,89 @@ h2 em {
     text-align: center;
 
     font-family: var(--serif);
-    font-size: 30px;
+    font-size: clamp(18px, 2vw, 28px);
 
-    box-shadow: 0 15px 30px rgba(0,0,0,.4);
+    line-height: 1;
 
-    transition: transform .5s ease;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, .5);
+
+    transform:
+        translateY(0)
+        rotate(0deg)
+        scale(1);
+
+    transition:
+        transform var(--transition-slow),
+        box-shadow var(--transition-slow);
 }
 
-.book-card:hover .book-placeholder {
-    transform: scale(1.04);
+
+/* =========================================================
+   REAL COVER IMAGE
+========================================================= */
+
+.book-placeholder img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    transition:
+        transform var(--transition-slow);
 }
+
+
+/* =========================================================
+   COVER IMAGE LINK
+========================================================= */
+
+.book-image-link {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================================================
+   BOOK HOVER
+========================================================= */
+
+.book-card:hover .book-placeholder,
+.book-card:focus-within .book-placeholder {
+    transform:
+        translateY(-8px)
+        rotate(1deg)
+        scale(1.025);
+
+    box-shadow:
+        0 30px 55px rgba(0, 0, 0, .65);
+}
+
+
+.book-card:hover .book-placeholder img,
+.book-card:focus-within .book-placeholder img {
+    transform: scale(1.025);
+}
+
+
+/* =========================================================
+   BOOK OVERLAY
+========================================================= */
 
 .book-overlay {
     position: absolute;
 
     inset: 0;
+
+    z-index: 2;
 
     display: flex;
     align-items: flex-end;
@@ -548,60 +825,159 @@ h2 em {
 
     padding: 25px;
 
-    background: linear-gradient(
-        transparent 40%,
-        rgba(0,0,0,.7)
-    );
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 35%,
+            rgba(0, 0, 0, .78)
+        );
 
     opacity: 0;
 
-    transition: opacity .3s ease;
+    pointer-events: none;
+
+    transition:
+        opacity var(--transition);
 }
 
-.book-card:hover .book-overlay {
+
+.book-card:hover .book-overlay,
+.book-card:focus-within .book-overlay {
     opacity: 1;
+
+    pointer-events: auto;
 }
+
+
+/* =========================================================
+   QUICK ADD
+========================================================= */
 
 .quick-add {
-    padding: 12px 20px;
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 13px 20px;
 
     background: var(--white);
     color: var(--black);
 
     font-size: 9px;
-    letter-spacing: 1px;
+
+    letter-spacing: 1.5px;
+
     text-transform: uppercase;
+
+    transform: translateY(12px);
+
+    transition:
+        transform var(--transition),
+        background var(--transition),
+        color var(--transition);
 }
 
-.book-info {
+
+.book-card:hover .quick-add,
+.book-card:focus-within .quick-add {
+    transform: translateY(0);
+}
+
+
+.quick-add:hover,
+.quick-add:focus-visible {
+    background: #d6d2c8;
+}
+
+
+/* =========================================================
+   BOOK INFORMATION
+========================================================= */
+
+.home-book-info {
+    min-width: 0;
+
     display: flex;
+
     justify-content: space-between;
-    gap: 10px;
+
+    align-items: flex-start;
+
+    gap: 20px;
 }
 
-.book-info h3 {
+
+.home-book-info > div {
+    min-width: 0;
+}
+
+
+.home-book-info h3 {
     font-family: var(--serif);
-    font-size: 21px;
+
+    font-size: 22px;
+
     font-weight: 500;
+
+    line-height: 1.1;
 }
 
-.book-author {
-    margin-top: 4px;
+
+.home-book-info h3 a {
+    transition:
+        color var(--transition);
+}
+
+
+.home-book-info h3 a:hover,
+.home-book-info h3 a:focus-visible {
+    color: #aaa;
+}
+
+
+/* =========================================================
+   BOOK AUTHOR
+========================================================= */
+
+.home-book-author {
+    margin-top: 6px;
 
     color: #666;
 
-    font-size: 9px;
-    letter-spacing: 1px;
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
     text-transform: uppercase;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-.book-price {
+
+/* =========================================================
+   BOOK PRICE
+========================================================= */
+
+.home-book-price {
+    flex-shrink: 0;
+
     font-family: var(--serif);
-    font-size: 18px;
+
+    font-size: 19px;
+
+    line-height: 1.1;
+
+    white-space: nowrap;
 }
 
 
-/* ================= CATEGORIES ================= */
+/* =========================================================
+   CATEGORIES
+========================================================= */
 
 .categories {
     padding: 120px 8%;
@@ -633,8 +1009,8 @@ h2 em {
     border-right: 1px solid #c7c4bc;
 
     transition:
-        background .4s ease,
-        color .4s ease;
+        background var(--transition-slow),
+        color var(--transition-slow);
 }
 
 .category-card:first-child {
@@ -642,14 +1018,15 @@ h2 em {
 }
 
 .category-card span {
-    font-size: 9px;
     color: #999;
+    font-size: 9px;
 }
 
 .category-card h3 {
     margin-top: 80px;
 
     font-family: var(--serif);
+
     font-size: 40px;
     font-weight: 400;
 }
@@ -664,6 +1041,7 @@ h2 em {
 
 .category-card b {
     position: absolute;
+
     right: 30px;
     bottom: 30px;
 
@@ -673,7 +1051,7 @@ h2 em {
 
 .category-card:hover {
     background: #111;
-    color: #f1eee8;
+    color: var(--white);
 }
 
 .category-card:hover p {
@@ -681,7 +1059,9 @@ h2 em {
 }
 
 
-/* ================= QUOTE ================= */
+/* =========================================================
+   QUOTE
+========================================================= */
 
 .quote-section {
     min-height: 600px;
@@ -702,6 +1082,7 @@ h2 em {
     color: #444;
 
     font-family: var(--serif);
+
     font-size: 100px;
     line-height: .5;
 }
@@ -710,6 +1091,7 @@ blockquote {
     max-width: 900px;
 
     font-family: var(--serif);
+
     font-size: clamp(3rem, 5vw, 5.5rem);
     font-style: italic;
     line-height: .95;
@@ -726,7 +1108,9 @@ blockquote {
 }
 
 
-/* ================= ABOUT ================= */
+/* =========================================================
+   ABOUT
+========================================================= */
 
 .about {
     display: grid;
@@ -751,6 +1135,7 @@ blockquote {
 
 .image-placeholder {
     width: 50%;
+
     aspect-ratio: 3 / 4;
 
     display: grid;
@@ -759,6 +1144,7 @@ blockquote {
     border: 1px solid #444;
 
     font-family: var(--serif);
+
     font-size: 80px;
 }
 
@@ -783,22 +1169,24 @@ blockquote {
 
 .secondary-btn {
     width: fit-content;
-
     margin-top: 35px;
 }
 
-.secondary-btn:hover {
+.secondary-btn:hover,
+.secondary-btn:focus-visible {
     background: var(--white);
     color: var(--black);
 }
 
 
-/* ================= FOOTER ================= */
+/* =========================================================
+   FOOTER
+========================================================= */
 
 .footer {
     padding: 80px 8% 30px;
 
-    background: #080808;
+    background: var(--black-deep);
 }
 
 .footer-top {
@@ -814,6 +1202,7 @@ blockquote {
     color: #555;
 
     font-family: var(--serif);
+
     font-size: 20px;
     font-style: italic;
 }
@@ -844,10 +1233,11 @@ blockquote {
 
     font-size: 10px;
 
-    transition: color .3s ease;
+    transition: color var(--transition);
 }
 
-.footer-links a:hover {
+.footer-links a:hover,
+.footer-links a:focus-visible {
     color: white;
 }
 
@@ -866,132 +1256,24 @@ blockquote {
 }
 
 
-/* ================= CART ================= */
-
-.cart-sidebar {
-    position: fixed;
-
-    top: 0;
-    right: -450px;
-
-    width: 420px;
-    height: 100vh;
-
-    z-index: 1000;
-
-    display: flex;
-    flex-direction: column;
-
-    background: #151515;
-
-    transition: right .4s ease;
-}
-
-.cart-sidebar.active {
-    right: 0;
-}
-
-.cart-header {
-    padding: 30px;
-
-    display: flex;
-    justify-content: space-between;
-
-    border-bottom: 1px solid #292929;
-}
-
-.cart-header h2 {
-    font-family: var(--serif);
-    font-size: 32px;
-    font-weight: 400;
-}
-
-.cart-header button {
-    font-size: 25px;
-}
-
-.cart-items {
-    flex: 1;
-
-    padding: 30px;
-
-    overflow-y: auto;
-}
-
-.empty-cart {
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    color: #555;
-}
-
-.empty-cart span {
-    font-size: 50px;
-}
-
-.empty-cart p {
-    margin-top: 15px;
-
-    font-size: 11px;
-}
-
-.cart-footer {
-    padding: 30px;
-
-    border-top: 1px solid #292929;
-}
-
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-
-    margin-bottom: 25px;
-
-    font-size: 11px;
-}
-
-.cart-total strong {
-    font-family: var(--serif);
-    font-size: 24px;
-}
-
-.checkout-btn {
-    width: 100%;
-
-    padding: 17px;
-
-    background: var(--white);
-    color: var(--black);
-
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.checkout-btn span {
-    margin-left: 20px;
-}
-
-
-/* ================= OVERLAY ================= */
+/* =========================================================
+   OVERLAY
+========================================================= */
 
 .overlay {
     position: fixed;
 
     inset: 0;
 
-    z-index: 900;
+    z-index: var(--z-overlay);
 
-    background: rgba(0,0,0,.65);
+    background: rgba(0, 0, 0, .65);
 
     opacity: 0;
+
     pointer-events: none;
 
-    transition: opacity .3s ease;
+    transition: opacity var(--transition);
 }
 
 .overlay.active {
@@ -1000,25 +1282,30 @@ blockquote {
 }
 
 
-/* ================= SEARCH ================= */
+/* =========================================================
+   SEARCH
+========================================================= */
 
 .search-overlay {
     position: fixed;
 
     inset: 0;
 
-    z-index: 2000;
+    z-index: var(--z-search);
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    background: rgba(5,5,5,.97);
+    padding: 30px;
+
+    background: rgba(5, 5, 5, .97);
 
     opacity: 0;
+
     pointer-events: none;
 
-    transition: opacity .3s ease;
+    transition: opacity var(--transition);
 }
 
 .search-overlay.active {
@@ -1029,7 +1316,7 @@ blockquote {
 .search-container {
     position: relative;
 
-    width: min(700px, 80%);
+    width: min(700px, 100%);
 }
 
 .search-container p {
@@ -1056,7 +1343,12 @@ blockquote {
     color: white;
 
     font-family: var(--serif);
+
     font-size: 40px;
+}
+
+.search-container input:focus {
+    border-bottom-color: var(--white);
 }
 
 .close-search {
@@ -1065,22 +1357,27 @@ blockquote {
     top: -70px;
     right: 0;
 
+    min-width: 40px;
+    min-height: 40px;
+
     font-size: 30px;
 }
 
 
-/* ================= MOBILE MENU ================= */
+/* =========================================================
+   MOBILE MENU
+========================================================= */
 
 .mobile-menu {
     position: fixed;
 
     inset: 0;
 
-    z-index: 1500;
+    z-index: var(--z-menu);
 
     padding: 100px 10%;
 
-    background: #0b0b0b;
+    background: var(--black);
 
     transform: translateX(100%);
 
@@ -1097,6 +1394,9 @@ blockquote {
     top: 30px;
     right: 8%;
 
+    min-width: 40px;
+    min-height: 40px;
+
     font-size: 30px;
 }
 
@@ -1108,11 +1408,21 @@ blockquote {
 
 .mobile-links a {
     font-family: var(--serif);
+
     font-size: 55px;
+
+    transition: color var(--transition);
+}
+
+.mobile-links a:hover,
+.mobile-links a:focus-visible {
+    color: #aaa;
 }
 
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 900px) {
 
@@ -1122,14 +1432,6 @@ blockquote {
 
     .menu-btn {
         display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .menu-btn span {
-        width: 25px;
-        height: 1px;
-        background: white;
     }
 
     .hero {
@@ -1137,6 +1439,7 @@ blockquote {
 
         flex-direction: column;
         align-items: flex-start;
+
         gap: 80px;
     }
 
@@ -1154,7 +1457,10 @@ blockquote {
     }
 
     .books-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    
+        gap: 40px 20px;
     }
 
     .category-grid {
@@ -1172,7 +1478,6 @@ blockquote {
     .about-image {
         min-height: 500px;
     }
-
 }
 
 
@@ -1184,6 +1489,10 @@ blockquote {
 
     .cart-btn span {
         display: none;
+    }
+
+    .hero {
+        padding-top: 140px;
     }
 
     .hero h1 {
@@ -1202,6 +1511,7 @@ blockquote {
 
     .intro {
         grid-template-columns: 1fr;
+
         gap: 25px;
 
         padding: 100px 0;
@@ -1213,22 +1523,49 @@ blockquote {
 
     .section-heading {
         align-items: flex-start;
+
         flex-direction: column;
+
         gap: 30px;
     }
 
     .books-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    
+        gap: 35px 15px;
     }
-
+    
     .book-image {
-        height: 280px;
+        aspect-ratio: 3 / 4;
+    
+        margin-bottom: 15px;
     }
-
-    .book-info {
+    
+    .book-placeholder {
+        width: 72%;
+        height: 82%;
+    
+        padding: 15px;
+    
+        font-size: 18px;
+    }
+    
+    .home-book-info {
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
+    }
+    
+    .home-book-info h3 {
+        font-size: 18px;
+    }
+    
+    .home-book-price {
+        font-size: 17px;
+    }
+    
+    .home-book-author {
+        font-size: 7px;
     }
 
     .category-grid {
@@ -1251,6 +1588,7 @@ blockquote {
 
     .footer-top {
         flex-direction: column;
+
         gap: 60px;
     }
 
@@ -1260,16 +1598,15 @@ blockquote {
 
     .footer-bottom {
         flex-direction: column;
-        gap: 10px;
-    }
 
-    .cart-sidebar {
-        width: 100%;
-        right: -100%;
+        gap: 10px;
     }
 
     .mobile-links a {
         font-size: 45px;
     }
 
+    .search-container input {
+        font-size: 30px;
+    }
 }

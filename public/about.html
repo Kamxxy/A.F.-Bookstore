@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>About — A.F. Bookstore</title>
+
+    <meta
+        name="description"
+        content="Discover the story behind A.F. Bookstore, a carefully curated collection of stories worth keeping."
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <link
+        rel="canonical"
+        href="/about"
+    >
+
+    <!-- ================= FONTS ================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ================= STYLES ================= -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="css/cart.css"
+        >
+
+    <link
+        rel="stylesheet"
+        href="css/about.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="header">
+
+        <nav class="navbar">
+
+            <a
+                href="/"
+                class="logo"
+                aria-label="A.F. Bookstore home"
+            >
+
+                <span>A.F.</span>
+
+                <small>BOOKSTORE</small>
+
+            </a>
+
+
+            <div class="nav-links">
+
+                <a href="/">
+                    Home
+                </a>
+
+                <a href="/shop">
+                    Books
+                </a>
+
+                <a
+                    href="/about"
+                    class="active"
+                >
+                    About
+                </a>
+
+            </div>
+
+
+            <div class="nav-actions">
+
+                <button
+                    class="icon-btn"
+                    id="searchBtn"
+                    type="button"
+                    aria-label="Search"
+                >
+                    ⌕
+                </button>
+
+
+                <button
+                    class="cart-btn"
+                    id="cartBtn"
+                    type="button"
+                    aria-label="Shopping cart"
+                >
+
+                    <span>
+                        Cart
+                    </span>
+
+                    <b id="cartCount">
+                        0
+                    </b>
+
+                </button>
+
+
+                <button
+                    class="menu-btn"
+                    id="menuBtn"
+                    type="button"
+                    aria-label="Open menu"
+                >
+
+                    <span></span>
+                    <span></span>
+
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =================================================
+         MOBILE MENU
+    ================================================== -->
+
+    <div
+        class="mobile-menu"
+        id="mobileMenu"
+    >
+
+        <button
+            class="close-menu"
+            id="closeMenu"
+            type="button"
+            aria-label="Close menu"
+        >
+            ×
+        </button>
+
+
+        <div class="mobile-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/shop">
+                Books
+            </a>
+
+            <a href="/about">
+                About
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         SEARCH
+    ================================================== -->
+
+    <div
+        class="search-overlay"
+        id="searchOverlay"
+    >
+
+        <div class="search-container">
+
+            <button
+                class="close-search"
+                id="closeSearch"
+                type="button"
+                aria-label="Close search"
+            >
+                ×
+            </button>
+
+
+            <p>
+                SEARCH THE COLLECTION
+            </p>
+
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search for a book..."
+                autocomplete="off"
+            >
+
+
+            <div id="searchResults"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <main>
+
+
+        <!-- =================================================
+             ABOUT HERO
+        ================================================== -->
+
+        <section class="about-hero">
+
+            <div class="about-hero-content">
+
+                <p class="eyebrow">
+                    OUR STORY
+                </p>
+
+
+                <h1>
+                    Books are
+                    <em>places.</em>
+                </h1>
+
+
+                <p class="about-hero-description">
+                    A.F. Bookstore exists for the stories
+                    that stay with you long after the
+                    final page.
+                </p>
+
+            </div>
+
+
+            <div class="about-hero-mark">
+
+                <span>
+                    A.F.
+                </span>
+
+                <small>
+                    EST. 2026
+                </small>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OUR STORY
+        ================================================== -->
+
+        <section class="story-section">
+
+            <div class="story-number">
+                01
+            </div>
+
+
+            <div class="story-content">
+
+                <p class="eyebrow">
+                    THE BEGINNING
+                </p>
+
+
+                <h2>
+                    A bookstore built
+                    around the
+                    <em>feeling</em>
+                    of finding a good book.
+                </h2>
+
+
+                <div class="story-copy">
+
+                    <p>
+                        There is something particular about
+                        discovering a book at exactly the
+                        right moment.
+                    </p>
+
+
+                    <p>
+                        A.F. Bookstore was created around that
+                        feeling. Not simply as a place to
+                        purchase books, but as a carefully
+                        considered collection of stories,
+                        ideas and worlds worth returning to.
+                    </p>
+
+
+                    <p>
+                        From quiet romances to unsettling
+                        mysteries and impossible worlds,
+                        every title has a reason for being
+                        here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PHILOSOPHY
+        ================================================== -->
+
+        <section class="philosophy-section">
+
+            <div class="philosophy-heading">
+
+                <p class="eyebrow">
+                    WHAT WE BELIEVE
+                </p>
+
+
+                <h2>
+                    A good collection
+                    should feel
+                    <em>personal.</em>
+                </h2>
+
+            </div>
+
+
+            <div class="principles">
+
+
+                <article class="principle">
+
+                    <span>
+                        01
+                    </span>
+
+
+                    <h3>
+                        Curiosity
+                    </h3>
+
+
+                    <p>
+                        The best shelves leave room for
+                        surprise. We look for stories that
+                        invite you somewhere unexpected.
+                    </p>
+
+                </article>
+
+
+
+                <article class="principle">
+
+                    <span>
+                        02
+                    </span>
+
+
+                    <h3>
+                        Character
+                    </h3>
+
+
+                    <p>
+                        We believe books should have a
+                        distinct voice, a memorable world
+                        or something worth saying.
+                    </p>
+
+                </article>
+
+
+
+                <article class="principle">
+
+                    <span>
+                        03
+                    </span>
+
+
+                    <h3>
+                        Re-reading
+                    </h3>
+
+
+                    <p>
+                        Some books are finished once.
+                        The special ones wait patiently
+                        to be opened again.
+                    </p>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             COLLECTION
+        ================================================== -->
+
+        <section class="collection-section">
+
+            <div class="collection-visual">
+
+                <div class="collection-card">
+
+                    <span>
+                        A.F.
+                    </span>
+
+
+                    <strong>
+                        STORIES
+                    </strong>
+
+
+                    <small>
+                        WORTH KEEPING
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="collection-content">
+
+                <p class="eyebrow">
+                    THE COLLECTION
+                </p>
+
+
+                <h2>
+                    Not everything
+                    belongs on the
+                    <em>shelf.</em>
+                </h2>
+
+
+                <p>
+                    Our collection brings together fiction,
+                    romance, mystery and fantasy with an
+                    emphasis on stories that create a lasting
+                    impression.
+                </p>
+
+
+                <a
+                    href="/shop"
+                    class="secondary-btn"
+                >
+
+                    Explore the books
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CLOSING STATEMENT
+        ================================================== -->
+
+        <section class="about-quote">
+
+            <span class="quote-mark">
+                “
+            </span>
+
+
+            <blockquote>
+                There is always another
+                story waiting to become
+                <em>yours.</em>
+            </blockquote>
+
+
+            <p>
+                A.F. BOOKSTORE
+            </p>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-top">
+
+
+            <div class="footer-brand">
+
+                <a
+                    href="/"
+                    class="logo"
+                >
+
+                    <span>
+                        A.F.
+                    </span>
+
+                    <small>
+                        BOOKSTORE
+                    </small>
+
+                </a>
+
+
+                <p>
+                    Stories worth keeping.
+                </p>
+
+            </div>
+
+
+
+            <div class="footer-links">
+
+
+                <div>
+
+                    <h4>
+                        Explore
+                    </h4>
+
+
+                    <a href="/shop">
+                        Books
+                    </a>
+
+
+                    <a href="/about">
+                        About
+                    </a>
+
+                </div>
+
+
+
+                <div>
+
+                    <h4>
+                        Help
+                    </h4>
+
+
+                    <a href="#">
+                        Contact
+                    </a>
+
+
+                    <a href="#">
+                        Shipping
+                    </a>
+
+
+                    <a href="#">
+                        FAQ
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 A.F. Bookstore
+            </span>
+
+
+            <span>
+                Made for readers.
+            </span>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =================================================
+         CART
+    ================================================== -->
+
+    <aside
+        class="cart-sidebar"
+        id="cartSidebar"
+    >
+
+        <div class="cart-header">
+
+            <div>
+
+                <span class="cart-eyebrow">
+                    YOUR COLLECTION
+                </span>
+
+                <h2>
+                    Your Bag
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeCart"
+                aria-label="Close cart"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            class="cart-items"
+            id="cartItems"
+        ></div>
+
+
+        <div class="cart-footer">
+
+            <div class="cart-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="cartTotal">
+                    ₦0
+                </strong>
+
+            </div>
+
+
+            <button
+                class="checkout-btn"
+                type="button"
+            >
+
+                Proceed to checkout
+
+                <span>
+                    →
+                </span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <div
+        class="overlay"
+        id="overlay"
+    ></div>
+
+
+
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script src="js/books.js"></script>
+
+    <script src="js/cart.js"></script>
+
+    <script src="js/about.js"></script>
+
+</body>
+
+</html>

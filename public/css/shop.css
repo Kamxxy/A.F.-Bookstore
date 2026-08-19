@@ -1,10 +1,13 @@
 /* =========================================================
    A.F. BOOKSTORE
-   Shop Page
+   Shop Page Styles
+   Phase 2
 ========================================================= */
 
 
-/* ================= SHOP HERO ================= */
+/* =========================================================
+   SHOP HERO
+========================================================= */
 
 .shop-hero {
     min-height: 65vh;
@@ -30,9 +33,13 @@
     max-width: 800px;
 
     font-family: var(--serif);
+
     font-size: clamp(4rem, 8vw, 8rem);
+
     font-weight: 400;
+
     line-height: .8;
+
     letter-spacing: -4px;
 }
 
@@ -50,15 +57,18 @@
     color: #777;
 
     font-size: 12px;
+
     line-height: 2;
 }
 
 
-/* ================= SHOP SECTION ================= */
+/* =========================================================
+   SHOP SECTION
+========================================================= */
 
 .shop-section {
-    width: 84%;
-    max-width: 1400px;
+    width: var(--content-width);
+    max-width: var(--container);
 
     margin: auto;
 
@@ -66,26 +76,31 @@
 }
 
 
-/* ================= TOOLBAR ================= */
+/* =========================================================
+   SHOP TOOLBAR
+========================================================= */
 
 .shop-toolbar {
     display: flex;
+
     align-items: flex-end;
     justify-content: space-between;
 
     padding-bottom: 30px;
 
-    border-bottom: 1px solid #292929;
+    border-bottom: 1px solid var(--line);
 }
 
 
 .book-count {
     display: flex;
+
     gap: 12px;
 
     color: #555;
 
     font-size: 9px;
+
     letter-spacing: 2px;
 }
 
@@ -95,17 +110,22 @@
 }
 
 
-/* ================= FILTERS ================= */
+/* =========================================================
+   FILTERS
+========================================================= */
 
 .filters {
     display: flex;
+
     gap: 40px;
 }
 
 
 .filter {
     display: flex;
+
     align-items: center;
+
     gap: 15px;
 }
 
@@ -114,6 +134,7 @@
     color: #555;
 
     font-size: 8px;
+
     letter-spacing: 2px;
 }
 
@@ -126,243 +147,114 @@
     background: transparent;
 
     border: none;
+
     border-bottom: 1px solid #444;
 
     outline: none;
 
     color: #aaa;
 
-    font-family: "Inter", sans-serif;
+    font-family: var(--sans);
+
     font-size: 10px;
 
     cursor: pointer;
+
+    transition:
+        border-color var(--transition);
+}
+
+
+.filter select:hover,
+.filter select:focus {
+    border-bottom-color: var(--white);
 }
 
 
 .filter select option {
     background: #111;
+
     color: white;
 }
 
 
-/* ================= SHOP GRID ================= */
+/* =========================================================
+   SHOP BOOK GRID
+========================================================= */
 
-.shop-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+/*
+    IMPORTANT:
 
-    gap: 60px 30px;
+    The shop uses the GLOBAL .books-grid
+    and .book-card system from style.css.
 
+    Do NOT duplicate:
+
+        .book-card
+        .book-image
+        .book-placeholder
+        .book-overlay
+        .quick-add
+        .home-book-info
+        .home-book-author
+        .home-book-price
+
+    here.
+
+    This keeps the entire bookstore using
+    one reusable book-card component.
+*/
+
+#shopGrid {
     padding-top: 60px;
 }
 
 
-/* ================= BOOK CARD ================= */
+/*
+    The loading element is inserted directly
+    into #shopGrid, so it needs to span
+    the entire grid.
+*/
 
-.shop-book-card {
-    cursor: pointer;
+#shopGrid .loading {
+    grid-column: 1 / -1;
 }
 
 
-.shop-book-image {
-    position: relative;
-
-    height: 430px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    background: #151515;
-}
-
-
-.shop-book-cover {
-    width: 67%;
-    height: 82%;
-
-    padding: 25px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    font-family: var(--serif);
-    font-size: 25px;
-    line-height: 1;
-
-    color: #111;
-
-    box-shadow:
-        0 20px 35px rgba(0,0,0,.5);
-
-    transition:
-        transform .5s ease;
-}
-
-
-.shop-book-card:hover
-.shop-book-cover {
-
-    transform:
-        translateY(-8px)
-        rotate(1deg)
-        scale(1.02);
-
-}
-
-
-/* ================= BOOK OVERLAY ================= */
-
-.shop-book-overlay {
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-
-    padding: 25px;
-
-    background:
-        linear-gradient(
-            transparent 35%,
-            rgba(0,0,0,.75)
-        );
-
-    opacity: 0;
-
-    transition: opacity .3s ease;
-}
-
-
-.shop-book-card:hover
-.shop-book-overlay {
-
-    opacity: 1;
-
-}
-
-
-.add-cart-btn {
-    width: 100%;
-
-    padding: 14px;
-
-    background: var(--white);
-    color: var(--black);
-
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-
-    transform: translateY(10px);
-
-    transition: transform .3s ease;
-}
-
-
-.shop-book-card:hover
-.add-cart-btn {
-
-    transform: translateY(0);
-
-}
-
-
-/* ================= BOOK INFO ================= */
-
-.shop-book-info {
-
-    padding-top: 18px;
-
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-
-.shop-book-title {
-
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-
-    line-height: 1.1;
-}
-
-
-.shop-book-author {
-
-    margin-top: 6px;
-
-    color: #5f5f5f;
-
-    font-size: 8px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-
-.shop-book-price {
-
-    white-space: nowrap;
-
-    font-family: var(--serif);
-    font-size: 19px;
-}
-
-
-/* ================= CATEGORY ================= */
-
-.shop-book-category {
-
-    display: inline-block;
-
-    margin-top: 12px;
-
-    color: #555;
-
-    font-size: 7px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-
-/* ================= LOADING ================= */
+/* =========================================================
+   LOADING
+========================================================= */
 
 .loading {
-
-    grid-column: 1 / -1;
-
     min-height: 300px;
 
     display: grid;
+
     place-items: center;
 
     color: #555;
 
     font-family: var(--serif);
+
     font-size: 25px;
+
     font-style: italic;
 }
 
 
-/* ================= NO RESULTS ================= */
+/* =========================================================
+   NO RESULTS
+========================================================= */
 
 .no-results {
-
     display: none;
 
     min-height: 400px;
 
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
     text-align: center;
@@ -378,50 +270,186 @@
     color: #444;
 
     font-family: var(--serif);
+
     font-size: 50px;
 }
 
 
 .no-results h2 {
-
     margin-top: 15px;
 
     font-family: var(--serif);
-    font-size: 40px;
-    font-weight: 400;
 
+    font-size: 40px;
+
+    font-weight: 400;
 }
 
 
 .no-results p {
-
     margin-top: 5px;
 
     color: #555;
 
     font-size: 10px;
-
 }
 
 
-/* ================= NAV ACTIVE ================= */
+/* =========================================================
+   SEARCH RESULTS
+========================================================= */
 
-.nav-links a.active {
+/*
+    Search itself is global functionality,
+    but these styles belong to the shop/search
+    presentation.
+*/
+
+#searchResults {
+    max-height: 60vh;
+
+    margin-top: 30px;
+
+    overflow-y: auto;
+}
+
+
+.search-result {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid var(--line);
+
+    cursor: pointer;
+
+    transition:
+        border-color var(--transition),
+        color var(--transition);
+}
+
+
+.search-result:hover {
+    border-color: var(--line-light);
+}
+
+
+.search-result h3 {
+    font-family: var(--serif);
+
+    font-size: 24px;
+
+    font-weight: 400;
+
+    line-height: 1.1;
+}
+
+
+.search-result small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #666;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+.search-result span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+}
+
+
+.search-add-btn {
+    flex-shrink: 0;
+
+    min-width: 60px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #444;
+
     color: var(--white);
+
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    transition:
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition);
 }
 
 
-.nav-links a.active::after {
-    width: 100%;
+.search-add-btn:hover,
+.search-add-btn:focus-visible {
+    background: var(--white);
+
+    border-color: var(--white);
+
+    color: var(--black);
 }
 
 
-/* ================= RESPONSIVE ================= */
+.search-no-results {
+    padding: 30px 0;
+
+    color: #666;
+
+    font-family: var(--serif);
+
+    font-size: 24px;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   SHOP RESPONSIVE
+========================================================= */
 
 @media (max-width: 1000px) {
 
-    .shop-grid {
-        grid-template-columns: repeat(3, 1fr);
+    /*
+        The global .books-grid handles
+        the card layout at this breakpoint.
+    */
+
+    .shop-section {
+        padding-top: 75px;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .shop-hero {
+        min-height: 60vh;
+
+        padding: 160px 8% 90px;
     }
 
 }
@@ -445,35 +473,26 @@
     }
 
 
-    .shop-grid {
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 50px 20px;
-    }
-
-
-    .shop-book-image {
-        height: 350px;
+    #shopGrid {
+        padding-top: 50px;
     }
 
 }
 
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
 
     .shop-hero {
         min-height: 60vh;
 
-        padding: 150px 8% 80px;
+        padding: 140px 8% 80px;
     }
 
 
     .shop-hero h1 {
-
         font-size: 4rem;
 
         letter-spacing: -2px;
-
     }
 
 
@@ -481,6 +500,8 @@
         width: 84%;
 
         padding-top: 60px;
+
+        padding-bottom: 100px;
     }
 
 
@@ -503,36 +524,50 @@
     }
 
 
-    .shop-grid {
-        grid-template-columns: 1fr 1fr;
-
-        gap: 40px 12px;
+    #shopGrid {
+        padding-top: 40px;
     }
 
 
-    .shop-book-image {
-        height: 270px;
-    }
+    .search-result {
+        align-items: flex-start;
 
-
-    .shop-book-cover {
-        width: 72%;
-        height: 80%;
-
-        padding: 15px;
-
-        font-size: 19px;
-    }
-
-
-    .shop-book-info {
         flex-direction: column;
-        gap: 5px;
+
+        gap: 15px;
     }
 
 
-    .shop-book-title {
-        font-size: 19px;
+    .search-add-btn {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .shop-hero h1 {
+        font-size: 3.5rem;
+    }
+
+
+    .shop-section {
+        width: 88%;
+    }
+
+
+    .filter {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+
+    .filter select {
+        width: 100%;
     }
 
 }

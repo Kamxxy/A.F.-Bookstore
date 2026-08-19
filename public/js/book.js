@@ -4,16 +4,6 @@
 ========================================================= */
 
 
-/* ================= STATE ================= */
-
-let books = [];
-
-let cart =
-    JSON.parse(
-        localStorage.getItem("afCart")
-    ) || [];
-
-
 /* ================= GET BOOK ID ================= */
 
 const params =
@@ -42,80 +32,17 @@ const relatedGrid =
     );
 
 
-/* ================= CART ================= */
-
-const cartBtn =
-    document.getElementById(
-        "cartBtn"
-    );
-
-
-const cartSidebar =
-    document.getElementById(
-        "cartSidebar"
-    );
-
-
-const closeCart =
-    document.getElementById(
-        "closeCart"
-    );
-
-
-const cartItems =
-    document.getElementById(
-        "cartItems"
-    );
-
-
-const cartCount =
-    document.getElementById(
-        "cartCount"
-    );
-
-
-const cartTotal =
-    document.getElementById(
-        "cartTotal"
-    );
-
-
-const overlay =
-    document.getElementById(
-        "overlay"
-    );
-
-
-/* ================= LOAD BOOKS ================= */
+/* ================= LOAD BOOK ================= */
 
 async function loadBook() {
 
     try {
 
-        const response =
-            await fetch(
-                "data/books.json"
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Unable to load books."
-            );
-
-        }
-
-
-        books =
-            await response.json();
+        await loadBooksData();
 
 
         const book =
-            books.find(
-                item =>
-                    item.id === bookId
-            );
+            getBookById(bookId);
 
 
         if (!book) {
@@ -131,23 +58,29 @@ async function loadBook() {
 
         renderRelated(book);
 
-        updateCart();
-
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "Book details loading error:",
+            error
+        );
 
-        bookDetails.innerHTML = `
 
-            <div class="book-loading">
+        if (bookDetails) {
 
-                Unable to load this book.
+            bookDetails.innerHTML = `
 
-            </div>
+                <div class="book-loading">
 
-        `;
+                    Unable to load this book.
+
+                </div>
+
+            `;
+
+        }
 
     }
 
@@ -162,6 +95,9 @@ function renderBook(book) {
         `${book.title} — A.F. Bookstore`;
 
 
+    if (!bookDetails) return;
+
+
     bookDetails.innerHTML = `
 
         <div class="book-cover-area">
@@ -174,37 +110,50 @@ function renderBook(book) {
                 "
             >
 
-                ${book.title}
+                ${
+                    book.cover
+                        ? `
+                            <img
+                                src="${book.cover}"
+                                alt="${book.title} by ${book.author}"
+                            >
+                        `
+                        : `
+                            <span>
+                                ${book.title}
+                            </span>
+                        `
+                }
 
             </div>
 
         </div>
 
 
-        <div class="book-info">
+        <div class="product-info">
 
-            <span class="book-category">
+            <span class="product-category">
 
                 ${book.category}
 
             </span>
 
 
-            <h1 class="book-title">
+            <h1 class="product-title">
 
                 ${book.title}
 
             </h1>
 
 
-            <p class="book-author">
+            <p class="product-author">
 
                 By ${book.author}
 
             </p>
 
 
-            <div class="book-rating">
+            <div class="product-rating">
 
                 ${getStars(book.rating)}
 
@@ -215,16 +164,16 @@ function renderBook(book) {
             </div>
 
 
-            <div class="book-price">
+            <div class="product-price">
 
-                ₦${book.price.toLocaleString()}
+                ${formatPrice(book.price)}
 
             </div>
 
 
-            <p class="book-description">
+            <p class="product-description">
 
-                ${book.description}
+                ${book.description || ""}
 
             </p>
 
@@ -234,27 +183,38 @@ function renderBook(book) {
                 <div class="quantity">
 
                     <button
+                        type="button"
                         id="decreaseQuantity"
+                        aria-label="Decrease quantity"
                     >
+
                         −
+
                     </button>
 
 
                     <span id="quantity">
+
                         1
+
                     </span>
 
 
                     <button
+                        type="button"
                         id="increaseQuantity"
+                        aria-label="Increase quantity"
                     >
+
                         +
+
                     </button>
 
                 </div>
 
 
                 <button
+                    type="button"
                     class="book-add-btn"
                     id="addBookBtn"
                 >
@@ -271,11 +231,16 @@ function renderBook(book) {
                 <div class="meta-item">
 
                     <span class="meta-label">
+
                         Category
+
                     </span>
 
+
                     <span class="meta-value">
+
                         ${book.category}
+
                     </span>
 
                 </div>
@@ -284,11 +249,16 @@ function renderBook(book) {
                 <div class="meta-item">
 
                     <span class="meta-label">
+
                         Format
+
                     </span>
 
+
                     <span class="meta-value">
+
                         Paperback
+
                     </span>
 
                 </div>
@@ -297,11 +267,16 @@ function renderBook(book) {
                 <div class="meta-item">
 
                     <span class="meta-label">
+
                         Availability
+
                     </span>
 
+
                     <span class="meta-value">
+
                         In stock
+
                     </span>
 
                 </div>
@@ -322,7 +297,16 @@ function renderBook(book) {
 
 function getStars(rating) {
 
-    return "★".repeat(rating);
+    const value =
+        Number(rating) || 0;
+
+
+    return "★".repeat(
+        Math.max(
+            0,
+            Math.round(value)
+        )
+    );
 
 }
 
@@ -340,438 +324,117 @@ function setupQuantity(book) {
         );
 
 
-    document
-        .getElementById(
+    const increaseButton =
+        document.getElementById(
             "increaseQuantity"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                quantity++;
-
-                quantityDisplay.textContent =
-                    quantity;
-
-            }
         );
 
 
-    document
-        .getElementById(
+    const decreaseButton =
+        document.getElementById(
             "decreaseQuantity"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                if (quantity > 1) {
-
-                    quantity--;
-
-                    quantityDisplay
-                        .textContent =
-                        quantity;
-
-                }
-
-            }
         );
 
 
-    document
-        .getElementById(
+    const addButton =
+        document.getElementById(
             "addBookBtn"
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                addToCart(
-                    book,
-                    quantity
-                );
-
-            }
-        );
-
-}
-
-
-/* ================= ADD TO CART ================= */
-
-function addToCart(
-    book,
-    quantity
-) {
-
-    const existing =
-        cart.find(
-            item =>
-                item.id === book.id
         );
 
 
-    if (existing) {
-
-        existing.quantity +=
-            quantity;
-
-    }
-
-    else {
-
-        cart.push({
-
-            ...book,
-
-            quantity
-
-        });
-
-    }
-
-
-    saveCart();
-
-    openCart();
-
-}
-
-
-/* ================= SAVE CART ================= */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "afCart",
-        JSON.stringify(cart)
-    );
-
-
-    updateCart();
-
-}
-
-
-/* ================= UPDATE CART ================= */
-
-function updateCart() {
-
-    cartItems.innerHTML = "";
-
-
-    if (cart.length === 0) {
-
-        cartItems.innerHTML = `
-
-            <div class="empty-cart">
-
-                <span>◌</span>
-
-                <p>
-                    Your cart is empty.
-                </p>
-
-            </div>
-
-        `;
-
-    }
-
-    else {
-
-        cart.forEach(book => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.style.cssText = `
-
-                display:flex;
-
-                gap:15px;
-
-                padding:20px 0;
-
-                border-bottom:
-                    1px solid #292929;
-
-            `;
-
-
-            item.innerHTML = `
-
-                <div
-                    style="
-                        width:70px;
-                        height:90px;
-                        background:
-                            ${getBookColor(book.id)};
-                        display:grid;
-                        place-items:center;
-                        color:#111;
-                        padding:8px;
-                        text-align:center;
-                        font-family:
-                            var(--serif);
-                        font-size:13px;
-                    "
-                >
-
-                    ${book.title}
-
-                </div>
-
-
-                <div style="flex:1">
-
-                    <h3
-                        style="
-                            font-family:
-                                var(--serif);
-                            font-size:19px;
-                            font-weight:400;
-                        "
-                    >
-
-                        ${book.title}
-
-                    </h3>
-
-
-                    <p
-                        style="
-                            color:#666;
-                            font-size:9px;
-                            margin-top:3px;
-                        "
-                    >
-
-                        ₦${book.price.toLocaleString()}
-
-                    </p>
-
-
-                    <div
-                        style="
-                            display:flex;
-                            align-items:center;
-                            gap:12px;
-                            margin-top:12px;
-                        "
-                    >
-
-                        <button
-                            onclick="
-                                changeQuantity(
-                                    ${book.id},
-                                    -1
-                                )
-                            "
-                        >
-                            −
-                        </button>
-
-
-                        <span>
-                            ${book.quantity}
-                        </span>
-
-
-                        <button
-                            onclick="
-                                changeQuantity(
-                                    ${book.id},
-                                    1
-                                )
-                            "
-                        >
-                            +
-                        </button>
-
-
-                        <button
-                            onclick="
-                                removeFromCart(
-                                    ${book.id}
-                                )
-                            "
-                            style="
-                                margin-left:auto;
-                                color:#666;
-                                font-size:9px;
-                            "
-                        >
-
-                            REMOVE
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-            cartItems.appendChild(item);
-
-        });
-
-    }
-
-
-    const quantity =
-        cart.reduce(
-            (total, book) =>
-                total + book.quantity,
-            0
-        );
-
-
-    cartCount.textContent =
-        quantity;
-
-
-    const total =
-        cart.reduce(
-            (sum, book) =>
-                sum +
-                (
-                    book.price *
-                    book.quantity
-                ),
-            0
-        );
-
-
-    cartTotal.textContent =
-        `₦${total.toLocaleString()}`;
-
-}
-
-
-/* ================= CART QUANTITY ================= */
-
-function changeQuantity(
-    id,
-    amount
-) {
-
-    const book =
-        cart.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!book) return;
-
-
-    book.quantity += amount;
-
-
-    if (book.quantity <= 0) {
-
-        removeFromCart(id);
+    if (
+        !quantityDisplay ||
+        !increaseButton ||
+        !decreaseButton ||
+        !addButton
+    ) {
 
         return;
 
     }
 
 
-    saveCart();
+    /* ================= INCREASE ================= */
 
-}
+    increaseButton.addEventListener(
+        "click",
+        () => {
 
-
-/* ================= REMOVE ================= */
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            book =>
-                book.id !== id
-        );
+            quantity++;
 
 
-    saveCart();
+            quantityDisplay.textContent =
+                quantity;
 
-}
-
-
-/* ================= CART UI ================= */
-
-function openCart() {
-
-    cartSidebar.classList.add(
-        "active"
+        }
     );
 
-    overlay.classList.add(
-        "active"
+
+    /* ================= DECREASE ================= */
+
+    decreaseButton.addEventListener(
+        "click",
+        () => {
+
+            if (quantity > 1) {
+
+                quantity--;
+
+
+                quantityDisplay.textContent =
+                    quantity;
+
+            }
+
+        }
+    );
+
+
+    /* ================= ADD TO CART ================= */
+
+    addButton.addEventListener(
+        "click",
+        () => {
+
+            addToCart(
+                book,
+                quantity
+            );
+
+        }
     );
 
 }
-
-
-function closeCartSidebar() {
-
-    cartSidebar.classList.remove(
-        "active"
-    );
-
-    overlay.classList.remove(
-        "active"
-    );
-
-}
-
-
-cartBtn.addEventListener(
-    "click",
-    openCart
-);
-
-
-closeCart.addEventListener(
-    "click",
-    closeCartSidebar
-);
-
-
-overlay.addEventListener(
-    "click",
-    closeCartSidebar
-);
 
 
 /* ================= RELATED BOOKS ================= */
 
 function renderRelated(currentBook) {
 
+    if (!relatedGrid) return;
+
+
+    /*
+        First get books from the same category.
+    */
+
     const related =
         books
             .filter(
                 book =>
-                    book.id !==
-                    currentBook.id &&
+                    Number(book.id) !==
+                        Number(currentBook.id) &&
+
                     book.category ===
-                    currentBook.category
+                        currentBook.category
             )
             .slice(0, 4);
 
 
     /*
-        If there aren't enough books
-        in the same category, fill
-        the remaining slots with
-        other books.
+        If there are fewer than four
+        related books, fill the remaining
+        slots with other books.
     */
 
     if (related.length < 4) {
@@ -780,12 +443,13 @@ function renderRelated(currentBook) {
             books
                 .filter(
                     book =>
-                        book.id !==
-                        currentBook.id &&
+                        Number(book.id) !==
+                            Number(currentBook.id) &&
+
                         !related.some(
                             item =>
-                                item.id ===
-                                book.id
+                                Number(item.id) ===
+                                Number(book.id)
                         )
                 )
                 .slice(
@@ -801,98 +465,153 @@ function renderRelated(currentBook) {
     }
 
 
-    relatedGrid.innerHTML =
-        related.map(
-            book => `
+    /*
+        Clear existing cards.
+    */
 
-                <article
-                    class="related-card"
-                    onclick="
-                        window.location.href =
-                        'book.html?id=${book.id}'
-                    "
+    relatedGrid.innerHTML = "";
+
+
+    /*
+        Render cards using the SAME
+        structure as the homepage.
+    */
+
+    related.forEach(book => {
+
+        const card =
+            document.createElement(
+                "article"
+            );
+
+
+        card.className =
+            "book-card";
+
+
+        card.innerHTML = `
+
+            <div class="book-image">
+
+                <a
+                    href="${getBookUrl(book.id)}"
+                    class="book-image-link"
+                    aria-label="View ${book.title}"
                 >
 
                     <div
-                        class="related-cover"
+                        class="book-placeholder"
                         style="
                             background:
-                            ${getBookColor(
-                                book.id
-                            )};
+                            ${getBookColor(book.id)};
                         "
                     >
 
-                        ${book.title}
+                        ${
+                            book.cover
+                                ? `
+                                    <img
+                                        src="${book.cover}"
+                                        alt="${book.title} by ${book.author}"
+                                        loading="lazy"
+                                    >
+                                `
+                                : `
+                                    <span>
+                                        ${book.title}
+                                    </span>
+                                `
+                        }
 
                     </div>
 
+                </a>
 
-                    <div class="related-info">
 
-                        <h3
-                            class="related-title"
+                <div class="book-overlay">
+
+                    <button
+                        class="quick-add"
+                        type="button"
+                        data-book-id="${book.id}"
+                    >
+
+                        Add to cart
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="home-book-info">
+
+                <div>
+
+                    <h3>
+
+                        <a
+                            href="${getBookUrl(book.id)}"
                         >
 
                             ${book.title}
 
-                        </h3>
+                        </a>
+
+                    </h3>
 
 
-                        <p
-                            class="related-author"
-                        >
+                    <p class="home-book-author">
 
-                            ${book.author}
+                        ${book.author}
 
-                        </p>
+                    </p>
 
-
-                        <p
-                            class="related-price"
-                        >
-
-                            ₦${book.price.toLocaleString()}
-
-                        </p>
-
-                    </div>
-
-                </article>
-
-            `
-        )
-        .join("");
-
-}
+                </div>
 
 
-/* ================= COLORS ================= */
+                <span class="home-book-price">
 
-function getBookColor(id) {
+                    ${formatPrice(book.price)}
 
-    const colors = [
+                </span>
 
-        "#d7d3c8",
-        "#b8b5ad",
-        "#c8c2b7",
-        "#a9a49a",
-        "#d0cbc0",
-        "#b2afa8",
-        "#dad6cd",
-        "#aaa59b",
-        "#c4beb3",
-        "#d1ccc1",
-        "#bcb7ae",
-        "#cec9bf"
+            </div>
 
-    ];
+        `;
 
 
-    return colors[
-        (id - 1) %
-        colors.length
-    ];
+        /* ================= ADD TO CART ================= */
+
+        const addButton =
+            card.querySelector(
+                ".quick-add"
+            );
+
+
+        if (addButton) {
+
+            addButton.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    addToCart(book);
+
+                }
+            );
+
+        }
+
+
+        relatedGrid.appendChild(card);
+
+    });
 
 }
 
@@ -901,33 +620,45 @@ function getBookColor(id) {
 
 function showNotFound() {
 
-    bookDetails.innerHTML = `
+    if (bookDetails) {
 
-        <div class="book-loading">
+        bookDetails.innerHTML = `
 
-            Book not found.
+            <div class="book-loading">
 
-            <br>
+                Book not found.
 
-            <a
-                href="shop.html"
-                style="
-                    display:inline-block;
-                    margin-top:20px;
-                    color:#aaa;
-                    font-family:Inter,sans-serif;
-                    font-size:10px;
-                    font-style:normal;
-                "
-            >
+                <br>
 
-                ← Return to collection
+                <a
+                    href="/shop"
+                    style="
+                        display:inline-block;
+                        margin-top:20px;
+                        color:#aaa;
+                        font-family:
+                            Inter,sans-serif;
+                        font-size:10px;
+                        font-style:normal;
+                    "
+                >
 
-            </a>
+                    ← Return to collection
 
-        </div>
+                </a>
 
-    `;
+            </div>
+
+        `;
+
+    }
+
+
+    if (relatedGrid) {
+
+        relatedGrid.innerHTML = "";
+
+    }
 
 }
 
@@ -952,28 +683,68 @@ const closeMenu =
     );
 
 
-menuBtn.addEventListener(
-    "click",
-    () => {
+if (
+    menuBtn &&
+    mobileMenu
+) {
 
-        mobileMenu.classList.add(
-            "active"
+    menuBtn.addEventListener(
+        "click",
+        () => {
+
+            mobileMenu.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+if (
+    closeMenu &&
+    mobileMenu
+) {
+
+    closeMenu.addEventListener(
+        "click",
+        () => {
+
+            mobileMenu.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+/* ================= MOBILE LINKS ================= */
+
+document
+    .querySelectorAll(
+        ".mobile-links a"
+    )
+    .forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                if (mobileMenu) {
+
+                    mobileMenu.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
         );
 
-    }
-);
-
-
-closeMenu.addEventListener(
-    "click",
-    () => {
-
-        mobileMenu.classList.remove(
-            "active"
-        );
-
-    }
-);
+    });
 
 
 /* ================= START ================= */

@@ -1,48 +1,118 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 
+const booksRouter = require('./routes/books');
+const pagesRouter = require('./routes/pages');
+
+
 const app = express();
-const PORT = 3000;
 
-// Middleware
+const PORT = process.env.PORT || 3000;
+
+
+/* =========================================================
+   MIDDLEWARE
+========================================================= */
+
 app.use(cors());
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, '../public')));
-app.use('/css', express.static(path.join(__dirname, '../css')));
-app.use('/js', express.static(path.join(__dirname, '../js')));
-app.use('/images', express.static(path.join(__dirname, '../images')));
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
 
-// Routes
-// Serve index.html as the home page
+
+/* =========================================================
+   STATIC FILES
+========================================================= */
+
+app.use(
+    express.static(
+        path.join(__dirname, '../public')
+    )
+);
+
+
+/* =========================================================
+   ROUTES
+========================================================= */
+
+app.use(
+    '/',
+    pagesRouter
+);
+
+app.use(
+    '/api/books',
+    booksRouter
+);
+
+
+// =========================================================
+// PAGE ROUTES
+// =========================================================
+
+// Home
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(
+        path.join(__dirname, '../public/index.html')
+    );
 });
 
-// Serve shop.html
+
+// Shop
 app.get('/shop', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/shop.html'));
+    res.sendFile(
+        path.join(__dirname, '../public/shop.html')
+    );
 });
 
-// API route to get books data
-app.get('/api/books', (req, res) => {
-  const booksPath = path.join(__dirname, '../data/books.json');
-  fs.readFile(booksPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading books.json:', err);
-      res.status(500).json({ error: 'Failed to load books' });
-      return;
-    }
-    res.json(JSON.parse(data));
-  });
+
+// About
+app.get('/about', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../public/about.html')
+    );
 });
 
-// Start server
+app.get('/book', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../public/book.html')
+    );
+});
+
+// Contact
+app.get('/contact', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../public/contact.html')
+    );
+});
+
+
+// FAQ
+app.get('/faq', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../public/faq.html')
+    );
+});
+
+
+/* =========================================================
+   START SERVER
+========================================================= */
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Open http://localhost:${PORT} in your browser to view the bookstore`);
+
+    console.log(
+        `Server running on http://localhost:${PORT}`
+    );
+
+    console.log(
+        `Open http://localhost:${PORT} in your browser to view the bookstore`
+    );
+
 });

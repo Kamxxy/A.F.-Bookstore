@@ -4,16 +4,6 @@
 ========================================================= */
 
 
-/* ================= STATE ================= */
-
-let books = [];
-
-let cart =
-    JSON.parse(
-        localStorage.getItem("afCart")
-    ) || [];
-
-
 /* ================= ELEMENTS ================= */
 
 const shopGrid =
@@ -32,154 +22,162 @@ const noResults =
     document.getElementById("noResults");
 
 
-/* ================= CART ELEMENTS ================= */
+/* ================= LOAD BOOKS ================= 
 
-const cartBtn =
-    document.getElementById("cartBtn");
-
-const cartSidebar =
-    document.getElementById("cartSidebar");
-
-const closeCart =
-    document.getElementById("closeCart");
-
-const cartItems =
-    document.getElementById("cartItems");
-
-const cartCount =
-    document.getElementById("cartCount");
-
-const cartTotal =
-    document.getElementById("cartTotal");
-
-const overlay =
-    document.getElementById("overlay");
-
-
-/* ================= LOAD BOOKS ================= */
-
-async function loadBooks() {
+async function loadShopBooks() {
 
     try {
 
-        const response =
-            await fetch("data/books.json");
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Could not load books."
-            );
-
-        }
-
-
-        books =
-            await response.json();
-
+        await loadBooksData();
 
         renderBooks(books);
-
-        updateCart();
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "Shop book loading error:",
+            error
+        );
 
-        shopGrid.innerHTML = `
 
-            <div class="loading">
+        if (shopGrid) {
 
-                Unable to load the collection.
+            shopGrid.innerHTML = `
 
-                <br>
+                <div class="loading">
 
-                <small
-                    style="
-                        color:#444;
-                        font-family:Inter,sans-serif;
-                        font-size:9px;
-                    "
-                >
-                    Make sure you're running the
-                    website through a local server.
-                </small>
+                    Unable to load the collection.
 
-            </div>
+                </div>
 
-        `;
+            `;
+
+        }
 
     }
 
-}
+}*/
 
 
 /* ================= RENDER BOOKS ================= */
 
 function renderBooks(bookList) {
 
+    if (!shopGrid) return;
+
+
     shopGrid.innerHTML = "";
 
 
-    bookCount.textContent =
-        bookList.length;
+    /* ================= BOOK COUNT ================= */
 
+    if (bookCount) {
+
+        bookCount.textContent =
+            bookList.length;
+
+    }
+
+
+    /* ================= NO RESULTS ================= */
 
     if (bookList.length === 0) {
 
-        noResults.classList.add("visible");
+        if (noResults) {
+
+            noResults.classList.add(
+                "visible"
+            );
+
+        }
 
         return;
 
     }
 
 
-    noResults.classList.remove("visible");
+    if (noResults) {
 
+        noResults.classList.remove(
+            "visible"
+        );
+
+    }
+
+
+    /* ================= BOOK CARDS ================= */
 
     bookList.forEach(book => {
 
         const card =
-            document.createElement("article");
-
-
-        card.className =
-            "shop-book-card";
+            document.createElement(
+                "article"
+            );
 
 
         /*
-            We're intentionally using a styled
-            placeholder for now.
+            IMPORTANT:
 
-            When actual cover images are added,
-            this can become an <img>.
+            The shop now uses the EXACT
+            same card structure as the
+            homepage.
+
+            This means the homepage and
+            shop page can share the same
+            book-card CSS.
         */
+
+        card.className =
+            "book-card";
+
 
         card.innerHTML = `
 
-            <div class="shop-book-image">
+            <div class="book-image">
 
-                <div
-                    class="shop-book-cover"
-                    style="
-                        background:
-                        ${getBookColor(book.id)};
-                    "
+                <a
+                    href="${getBookUrl(book.id)}"
+                    class="book-image-link"
+                    aria-label="View ${book.title}"
                 >
 
-                    ${book.title}
+                    <div
+                        class="book-placeholder"
+                        style="
+                            background:
+                            ${getBookColor(book.id)};
+                        "
+                    >
 
-                </div>
+                        ${
+                            book.cover
+                                ? `
+                                    <img
+                                        src="${book.cover}"
+                                        alt="${book.title} by ${book.author}"
+                                        loading="lazy"
+                                    >
+                                `
+                                : `
+                                    <span>
+                                        ${book.title}
+                                    </span>
+                                `
+                        }
+
+                    </div>
+
+                </a>
 
 
-                <div class="shop-book-overlay">
+                <div class="book-overlay">
 
                     <button
-                        class="add-cart-btn"
-                        data-id="${book.id}"
+                        class="quick-add"
+                        type="button"
+                        data-book-id="${book.id}"
                     >
 
                         Add to cart
@@ -191,36 +189,35 @@ function renderBooks(bookList) {
             </div>
 
 
-            <div class="shop-book-info">
+            <div class="home-book-info">
 
                 <div>
 
-                    <h2 class="shop-book-title">
+                    <h3>
 
-                        ${book.title}
+                        <a
+                            href="${getBookUrl(book.id)}"
+                        >
 
-                    </h2>
+                            ${book.title}
+
+                        </a>
+
+                    </h3>
 
 
-                    <p class="shop-book-author">
+                    <p class="home-book-author">
 
                         ${book.author}
 
                     </p>
 
-
-                    <span class="shop-book-category">
-
-                        ${book.category}
-
-                    </span>
-
                 </div>
 
 
-                <span class="shop-book-price">
+                <span class="home-book-price">
 
-                    ₦${book.price.toLocaleString()}
+                    ${formatPrice(book.price)}
 
                 </span>
 
@@ -229,81 +226,38 @@ function renderBooks(bookList) {
         `;
 
 
-        /*
-            Add to cart button
-        */
+        /* ================= ADD TO CART ================= */
 
         const addButton =
-            card.querySelector(".add-cart-btn");
+            card.querySelector(
+                ".quick-add"
+            );
 
 
-        addButton.addEventListener(
-            "click",
-            event => {
+        if (addButton) {
 
-                event.stopPropagation();
+            addButton.addEventListener(
+                "click",
+                event => {
 
-                addToCart(book.id);
+                    event.preventDefault();
 
-            }
-        );
+                    event.stopPropagation();
 
 
-        /*
-            Clicking the book itself
-            will eventually take us
-            to the book details page.
-        */
-
-        card.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    !event.target.closest(
-                        ".add-cart-btn"
-                    )
-                ) {
-
-                    openBook(book.id);
+                    addToCart(book);
 
                 }
+            );
 
-            }
-        );
+        }
 
+
+        /* ================= APPEND ================= */
 
         shopGrid.appendChild(card);
 
     });
-
-}
-
-
-/* ================= BOOK COLORS ================= */
-
-function getBookColor(id) {
-
-    const colors = [
-
-        "#d7d3c8",
-        "#b8b5ad",
-        "#c8c2b7",
-        "#a9a49a",
-        "#d0cbc0",
-        "#b2afa8",
-        "#dad6cd",
-        "#aaa59b",
-        "#c4beb3",
-        "#d1ccc1",
-        "#bcb7ae",
-        "#cec9bf"
-
-    ];
-
-    return colors[
-        (id - 1) % colors.length
-    ];
 
 }
 
@@ -313,20 +267,22 @@ function getBookColor(id) {
 function filterBooks() {
 
     const category =
-        categoryFilter.value;
+        categoryFilter
+            ? categoryFilter.value
+            : "all";
 
 
     const sort =
-        sortFilter.value;
+        sortFilter
+            ? sortFilter.value
+            : "default";
 
 
     let filtered =
         [...books];
 
 
-    /*
-        CATEGORY
-    */
+    /* ================= CATEGORY ================= */
 
     if (category !== "all") {
 
@@ -339,15 +295,14 @@ function filterBooks() {
     }
 
 
-    /*
-        SORTING
-    */
+    /* ================= SORT ================= */
 
     if (sort === "price-low") {
 
         filtered.sort(
             (a, b) =>
-                a.price - b.price
+                Number(a.price) -
+                Number(b.price)
         );
 
     }
@@ -357,7 +312,8 @@ function filterBooks() {
 
         filtered.sort(
             (a, b) =>
-                b.price - a.price
+                Number(b.price) -
+                Number(a.price)
         );
 
     }
@@ -380,400 +336,131 @@ function filterBooks() {
 }
 
 
+/* ================= URL CATEGORY FILTER ================= */
+
+function applyUrlCategoryFilter() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const category =
+        params.get("category");
+
+
+    if (
+        !category ||
+        !categoryFilter
+    ) {
+
+        return false;
+
+    }
+
+
+    const matchingOption =
+        [
+            ...categoryFilter.options
+        ].find(
+            option =>
+                option.value
+                    .toLowerCase() ===
+                category.toLowerCase()
+        );
+
+
+    if (!matchingOption) {
+
+        return false;
+
+    }
+
+
+    categoryFilter.value =
+        matchingOption.value;
+
+
+    filterBooks();
+
+
+    return true;
+
+}
+
+
 /* ================= FILTER EVENTS ================= */
 
-categoryFilter.addEventListener(
-    "change",
-    filterBooks
-);
-
-sortFilter.addEventListener(
-    "change",
-    filterBooks
-);
-
-
-/* ================= ADD TO CART ================= */
-
-function addToCart(id) {
-
-    const book =
-        books.find(
-            item => item.id === id
-        );
-
-
-    if (!book) return;
-
-
-    const existing =
-        cart.find(
-            item => item.id === id
-        );
-
-
-    if (existing) {
-
-        existing.quantity++;
-
-    }
-
-    else {
-
-        cart.push({
-
-            ...book,
-
-            quantity: 1
-
-        });
-
-    }
-
-
-    saveCart();
-
-    openCart();
-
-}
-
-
-/* ================= REMOVE ================= */
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            book => book.id !== id
-        );
-
-
-    saveCart();
-
-}
-
-
-/* ================= QUANTITY ================= */
-
-function changeQuantity(
-    id,
-    amount
-) {
-
-    const book =
-        cart.find(
-            item => item.id === id
-        );
-
-
-    if (!book) return;
-
-
-    book.quantity += amount;
-
-
-    if (book.quantity <= 0) {
-
-        removeFromCart(id);
-
-        return;
-
-    }
-
-
-    saveCart();
-
-}
-
-
-/* ================= SAVE ================= */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "afCart",
-        JSON.stringify(cart)
-    );
-
-
-    updateCart();
-
-}
-
-
-/* ================= UPDATE CART ================= */
-
-function updateCart() {
-
-    cartItems.innerHTML = "";
-
-
-    if (cart.length === 0) {
-
-        cartItems.innerHTML = `
-
-            <div class="empty-cart">
-
-                <span>◌</span>
-
-                <p>
-                    Your cart is empty.
-                </p>
-
-            </div>
-
-        `;
-
-    }
-
-    else {
-
-        cart.forEach(book => {
-
-            const item =
-                document.createElement("div");
-
-
-            item.style.cssText = `
-
-                display:flex;
-
-                gap:15px;
-
-                padding:20px 0;
-
-                border-bottom:
-                    1px solid #292929;
-
-            `;
-
-
-            item.innerHTML = `
-
-                <div
-                    style="
-                        width:70px;
-                        height:90px;
-                        background:
-                            ${getBookColor(book.id)};
-                        display:grid;
-                        place-items:center;
-                        color:#111;
-                        padding:8px;
-                        text-align:center;
-                        font-family:
-                            var(--serif);
-                        font-size:13px;
-                    "
-                >
-
-                    ${book.title}
-
-                </div>
-
-
-                <div style="flex:1">
-
-                    <h3
-                        style="
-                            font-family:
-                                var(--serif);
-                            font-size:19px;
-                            font-weight:400;
-                        "
-                    >
-
-                        ${book.title}
-
-                    </h3>
-
-
-                    <p
-                        style="
-                            color:#666;
-                            font-size:9px;
-                            margin-top:3px;
-                        "
-                    >
-
-                        ₦${book.price.toLocaleString()}
-
-                    </p>
-
-
-                    <div
-                        style="
-                            display:flex;
-                            align-items:center;
-                            gap:12px;
-                            margin-top:12px;
-                        "
-                    >
-
-                        <button
-                            onclick="
-                                changeQuantity(
-                                    ${book.id},
-                                    -1
-                                )
-                            "
-                        >
-                            −
-                        </button>
-
-
-                        <span>
-                            ${book.quantity}
-                        </span>
-
-
-                        <button
-                            onclick="
-                                changeQuantity(
-                                    ${book.id},
-                                    1
-                                )
-                            "
-                        >
-                            +
-                        </button>
-
-
-                        <button
-                            onclick="
-                                removeFromCart(
-                                    ${book.id}
-                                )
-                            "
-                            style="
-                                margin-left:auto;
-                                color:#666;
-                                font-size:9px;
-                            "
-                        >
-
-                            REMOVE
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-            cartItems.appendChild(item);
-
-        });
-
-    }
-
-
-    /*
-        CART COUNT
-    */
-
-    const quantity =
-        cart.reduce(
-            (total, book) =>
-                total + book.quantity,
-            0
-        );
-
-
-    cartCount.textContent =
-        quantity;
-
-
-    /*
-        CART TOTAL
-    */
-
-    const total =
-        cart.reduce(
-            (sum, book) =>
-                sum +
-                (
-                    book.price *
-                    book.quantity
-                ),
-            0
-        );
-
-
-    cartTotal.textContent =
-        `₦${total.toLocaleString()}`;
-
-}
-
-
-/* ================= CART UI ================= */
-
-function openCart() {
-
-    cartSidebar.classList.add(
-        "active"
-    );
-
-    overlay.classList.add(
-        "active"
+if (categoryFilter) {
+
+    categoryFilter.addEventListener(
+        "change",
+        filterBooks
     );
 
 }
 
 
-function closeCartSidebar() {
+if (sortFilter) {
 
-    cartSidebar.classList.remove(
-        "active"
-    );
-
-    overlay.classList.remove(
-        "active"
+    sortFilter.addEventListener(
+        "change",
+        filterBooks
     );
 
 }
-
-
-cartBtn.addEventListener(
-    "click",
-    openCart
-);
-
-
-closeCart.addEventListener(
-    "click",
-    closeCartSidebar
-);
-
-
-overlay.addEventListener(
-    "click",
-    closeCartSidebar
-);
 
 
 /* ================= BOOK DETAILS ================= */
 
 function openBook(id) {
 
-    /*
-        We'll build book.html next.
-
-        For now, store the selected
-        book so the details page can
-        retrieve it later.
-    */
-
-    localStorage.setItem(
-        "selectedBook",
-        id
-    );
-
-
     window.location.href =
-        `book.html?id=${id}`;
+        `/book?id=${encodeURIComponent(id)}`;
+
+}
+
+/* =========================================================
+   BUILD CATEGORY FILTER
+========================================================= */
+
+function buildCategoryFilter() {
+
+    if (!categoryFilter) return;
+
+    const categories =
+        [...new Set(
+            books
+                .map(book => book.category)
+                .filter(Boolean)
+        )]
+        .sort((a, b) =>
+            a.localeCompare(b)
+        );
+
+
+    categoryFilter.innerHTML = `
+
+        <option value="all">
+            All books
+        </option>
+
+    `;
+
+
+    categories.forEach(category => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = category;
+
+        option.textContent = category;
+
+        categoryFilter.appendChild(option);
+
+    });
 
 }
 
@@ -785,20 +472,24 @@ const searchBtn =
         "searchBtn"
     );
 
+
 const searchOverlay =
     document.getElementById(
         "searchOverlay"
     );
+
 
 const closeSearch =
     document.getElementById(
         "closeSearch"
     );
 
+
 const searchInput =
     document.getElementById(
         "searchInput"
     );
+
 
 const searchResults =
     document.getElementById(
@@ -806,171 +497,276 @@ const searchResults =
     );
 
 
-searchBtn.addEventListener(
-    "click",
-    () => {
+/* ================= OPEN SEARCH ================= */
 
-        searchOverlay.classList.add(
-            "active"
-        );
+if (
+    searchBtn &&
+    searchOverlay
+) {
 
+    searchBtn.addEventListener(
+        "click",
+        () => {
 
-        setTimeout(
-            () =>
-                searchInput.focus(),
-            300
-        );
-
-    }
-);
-
-
-closeSearch.addEventListener(
-    "click",
-    () => {
-
-        searchOverlay.classList.remove(
-            "active"
-        );
-
-    }
-);
-
-
-searchInput.addEventListener(
-    "input",
-    () => {
-
-        const query =
-            searchInput.value
-                .toLowerCase()
-                .trim();
-
-
-        if (!query) {
-
-            searchResults.innerHTML =
-                "";
-
-            return;
-
-        }
-
-
-        const results =
-            books.filter(
-                book =>
-                    book.title
-                        .toLowerCase()
-                        .includes(query) ||
-
-                    book.author
-                        .toLowerCase()
-                        .includes(query) ||
-
-                    book.category
-                        .toLowerCase()
-                        .includes(query)
+            searchOverlay.classList.add(
+                "active"
             );
 
 
-        if (results.length === 0) {
+            setTimeout(
+                () => {
 
-            searchResults.innerHTML = `
+                    if (searchInput) {
 
-                <p
-                    style="
-                        margin-top:30px;
-                        color:#555;
-                        font-family:
-                            var(--serif);
-                        font-size:25px;
-                    "
-                >
+                        searchInput.focus();
 
-                    No books found.
+                    }
 
-                </p>
-
-            `;
-
-            return;
+                },
+                300
+            );
 
         }
+    );
+
+}
 
 
-        searchResults.innerHTML =
-            results.map(
-                book => `
+/* ================= CLOSE SEARCH ================= */
 
-                    <div
-                        style="
-                            display:flex;
-                            justify-content:
-                                space-between;
-                            align-items:center;
-                            padding:20px 0;
-                            border-bottom:
-                                1px solid #292929;
-                        "
+if (
+    closeSearch &&
+    searchOverlay
+) {
+
+    closeSearch.addEventListener(
+        "click",
+        () => {
+
+            searchOverlay.classList.remove(
+                "active"
+            );
+
+
+            if (searchInput) {
+
+                searchInput.value = "";
+
+            }
+
+
+            if (searchResults) {
+
+                searchResults.innerHTML = "";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ================= SEARCH INPUT ================= */
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        () => {
+
+            const query =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+
+            if (!query) {
+
+                if (searchResults) {
+
+                    searchResults.innerHTML =
+                        "";
+
+                }
+
+                return;
+
+            }
+
+
+            const results =
+                books.filter(
+                    book =>
+
+                        book.title
+                            .toLowerCase()
+                            .includes(query)
+
+                        ||
+
+                        book.author
+                            .toLowerCase()
+                            .includes(query)
+
+                        ||
+
+                        book.category
+                            .toLowerCase()
+                            .includes(query)
+
+                );
+
+
+            if (!searchResults) return;
+
+
+            /* ================= NO RESULTS ================= */
+
+            if (results.length === 0) {
+
+                searchResults.innerHTML = `
+
+                    <p
+                        class="search-no-results"
                     >
 
-                        <div>
+                        No books found.
 
-                            <h3
-                                style="
-                                    font-family:
-                                        var(--serif);
-                                    font-size:25px;
-                                    font-weight:400;
-                                "
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            /* ================= RESULTS ================= */
+
+            searchResults.innerHTML =
+                results
+                    .map(
+                        book => `
+
+                            <div
+                                class="search-result"
+                                data-book-id="${book.id}"
                             >
 
-                                ${book.title}
+                                <div>
 
-                            </h3>
+                                    <h3>
 
-                            <small
-                                style="
-                                    color:#666;
-                                "
-                            >
+                                        ${book.title}
 
-                                ${book.author}
-
-                            </small>
-
-                        </div>
+                                    </h3>
 
 
-                        <button
-                            onclick="
-                                addToCart(
-                                    ${book.id}
+                                    <small>
+
+                                        ${book.author}
+
+                                    </small>
+
+
+                                    <span>
+
+                                        ${book.category}
+
+                                    </span>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    class="search-add-btn"
+                                    data-id="${book.id}"
+                                >
+
+                                    ADD
+
+                                </button>
+
+                            </div>
+
+                        `
+                    )
+                    .join("");
+
+
+            /* ================= SEARCH RESULT EVENTS ================= */
+
+            searchResults
+                .querySelectorAll(
+                    ".search-result"
+                )
+                .forEach(result => {
+
+                    result.addEventListener(
+                        "click",
+                        event => {
+
+                            if (
+                                event.target.closest(
+                                    ".search-add-btn"
                                 )
-                            "
-                            style="
-                                padding:
-                                    10px 15px;
-                                border:
-                                    1px solid #444;
-                                font-size:9px;
-                                letter-spacing:1px;
-                            "
-                        >
+                            ) {
 
-                            ADD
+                                return;
 
-                        </button>
+                            }
 
-                    </div>
 
-                `
-            )
-            .join("");
+                            openBook(
+                                result.dataset.bookId
+                            );
 
-    }
-);
+                        }
+                    );
+
+                });
+
+
+            /* ================= SEARCH ADD BUTTONS ================= */
+
+            searchResults
+                .querySelectorAll(
+                    ".search-add-btn"
+                )
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+
+                            event.stopPropagation();
+
+
+                            const book =
+                                getBookById(
+                                    button.dataset.id
+                                );
+
+
+                            if (book) {
+
+                                addToCart(book);
+
+                            }
+
+                        }
+                    );
+
+                });
+
+        }
+    );
+
+}
 
 
 /* ================= MOBILE MENU ================= */
@@ -980,10 +776,12 @@ const menuBtn =
         "menuBtn"
     );
 
+
 const mobileMenu =
     document.getElementById(
         "mobileMenu"
     );
+
 
 const closeMenu =
     document.getElementById(
@@ -991,30 +789,129 @@ const closeMenu =
     );
 
 
-menuBtn.addEventListener(
-    "click",
-    () => {
+if (
+    menuBtn &&
+    mobileMenu
+) {
 
-        mobileMenu.classList.add(
-            "active"
+    menuBtn.addEventListener(
+        "click",
+        () => {
+
+            mobileMenu.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+if (
+    closeMenu &&
+    mobileMenu
+) {
+
+    closeMenu.addEventListener(
+        "click",
+        () => {
+
+            mobileMenu.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+/* ================= MOBILE LINKS ================= */
+
+document
+    .querySelectorAll(
+        ".mobile-links a"
+    )
+    .forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                if (mobileMenu) {
+
+                    mobileMenu.classList.remove(
+                        "active"
+                    );
+
+                }
+
+            }
         );
 
-    }
-);
-
-
-closeMenu.addEventListener(
-    "click",
-    () => {
-
-        mobileMenu.classList.remove(
-            "active"
-        );
-
-    }
-);
+    });
 
 
 /* ================= START ================= */
 
-loadBooks();
+async function initializeShop() {
+
+    try {
+
+        await loadBooksData();
+
+
+        buildCategoryFilter();
+
+
+        const hasCategoryFilter =
+            applyUrlCategoryFilter();
+
+
+        if (!hasCategoryFilter) {
+
+            renderBooks(books);
+
+        }
+
+
+        if (
+            typeof renderCart ===
+            "function"
+        ) {
+
+            renderCart();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Shop initialization error:",
+            error
+        );
+
+
+        if (shopGrid) {
+
+            shopGrid.innerHTML = `
+
+                <div class="loading">
+
+                    Unable to load the collection.
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+}
+
+
+initializeShop();

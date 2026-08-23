@@ -106,9 +106,9 @@ function createBook(bookData) {
             bookData.cover || '',
 
         stockStatus:
-            bookData.stockStatus === 'out-of-stock'
-                ? 'out-of-stock'
-                : 'in-stock'
+            bookData.stockStatus === 'Out of Stock'
+                ? 'Out of Stock'
+                : 'In Stock'
 
     };
 
@@ -189,9 +189,9 @@ function updateBook(id, bookData) {
                 : currentBook.cover,
 
         stockStatus:
-            bookData.stockStatus === 'out-of-stock'
-                ? 'out-of-stock'
-                : 'in-stock'
+            bookData.stockStatus === 'Out of Stock'
+                ? 'Out of Stock'
+                : 'In Stock'
 
     };
 

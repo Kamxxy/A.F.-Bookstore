@@ -8,7 +8,7 @@
         "rating": 5,
         "description": "A psychological mystery surrounding a woman who refuses to speak after being accused of murdering her husband.",
         "cover": "images/books/silent-patient.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 2,
@@ -19,7 +19,7 @@
         "rating": 5,
         "description": "Between life and death there is a library, and within that library the shelves go on forever.",
         "cover": "images/books/midnight-library.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 3,
@@ -30,7 +30,7 @@
         "rating": 4,
         "description": "A story about two people whose lives remain deeply connected through love, friendship and time.",
         "cover": "images/books/normal-people.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 4,
@@ -41,7 +41,7 @@
         "rating": 5,
         "description": "A group of students at an elite college become entangled in a dark secret that changes everything.",
         "cover": "images/books/secret-history.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 5,
@@ -52,7 +52,7 @@
         "rating": 5,
         "description": "A reclusive Hollywood icon finally tells the story of her extraordinary life and complicated loves.",
         "cover": "images/books/evelyn-hugo.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 6,
@@ -63,7 +63,7 @@
         "rating": 5,
         "description": "Bilbo Baggins leaves his comfortable life behind and joins an unexpected adventure through Middle-earth.",
         "cover": "images/books/the-hobbit.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 7,
@@ -74,7 +74,7 @@
         "rating": 5,
         "description": "Elizabeth Bennet navigates love, society and the complicated first impressions surrounding Mr. Darcy.",
         "cover": "images/books/pride-prejudice.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 8,
@@ -85,7 +85,7 @@
         "rating": 5,
         "description": "A young man's portrait bears the consequences of a life devoted to beauty, pleasure and corruption.",
         "cover": "images/books/dorian-gray.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 9,
@@ -96,7 +96,7 @@
         "rating": 5,
         "description": "A scientist creates life and discovers that his greatest achievement may become his greatest nightmare.",
         "cover": "images/books/frankenstein.jpg",
-        "stockStatus": "out-of-stock"
+        "stockStatus": "Out of Stock"
     },
     {
         "id": 10,
@@ -107,7 +107,7 @@
         "rating": 4,
         "description": "A young shepherd follows a recurring dream in search of treasure and discovers something much greater.",
         "cover": "images/books/alchemist.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 11,
@@ -118,7 +118,7 @@
         "rating": 4,
         "description": "A powerful story about love, difficult choices and finding the courage to break painful cycles.",
         "cover": "images/books/it-ends-with-us.jpg",
-        "stockStatus": "in-stock"
+        "stockStatus": "In Stock"
     },
     {
         "id": 12,
@@ -129,6 +129,6 @@
         "rating": 5,
         "description": "A legendary musician and magician recounts the remarkable events that shaped his life.",
         "cover": "images/books/name-of-the-wind.jpg",
-        "stockStatus": "out-of-stock"
+        "stockStatus": "Out of Stock"
     }
 ]

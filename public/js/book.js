@@ -275,7 +275,7 @@ function renderBook(book) {
 
                     <span class="meta-value">
 
-                        In stock
+                        ${book.stockStatus}
 
                     </span>
 

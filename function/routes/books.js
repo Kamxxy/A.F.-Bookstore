@@ -96,7 +96,8 @@ router.post('/', (req, res) => {
             description,
             cover,
             rating,
-            stockStatus
+            stockStatus,
+            stockNumber
         } = req.body;
 
 
@@ -124,7 +125,8 @@ router.post('/', (req, res) => {
             description,
             cover,
             rating,
-            stockStatus
+            stockStatus,
+            stockNumber
 
         });
 

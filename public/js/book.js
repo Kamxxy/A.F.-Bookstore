@@ -281,6 +281,23 @@ function renderBook(book) {
 
                 </div>
 
+                <div class="meta-item">
+
+                    <span class="meta-label">
+
+                        Stock
+
+                    </span>
+                    
+
+                    <span class="meta-value">
+                    
+                        ${book.stockNumber}
+                
+                    </span>
+
+                </div>
+
             </div>
 
         </div>

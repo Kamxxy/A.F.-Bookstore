@@ -358,6 +358,19 @@ function setupQuantity(book) {
             "addBookBtn"
         );
 
+    const stock =
+    Number(book.stockNumber) || 0;
+
+
+if (stock <= 0) {
+
+    addButton.disabled = true;
+
+    addButton.textContent =
+        "Out of Stock";
+
+}
+
 
     if (
         !quantityDisplay ||
@@ -374,17 +387,22 @@ function setupQuantity(book) {
     /* ================= INCREASE ================= */
 
     increaseButton.addEventListener(
-        "click",
-        () => {
+    "click",
+    () => {
 
-            quantity++;
-
-
-            quantityDisplay.textContent =
-                quantity;
-
+        if (quantity >= stock) {
+            return;
         }
-    );
+
+
+        quantity++;
+
+
+        quantityDisplay.textContent =
+            quantity;
+
+    }
+);
 
 
     /* ================= DECREASE ================= */

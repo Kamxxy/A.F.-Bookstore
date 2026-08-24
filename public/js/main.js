@@ -65,12 +65,13 @@ function displayBooks(bookList) {
                 <div class="book-overlay">
 
                     <button
-                        class="quick-add"
-                        type="button"
-                        data-book-id="${book.id}"
-                    >
-                        Add to cart
-                    </button>
+    class="quick-add"
+    type="button"
+    data-book-id="${book.id}"
+    ${Number(book.stockNumber) <= 0 ? "disabled" : ""}
+>
+    ${Number(book.stockNumber) <= 0 ? "Out of Stock" : "Add to cart"}
+</button>
 
                 </div>
 

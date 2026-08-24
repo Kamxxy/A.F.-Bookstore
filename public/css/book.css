@@ -246,6 +246,17 @@
     background: #ddd;
 }
 
+.book-add-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.book-add-btn:disabled:hover,
+.book-add-btn:disabled:focus-visible {
+    transform: none;
+}
+
 
 /* =========================================================
    BOOK META

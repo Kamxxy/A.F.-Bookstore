@@ -141,6 +141,18 @@
         "description": "A legendary musician and magician recounts the remarkable events that shaped his life.",
         "cover": "images/books/name-of-the-wind.jpg",
         "stockStatus": "Out of Stock",
+        "stockNumber": ""
+    },
+    {
+        "id": 13,
+        "title": "1984",
+        "author": "George Orwell",
+        "price": 7500,
+        "category": "Dystopian",
+        "rating": 5,
+        "description": "A classic dystopian novel.",
+        "cover": "images/books/1984.jpg",
+        "stockStatus": "Out of Stock",
         "stockNumber": 0
     }
 ]

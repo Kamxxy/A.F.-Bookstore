@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const booksRouter = require('./routes/books');
 const pagesRouter = require('./routes/pages');
+const adminRouter = require('./adminRoutes/admin')
 
 
 const app = express();
@@ -51,55 +52,20 @@ app.use(
     booksRouter
 );
 
+app.use(
+    'api/admin',
+    adminRouter
+)
 
-// =========================================================
-// PAGE ROUTES
-// =========================================================
+/* =========================================================
+   404 PAGE
+========================================================= */
 
-// Home
-app.get('/', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/index.html')
+app.use((req, res) => {
+    res.status(404).sendFile(
+        path.join(__dirname, '../public/404.html')
     );
 });
-
-
-// Shop
-app.get('/shop', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/shop.html')
-    );
-});
-
-
-// About
-app.get('/about', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/about.html')
-    );
-});
-
-app.get('/book', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/book.html')
-    );
-});
-
-// Contact
-app.get('/contact', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/contact.html')
-    );
-});
-
-
-// FAQ
-app.get('/faq', (req, res) => {
-    res.sendFile(
-        path.join(__dirname, '../public/faq.html')
-    );
-});
-
 
 /* =========================================================
    START SERVER

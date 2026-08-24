@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const rateLimit = require("express-rate-limit");
 
 const booksRouter = require('./routes/books');
 const pagesRouter = require('./routes/pages');
@@ -25,6 +26,24 @@ app.use(
         extended: true
     })
 );
+
+// ========================
+// RATE LIMITERS
+// ========================
+
+// Global limiter
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: {
+    success: false,
+    message: "Too many requests, please try again later."
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.use('/api', globalLimiter);
 
 
 /* =========================================================
@@ -53,7 +72,7 @@ app.use(
 );
 
 app.use(
-    'api/admin',
+    '/api/admin',
     adminRouter
 )
 

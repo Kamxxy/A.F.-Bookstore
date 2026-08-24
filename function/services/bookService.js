@@ -18,12 +18,27 @@ const booksPath = path.join(
 
 function getAllBooks() {
 
-    const data = fs.readFileSync(
-        booksPath,
-        'utf8'
-    );
+    try {
 
-    return JSON.parse(data);
+        const data = fs.readFileSync(
+            booksPath,
+            'utf8'
+        );
+
+        return JSON.parse(data);
+
+    } catch (error) {
+
+        console.error(
+            'Error reading books.json:',
+            error
+        );
+
+        throw new Error(
+            'Unable to load book data'
+        );
+
+    }
 
 }
 
@@ -110,8 +125,14 @@ function createBook(bookData) {
                 ? 'Out of Stock'
                 : 'In Stock',
 
-        stockNumber: 
-            bookData.stockNumber || ''
+        /*stockNumber: 
+            bookData.stockNumber || ''*/
+
+        stockNumber:
+            bookData.stockNumber !== undefined &&
+            bookData.stockNumber !== ''
+                ? Number(bookData.stockNumber)
+                : 0
 
     };
 

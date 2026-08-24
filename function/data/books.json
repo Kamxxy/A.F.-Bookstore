@@ -141,7 +141,7 @@
         "description": "A legendary musician and magician recounts the remarkable events that shaped his life.",
         "cover": "images/books/name-of-the-wind.jpg",
         "stockStatus": "Out of Stock",
-        "stockNumber": ""
+        "stockNumber": 4
     },
     {
         "id": 13,

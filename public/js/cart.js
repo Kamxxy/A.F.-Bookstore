@@ -108,6 +108,102 @@ function addToCart(book, quantity = 1) {
     }
 
 
+    /* =====================================================
+       CHECK STOCK
+    ===================================================== */
+
+    const stock =
+        Number(book.stockNumber) || 0;
+
+
+    if (stock <= 0) {
+
+        alert(
+            `"${book.title}" is currently out of stock.`
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       NORMALIZE REQUESTED QUANTITY
+    ===================================================== */
+
+    quantity =
+        Math.max(
+            1,
+            Number(quantity) || 1
+        );
+
+
+    /* =====================================================
+       FIND EXISTING CART ITEM
+    ===================================================== */
+
+    const existingBook =
+        cart.find(
+            item =>
+                Number(item.id) ===
+                Number(book.id)
+        );
+
+
+    /* =====================================================
+       CHECK EXISTING CART QUANTITY
+    ===================================================== */
+
+    const currentQuantity =
+        existingBook
+            ? Number(existingBook.quantity) || 0
+            : 0;
+
+
+    const requestedTotal =
+        currentQuantity + quantity;
+
+
+    if (requestedTotal > stock) {
+
+        alert(
+            `Only ${stock} copy${stock === 1 ? "" : "ies"} of "${book.title}" available.`
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       ADD / UPDATE CART
+    ===================================================== */
+
+    if (existingBook) {
+
+        existingBook.quantity =
+            requestedTotal;
+
+    } else {
+
+        cart.push({
+
+            ...book,
+
+            quantity
+
+        });
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
     quantity =
         Math.max(
             1,
@@ -146,7 +242,7 @@ function addToCart(book, quantity = 1) {
 
     openCart();
 
-}
+
 
 
 /* =========================================================
@@ -612,10 +708,71 @@ if (cartItems) {
 
             if (action === "increase") {
 
-                changeQuantity(
-                    id,
-                    1
-                );
+                function changeQuantity(id, amount) {
+
+    const book =
+        cart.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if (!book) {
+        return;
+    }
+
+
+    const currentQuantity =
+        Number(book.quantity) || 0;
+
+
+    const stock =
+        Number(book.stockNumber) || 0;
+
+
+    const newQuantity =
+        currentQuantity +
+        Number(amount);
+
+
+    /* =====================================================
+       PREVENT QUANTITY FROM EXCEEDING STOCK
+    ===================================================== */
+
+    if (newQuantity > stock) {
+
+        alert(
+            `Only ${stock} copy${stock === 1 ? "" : "ies"} of "${book.title}" available.`
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       REMOVE WHEN QUANTITY REACHES ZERO
+    ===================================================== */
+
+    if (newQuantity <= 0) {
+
+        removeFromCart(id);
+
+        return;
+
+    }
+
+
+    book.quantity =
+        newQuantity;
+
+
+    saveCart();
+
+    renderCart();
+
+}
 
                 return;
 

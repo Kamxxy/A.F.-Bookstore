@@ -1,0 +1,370 @@
+/* =========================================================
+   A.F. BOOKSTORE
+   404 PAGE
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.error-page {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 75% 45%,
+            #222 0%,
+            #111 35%,
+            #0b0b0b 72%
+        );
+}
+
+
+/* =========================================================
+   ERROR HERO
+========================================================= */
+
+.error-hero {
+    position: relative;
+
+    min-height: 780px;
+
+    padding:
+        170px 8%
+        120px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        minmax(320px, 700px)
+        1fr;
+
+    align-items: center;
+
+    gap: 40px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   LARGE 404
+========================================================= */
+
+.error-number {
+    position: absolute;
+
+    top: 50%;
+    left: 4%;
+
+    transform:
+        translateY(-50%)
+        rotate(-90deg);
+
+    color: rgba(255, 255, 255, .025);
+
+    font-family: var(--serif);
+
+    font-size:
+        clamp(13rem, 25vw, 28rem);
+
+    font-weight: 400;
+
+    line-height: .7;
+
+    letter-spacing: -15px;
+
+    pointer-events: none;
+
+    user-select: none;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.error-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 650px;
+
+    margin: auto;
+}
+
+
+.error-eyebrow {
+    margin-bottom: 25px;
+
+    color: #777572;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    letter-spacing: 4px;
+}
+
+
+.error-content h1 {
+    font-family: var(--serif);
+
+    font-size:
+        clamp(4rem, 7vw, 7rem);
+
+    font-weight: 400;
+
+    line-height: .85;
+
+    letter-spacing: -3px;
+}
+
+
+.error-content h1 em {
+    display: block;
+
+    font-weight: 400;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.error-description {
+    max-width: 470px;
+
+    margin-top: 38px;
+
+    color: #85837f;
+
+    font-size: 13px;
+
+    line-height: 2;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.error-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin-top: 40px;
+}
+
+
+/* =========================================================
+   DECORATION
+========================================================= */
+
+.error-decoration {
+    position: relative;
+
+    z-index: 2;
+
+    width: 210px;
+    height: 300px;
+
+    margin-left: auto;
+
+    padding: 25px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dedbd2,
+            #aaa69d
+        );
+
+    color: #151515;
+
+    box-shadow:
+        -20px 30px 50px rgba(0, 0, 0, .5);
+
+    transform: rotate(5deg);
+
+    transition:
+        transform var(--transition-slow);
+}
+
+
+.error-decoration:hover {
+    transform:
+        rotate(1deg)
+        translateY(-8px);
+}
+
+
+.error-decoration > span {
+    font-family: var(--serif);
+
+    font-size: 26px;
+
+    line-height: 1;
+}
+
+
+.error-decoration > small {
+    font-size: 6px;
+
+    letter-spacing: 3px;
+}
+
+
+.error-decoration div {
+    width: 100%;
+
+    height: 1px;
+
+    background: rgba(0, 0, 0, .25);
+}
+
+
+.error-decoration p {
+    font-family: var(--serif);
+
+    font-size: 20px;
+
+    font-style: italic;
+
+    line-height: 1.1;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .error-hero {
+
+        min-height: 850px;
+
+        padding:
+            150px 8%
+            100px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        justify-content: center;
+
+        gap: 60px;
+    }
+
+
+    .error-number {
+
+        top: 42%;
+
+        left: -5%;
+
+        font-size: 20rem;
+    }
+
+
+    .error-content {
+
+        margin: 0;
+
+    }
+
+
+    .error-decoration {
+
+        align-self: center;
+
+        margin: 0;
+
+        width: 180px;
+
+        height: 260px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .error-hero {
+
+        min-height: 780px;
+
+        padding:
+            130px 8%
+            80px;
+
+        gap: 50px;
+    }
+
+
+    .error-number {
+
+        top: 37%;
+
+        left: -20%;
+
+        font-size: 15rem;
+
+        letter-spacing: -10px;
+    }
+
+
+    .error-content h1 {
+
+        font-size: 4rem;
+
+        letter-spacing: -2px;
+    }
+
+
+    .error-description {
+
+        margin-top: 30px;
+
+        font-size: 12px;
+
+        line-height: 1.9;
+    }
+
+
+    .error-actions {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .error-decoration {
+
+        width: 160px;
+
+        height: 230px;
+
+    }
+
+}

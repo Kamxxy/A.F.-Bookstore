@@ -154,5 +154,17 @@
         "cover": "images/books/1984.jpg",
         "stockStatus": "Out of Stock",
         "stockNumber": 0
+    },
+    {
+        "id": 15,
+        "title": "The Great Gatsby",
+        "author": "F. Scott Fitzgerald",
+        "price": 6500,
+        "category": "Classic",
+        "rating": 5,
+        "description": "A classic novel about wealth, love and the American dream.",
+        "cover": "images/books/great-gatsby.jpg",
+        "stockStatus": "In Stock",
+        "stockNumber": 10
     }
 ]

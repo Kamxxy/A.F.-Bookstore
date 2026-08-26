@@ -1,353 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERROR - PAGE NOT FOUND</title>
-    <link rel="stylesheet" href="css/about.css">
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/cart.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="The page you're looking for could not be found at A.F. Bookstore."
+    >
+
+    <title>Page Not Found | A.F. Bookstore</title>
+
+
+    <!-- GLOBAL STYLES -->
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/theme.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/cart.css"
+    >
+
+    <!-- 404 PAGE -->
+
+    <link
+        rel="stylesheet"
+        href="css/404.css"
+    >
+
 </head>
+
+
 <body>
 
 
- <!-- =================================================
-      HEADER
- ================================================== -->
+<!-- =================================================
+     HEADER
+================================================== -->
 
- <header class="header">
+<header class="header">
 
-     <nav class="navbar">
+    <nav class="navbar">
 
-         <a
-             href="/"
-             class="logo"
-             aria-label="A.F. Bookstore home"
-         >
+        <a
+            href="/"
+            class="logo"
+            aria-label="A.F. Bookstore home"
+        >
 
-             <span>A.F.</span>
+            <span>A.F.</span>
 
-             <small>BOOKSTORE</small>
+            <small>BOOKSTORE</small>
 
-         </a>
-
-
-         <div class="nav-links">
-
-             <a href="/">
-                 Home
-             </a>
-
-             <a href="/shop">
-                 Books
-             </a>
-
-             <a
-                 href="/about"
-                 class="active"
-             >
-                 About
-             </a>
-
-         </div>
+        </a>
 
 
-         <div class="nav-actions">
+        <div class="nav-links">
 
-             <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Switch to light mode">
-                 <span>☀</span>
-             </button>
+            <a href="/">
+                Home
+            </a>
 
+            <a href="/shop">
+                Books
+            </a>
 
-             <button
-                 class="cart-btn"
-                 id="cartBtn"
-                 type="button"
-                 aria-label="Shopping cart"
-             >
+            <a href="/about">
+                About
+            </a>
 
-                 <span>
-                     Cart
-                 </span>
-
-                 <b id="cartCount">
-                     0
-                 </b>
-
-             </button>
-
-
-             <button
-                 class="menu-btn"
-                 id="menuBtn"
-                 type="button"
-                 aria-label="Open menu"
-             >
-
-                 <span></span>
-                 <span></span>
-
-             </button>
-
-         </div>
-
-     </nav>
-
- </header>
-
-
-
- <!-- =================================================
-      MOBILE MENU
- ================================================== -->
-
- <div
-     class="mobile-menu"
-     id="mobileMenu"
- >
-
-     <button
-         class="close-menu"
-         id="closeMenu"
-         type="button"
-         aria-label="Close menu"
-     >
-         ×
-     </button>
-
-
-     <div class="mobile-links">
-
-         <a href="/">
-             Home
-         </a>
-
-         <a href="/shop">
-             Books
-         </a>
-
-         <a href="/about">
-             About
-         </a>
-
-     </div>
-
- </div>
-
- <main>
-
-
-    <!-- =================================================
-        404 HERO
-    ================================================== -->
-
-    <section class="about-hero">
-
-        <div class="story-content">
-
-            <h2 class="eyebrow">
-                Sorry the page youre looking for does not exist or is in developement.
-                <em>Contact us to get updates on when it would be available, or if you have any suggestions on more exciting additions to the platform</em>
-            </h2>
-        
         </div>
 
-    </section>
+
+        <div class="nav-actions">
+
+            <button
+                class="theme-toggle"
+                id="themeToggle"
+                type="button"
+                aria-label="Switch to light mode"
+                title="Switch to light mode"
+            >
+                <span>☀</span>
+            </button>
+
+
+            <button
+                class="cart-btn"
+                id="cartBtn"
+                type="button"
+                aria-label="Shopping cart"
+            >
+
+                <span>
+                    Cart
+                </span>
+
+                <b id="cartCount">
+                    0
+                </b>
+
+            </button>
+
+
+            <button
+                class="menu-btn"
+                id="menuBtn"
+                type="button"
+                aria-label="Open menu"
+            >
+
+                <span></span>
+                <span></span>
+
+            </button>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
 
 <!-- =================================================
-         FOOTER
-    ================================================== -->
+     MOBILE MENU
+================================================== -->
 
-    <footer class="footer">
+<div
+    class="mobile-menu"
+    id="mobileMenu"
+>
 
-        <div class="footer-top">
+    <button
+        class="close-menu"
+        id="closeMenu"
+        type="button"
+        aria-label="Close menu"
+    >
+        ×
+    </button>
 
 
-            <div class="footer-brand">
+    <div class="mobile-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="/shop">
+            Books
+        </a>
+
+        <a href="/about">
+            About
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<!-- =================================================
+     404 CONTENT
+================================================== -->
+
+<main class="error-page">
+
+    <section
+        class="error-hero"
+        aria-labelledby="error-title"
+    >
+
+        <div class="error-number">
+            404
+        </div>
+
+
+        <div class="error-content">
+
+            <p class="error-eyebrow">
+                PAGE NOT FOUND
+            </p>
+
+
+            <h1 id="error-title">
+
+                This chapter
+                <em>isn't here.</em>
+
+            </h1>
+
+
+            <p class="error-description">
+
+                The page you're looking for doesn't exist,
+                may have moved, or is still being written.
+
+                <br>
+
+                If you have an idea for something you'd like
+                to see at A.F. Bookstore, we'd love to hear it.
+
+            </p>
+
+
+            <div class="error-actions">
 
                 <a
                     href="/"
-                    class="logo"
+                    class="primary-btn"
                 >
 
-                    <span>
-                        A.F.
-                    </span>
+                    Return Home
 
-                    <small>
-                        BOOKSTORE
-                    </small>
+                    <span>→</span>
 
                 </a>
 
 
-                <p>
-                    Stories worth keeping.
-                </p>
+                <a
+                    href="/shop"
+                    class="secondary-btn"
+                >
 
-            </div>
+                    Browse Books
 
+                    <span>→</span>
 
-
-            <div class="footer-links">
-
-
-                <div>
-
-                    <h4>
-                        Explore
-                    </h4>
-
-
-                    <a href="/shop">
-                        Books
-                    </a>
-
-
-                    <a href="/about">
-                        About
-                    </a>
-
-                </div>
-
-
-
-                <div>
-
-                    <h4>
-                        Help
-                    </h4>
-
-
-                    <a href="/contact">
-                        Contact
-                    </a>
-
-
-                    <a href="/shipping">
-                        Shipping
-                    </a>
-
-
-                    <a href="/faq">
-                        FAQ
-                    </a>
-
-                </div>
-
+                </a>
 
             </div>
 
         </div>
 
 
-
-        <div class="footer-bottom">
-
-            <span>
-                &copy; 2026 A.F. Bookstore
-            </span>
-
+        <div class="error-decoration">
 
             <span>
-                Made for readers.
+                A.F.
             </span>
+
+            <small>
+                BOOKSTORE
+            </small>
+
+            <div></div>
+
+            <p>
+                Some stories<br>
+                take another route.
+            </p>
 
         </div>
 
-    </footer>
+    </section>
+
+</main>
 
 
 
-    <!-- =================================================
-         CART
-    ================================================== -->
+<!-- =================================================
+     FOOTER
+================================================== -->
 
-    <aside
-        class="cart-sidebar"
-        id="cartSidebar"
-    >
+<footer class="footer">
 
-        <div class="cart-header">
+    <div class="footer-top">
+
+
+        <div class="footer-brand">
+
+            <a
+                href="/"
+                class="logo"
+            >
+
+                <span>
+                    A.F.
+                </span>
+
+                <small>
+                    BOOKSTORE
+                </small>
+
+            </a>
+
+
+            <p>
+                Stories worth keeping.
+            </p>
+
+        </div>
+
+
+
+        <div class="footer-links">
+
 
             <div>
 
-                <span class="cart-eyebrow">
-                    YOUR COLLECTION
-                </span>
-
-                <h2>
-                    Your Bag
-                </h2>
-
-            </div>
+                <h4>
+                    Explore
+                </h4>
 
 
-            <button
-                type="button"
-                id="closeCart"
-                aria-label="Close cart"
-            >
-                ×
-            </button>
-
-        </div>
+                <a href="/shop">
+                    Books
+                </a>
 
 
-        <div
-            class="cart-items"
-            id="cartItems"
-        ></div>
-
-
-        <div class="cart-footer">
-
-            <div class="cart-total">
-
-                <span>
-                    Total
-                </span>
-
-                <strong id="cartTotal">
-                    ₦0
-                </strong>
+                <a href="/about">
+                    About
+                </a>
 
             </div>
 
 
-            <button
-                class="checkout-btn"
-                type="button"
-            >
 
-                Proceed to checkout
+            <div>
 
-                <span>
-                    →
-                </span>
+                <h4>
+                    Help
+                </h4>
 
-            </button>
+
+                <a href="/contact">
+                    Contact
+                </a>
+
+
+                <a href="/shipping">
+                    Shipping
+                </a>
+
+
+                <a href="/faq">
+                    FAQ
+                </a>
+
+            </div>
+
 
         </div>
 
-    </aside>
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+        <span>
+            &copy; 2026 A.F. Bookstore
+        </span>
+
+
+        <span>
+            Made for readers.
+        </span>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =================================================
+     CART
+================================================== -->
+
+<aside
+    class="cart-sidebar"
+    id="cartSidebar"
+>
+
+    <div class="cart-header">
+
+        <div>
+
+            <span class="cart-eyebrow">
+                YOUR COLLECTION
+            </span>
+
+            <h2>
+                Your Bag
+            </h2>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="closeCart"
+            aria-label="Close cart"
+        >
+            ×
+        </button>
+
+    </div>
 
 
     <div
-        class="overlay"
-        id="overlay"
+        class="cart-items"
+        id="cartItems"
     ></div>
 
 
+    <div class="cart-footer">
 
-    <!-- =================================================
-         JAVASCRIPT
-    ================================================== -->
+        <div class="cart-total">
 
-    <script src="js/books.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/theme.js"></script>
+            <span>
+                Total
+            </span>
+
+            <strong id="cartTotal">
+                ₦0
+            </strong>
+
+        </div>
+
+
+        <button
+            class="checkout-btn"
+            type="button"
+        >
+
+            Proceed to checkout
+
+            <span>
+                →
+            </span>
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<div
+    class="overlay"
+    id="overlay"
+></div>
+
+
+
+<!-- =================================================
+     JAVASCRIPT
+================================================== -->
+
+<script src="js/books.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/theme.js"></script>
 
 </body>
+
 </html>

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -5,7 +7,7 @@ const rateLimit = require("express-rate-limit");
 
 const booksRouter = require('./routes/books');
 const pagesRouter = require('./routes/pages');
-const adminRouter = require('./adminRoutes/admin')
+const adminRouter = require('./adminRoutes/admin');
 
 
 const app = express();
@@ -74,7 +76,7 @@ app.use(
 app.use(
     '/api/admin',
     adminRouter
-)
+);
 
 /* =========================================================
    404 PAGE

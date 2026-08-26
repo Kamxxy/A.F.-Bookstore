@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>A.F. Bookstore — Admin Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/admin.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         ADMIN LAYOUT
+    ====================================================== -->
+
+    <div class="admin-layout">
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="admin-sidebar">
+
+            <div class="admin-brand">
+
+                <span class="brand-mark">
+                    A.F.
+                </span>
+
+                <span class="brand-name">
+                    BOOKSTORE
+                </span>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a
+                    href="index.html"
+                    class="admin-nav-link active"
+                >
+                    <span>◈</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="books.html"
+                    class="admin-nav-link"
+                >
+                    <span>▣</span>
+                    Books
+                </a>
+
+
+                <a
+                    href="orders.html"
+                    class="admin-nav-link"
+                >
+                    <span>◉</span>
+                    Orders
+                </a>
+
+            </nav>
+
+
+            <div class="admin-sidebar-bottom">
+
+                <a
+                    href="../index.html"
+                    class="admin-nav-link"
+                >
+                    <span>←</span>
+                    View Store
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+             MAIN CONTENT
+        ================================================== -->
+
+        <main class="admin-main">
+
+
+            <!-- =================================================
+                 TOP BAR
+            ================================================== -->
+
+            <header class="admin-header">
+
+                <div>
+
+                    <p class="admin-eyebrow">
+                        A.F. BOOKSTORE
+                    </p>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                </div>
+
+
+                <div class="admin-header-right">
+
+                    <span class="admin-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </span>
+
+                    <button
+                        class="admin-menu-btn"
+                        type="button"
+                        aria-label="Open menu"
+                    >
+                        ☰
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 DASHBOARD CONTENT
+            ================================================== -->
+
+            <section class="dashboard-content">
+
+
+                <!-- =================================================
+                     STAT CARDS
+                ================================================== -->
+
+                <div class="stat-grid">
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+
+                            <span class="stat-label">
+                                Total Books
+                            </span>
+
+                            <span class="stat-icon">
+                                ▣
+                            </span>
+
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="totalBooks"
+                        >
+                            —
+                        </strong>
+
+                        <span class="stat-description">
+                            Books in catalogue
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+
+                            <span class="stat-label">
+                                Orders
+                            </span>
+
+                            <span class="stat-icon">
+                                ◉
+                            </span>
+
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="totalOrders"
+                        >
+                            —
+                        </strong>
+
+                        <span class="stat-description">
+                            All customer orders
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+
+                            <span class="stat-label">
+                                Low Stock
+                            </span>
+
+                            <span class="stat-icon warning">
+                                !
+                            </span>
+
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="lowStock"
+                        >
+                            —
+                        </strong>
+
+                        <span class="stat-description">
+                            Books needing attention
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <div class="stat-card-top">
+
+                            <span class="stat-label">
+                                Out of Stock
+                            </span>
+
+                            <span class="stat-icon danger">
+                                ×
+                            </span>
+
+                        </div>
+
+                        <strong
+                            class="stat-value"
+                            id="outOfStock"
+                        >
+                            —
+                        </strong>
+
+                        <span class="stat-description">
+                            Currently unavailable
+                        </span>
+
+                    </article>
+
+                </div>
+
+
+                <!-- =================================================
+                     LOWER DASHBOARD
+                ================================================== -->
+
+                <div class="dashboard-grid">
+
+
+                    <!-- Recent Orders -->
+
+                    <section class="dashboard-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <p class="panel-eyebrow">
+                                    ACTIVITY
+                                </p>
+
+                                <h2>
+                                    Recent Orders
+                                </h2>
+
+                            </div>
+
+                            <a href="orders.html">
+                                View all →
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            class="orders-preview"
+                            id="recentOrders"
+                        >
+
+                            <div class="empty-panel">
+
+                                <span>
+                                    ◌
+                                </span>
+
+                                <p>
+                                    No orders available yet.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Inventory -->
+
+                    <section class="dashboard-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <p class="panel-eyebrow">
+                                    INVENTORY
+                                </p>
+
+                                <h2>
+                                    Stock Overview
+                                </h2>
+
+                            </div>
+
+                            <a href="books.html">
+                                Manage →
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            class="inventory-preview"
+                            id="inventoryPreview"
+                        >
+
+                            <div class="inventory-row">
+
+                                <span>
+                                    In Stock
+                                </span>
+
+                                <strong id="inStock">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="inventory-row">
+
+                                <span>
+                                    Low Stock
+                                </span>
+
+                                <strong id="inventoryLowStock">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="inventory-row">
+
+                                <span>
+                                    Out of Stock
+                                </span>
+
+                                <strong
+                                    id="inventoryOutOfStock"
+                                    class="danger-text"
+                                >
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="../js/admin.js"></script>
+
+</body>
+
+</html>

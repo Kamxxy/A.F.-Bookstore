@@ -1,0 +1,330 @@
+/* =========================================================
+   A.F. BOOKSTORE
+   ADMIN LOGIN
+========================================================= */
+
+
+/* ================= VARIABLES ================= */
+
+:root {
+
+    --black: #0b0b0b;
+
+    --panel: #151515;
+
+    --border: #292929;
+
+    --border-light: #353535;
+
+    --white: #f4f3ef;
+
+    --muted: #8b8984;
+
+    --danger: #b36a6a;
+
+    --transition: 0.25s ease;
+
+}
+
+
+/* ================= RESET ================= */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+/* ================= BODY ================= */
+
+body {
+
+    min-height: 100vh;
+
+    background: var(--black);
+
+    color: var(--white);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 14px;
+
+}
+
+
+/* ================= LOGIN PAGE ================= */
+
+.login-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+
+}
+
+
+/* ================= LOGIN CARD ================= */
+
+.login-card {
+
+    width: 100%;
+
+    max-width: 430px;
+
+    padding: 45px;
+
+    background: var(--panel);
+
+    border:
+        1px solid var(--border);
+
+}
+
+
+/* ================= BRAND ================= */
+
+.login-brand {
+
+    display: flex;
+
+    flex-direction: column;
+
+    margin-bottom: 55px;
+
+}
+
+
+.brand-mark {
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 31px;
+
+    font-style: italic;
+
+    letter-spacing: -1px;
+
+}
+
+
+.brand-name {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    letter-spacing: 4px;
+
+}
+
+
+/* ================= HEADING ================= */
+
+.login-heading {
+
+    margin-bottom: 35px;
+
+}
+
+
+.eyebrow {
+
+    margin-bottom: 8px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    letter-spacing: 3px;
+
+}
+
+
+.login-heading h1 {
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 34px;
+
+    font-weight: 400;
+
+    letter-spacing: -1px;
+
+}
+
+
+.login-description {
+
+    margin-top: 10px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+}
+
+
+/* ================= FORM ================= */
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.form-group label {
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+}
+
+
+.form-group input {
+
+    width: 100%;
+
+    padding: 14px;
+
+    background: var(--black);
+
+    color: var(--white);
+
+    border:
+        1px solid var(--border-light);
+
+    outline: none;
+
+    transition:
+        border-color var(--transition);
+
+}
+
+
+.form-group input:focus {
+
+    border-color: var(--white);
+
+}
+
+
+/* ================= MESSAGE ================= */
+
+.login-message {
+
+    min-height: 20px;
+
+    margin-bottom: 15px;
+
+    color: var(--danger);
+
+    font-size: 11px;
+
+}
+
+
+/* ================= BUTTON ================= */
+
+.login-btn {
+
+    width: 100%;
+
+    padding: 14px;
+
+    background: var(--white);
+
+    color: var(--black);
+
+    border: none;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+        opacity var(--transition);
+
+}
+
+
+.login-btn:hover {
+
+    opacity: 0.85;
+
+}
+
+
+.login-btn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 500px) {
+
+    .login-page {
+
+        padding: 20px;
+
+    }
+
+
+    .login-card {
+
+        padding: 30px 25px;
+
+    }
+
+
+    .login-brand {
+
+        margin-bottom: 40px;
+
+    }
+
+}

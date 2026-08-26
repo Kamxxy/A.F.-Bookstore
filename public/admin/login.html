@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>A.F. Bookstore — Admin Login</title>
+
+    <link
+        rel="stylesheet"
+        href="css/login.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="login-page">
+
+        <section class="login-card">
+
+            <div class="login-brand">
+
+                <span class="brand-mark">
+                    A.F.
+                </span>
+
+                <span class="brand-name">
+                    BOOKSTORE
+                </span>
+
+            </div>
+
+
+            <div class="login-heading">
+
+                <p class="eyebrow">
+                    ADMINISTRATION
+                </p>
+
+                <h1>
+                    Sign in
+                </h1>
+
+                <p class="login-description">
+                    Access the A.F. Bookstore admin panel.
+                </p>
+
+            </div>
+
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    id="loginMessage"
+                    class="login-message"
+                    role="alert"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                    id="loginButton"
+                >
+                    Sign In
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/login.js"></script>
+
+</body>
+
+</html>

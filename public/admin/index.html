@@ -14,7 +14,7 @@
 
     <link
         rel="stylesheet"
-        href="css\admin.css"
+        href="css/admin.css"
     >
 
 </head>
@@ -51,7 +51,7 @@
             <nav class="admin-nav">
 
                 <a
-                    href="index.html"
+                    href="/admin"
                     class="admin-nav-link active"
                 >
                     <span>◈</span>
@@ -60,7 +60,7 @@
 
 
                 <a
-                    href="books.html"
+                    href="/admin/books"
                     class="admin-nav-link"
                 >
                     <span>▣</span>
@@ -69,12 +69,21 @@
 
 
                 <a
-                    href="orders.html"
+                    href="/admin/orders"
                     class="admin-nav-link"
                 >
                     <span>◉</span>
                     Orders
                 </a>
+
+                <button
+                    type="button"
+                    class="admin-nav-link"
+                    onclick="logoutAdmin()"
+                >
+                    <span>↪</span>
+                    Logout
+                </button>
 
             </nav>
 
@@ -82,8 +91,10 @@
             <div class="admin-sidebar-bottom">
 
                 <a
-                    href="../index.html"
+                    href="/"
                     class="admin-nav-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <span>←</span>
                     View Store
@@ -293,7 +304,7 @@
 
                             </div>
 
-                            <a href="orders.html">
+                            <a href="/admin/orders">
                                 View all →
                             </a>
 
@@ -340,7 +351,7 @@
 
                             </div>
 
-                            <a href="books.html">
+                            <a href="/admin/books">
                                 Manage →
                             </a>
 
@@ -406,8 +417,8 @@
 
     </div>
 
-
-    <script src="../js/admin.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
 
 </body>
 

@@ -63,15 +63,26 @@ function login(req, res) {
         );
 
 
+        res.cookie(
+            'adminToken',
+            token,
+            {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 2 * 60 * 60 * 1000
+            }
+        );
+        
         res.json({
-
+        
             success: true,
-
+        
             message:
                 'Admin login successful',
 
             token
-
+        
         });
 
     }

@@ -8,6 +8,8 @@ const rateLimit = require("express-rate-limit");
 const booksRouter = require('./routes/books');
 const pagesRouter = require('./routes/pages');
 const adminRouter = require('./adminRoutes/admin');
+const adminRoutes = require('./adminRoutes/pages');
+
 
 
 const app = express();
@@ -58,6 +60,16 @@ app.use(
     )
 );
 
+/* =========================================================
+   ADMIN FILES
+========================================================= */
+
+app.use(
+    express.static(
+        path.join(__dirname, '../public/admin')
+    )
+);
+
 
 /* =========================================================
    ROUTES
@@ -69,6 +81,12 @@ app.use(
 );
 
 app.use(
+    '/admin',
+    //adminRouter,
+    adminRoutes
+);
+
+app.use(
     '/api/books',
     booksRouter
 );
@@ -77,6 +95,7 @@ app.use(
     '/api/admin',
     adminRouter
 );
+
 
 /* =========================================================
    404 PAGE

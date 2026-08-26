@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin - Orders | A.F. Bookstore</title>
+
+    <link rel="stylesheet" href="css/order.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>A.F. Bookstore — Admin</h1>
+
+    <a href="/admin" class="back-btn">
+        Dashboard
+    </a>
+
+</header>
+
+
+<main>
+
+    <div class="top-bar">
+
+        <h2>Orders</h2>
+
+        <button class="refresh-btn" onclick="loadOrders()">
+            Refresh Orders
+        </button>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3>Total Orders</h3>
+            <p id="totalOrders">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Pending</h3>
+            <p id="pendingOrders">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Completed</h3>
+            <p id="completedOrders">0</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Revenue</h3>
+            <p id="totalRevenue">₦0</p>
+        </div>
+
+    </div>
+
+
+    <div class="filters">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search customer or order ID..."
+            oninput="filterOrders()"
+        >
+
+        <label for="statusFilter" class="sr-only">
+    Filter orders by status
+</label>
+
+<select
+    id="statusFilter"
+    onchange="filterOrders()"
+>
+    <option value="all">All Statuses</option>
+    <option value="pending">Pending</option>
+    <option value="processing">Processing</option>
+    <option value="shipped">Shipped</option>
+    <option value="delivered">Delivered</option>
+    <option value="cancelled">Cancelled</option>
+</select>
+
+    </div>
+
+
+    <div class="orders-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="ordersTableBody">
+
+                <tr>
+                    <td colspan="7" class="loading">
+                        Loading orders...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<!-- ORDER DETAILS MODAL -->
+
+<div
+    class="modal"
+    id="orderModal"
+    onclick="closeModal(event)"
+>
+
+    <div
+        class="modal-content"
+        onclick="event.stopPropagation()"
+    >
+
+        <div class="modal-header">
+
+            <h2>Order Details</h2>
+
+            <button
+                class="close-btn"
+                onclick="closeModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div id="orderDetails"></div>
+
+    </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/order.js">
+
+</script>
+
+</body>
+</html>

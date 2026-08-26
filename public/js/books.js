@@ -55,11 +55,20 @@ async function loadBooksData() {
 
 /* ================= FIND BOOK ================= */
 
-function getBookById(id) {
+/*function getBookById(id) {
 
     return books.find(
         book =>
             Number(book.id) === Number(id)
+    );
+
+}*/
+
+function getBookById(id) {
+
+    return books.find(
+        book =>
+            String(book.id) === String(id)
     );
 
 }
@@ -83,7 +92,7 @@ function getBookUrl(id) {
     fails to load or a placeholder is needed.
 */
 
-function getBookColor(id) {
+/*function getBookColor(id) {
 
     const colors = [
 
@@ -107,8 +116,52 @@ function getBookColor(id) {
         (Number(id) - 1) % colors.length
     ];
 
-}
+}*/
 
+
+function getBookColor(id) {
+
+    const colors = [
+        "#d7d3c8",
+        "#b8b5ad",
+        "#c8c2b7",
+        "#a9a49a",
+        "#d0cbc0",
+        "#b2afa8",
+        "#dad6cd",
+        "#aaa59b",
+        "#c4beb3",
+        "#d1ccc1",
+        "#bcb7ae",
+        "#cec9bf"
+    ];
+
+
+    const stringId =
+        String(id);
+
+
+    let hash = 0;
+
+
+    for (let i = 0; i < stringId.length; i++) {
+
+        hash =
+            ((hash << 5) - hash) +
+            stringId.charCodeAt(i);
+
+        hash |= 0;
+
+    }
+
+
+    const index =
+        Math.abs(hash) % colors.length;
+
+
+    return colors[index];
+
+}
 
 /* ================= FORMAT PRICE ================= */
 

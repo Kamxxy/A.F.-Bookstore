@@ -491,6 +491,85 @@ function updateOrderStatus(
 
 }
 
+/* =========================================================
+   ORDER STATUS TRACKING
+========================================================= */
+
+function getPublicOrderById(id) {
+
+    const orders =
+        getAllOrders();
+
+
+    const order =
+        orders.find(
+            order =>
+                String(order.id) ===
+                String(id)
+        );
+
+
+    if (!order) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        id:
+            order.id,
+
+        status:
+            order.status,
+
+        paymentStatus:
+            order.paymentStatus,
+
+        items:
+            order.items.map(
+                item => ({
+
+                    title:
+                        item.title,
+
+                    author:
+                        item.author,
+
+                    quantity:
+                        item.quantity,
+
+                    price:
+                        item.price,
+
+                    itemTotal:
+                        item.itemTotal
+
+                })
+            ),
+
+        subtotal:
+            order.subtotal,
+
+        deliveryFee:
+            order.deliveryFee,
+
+        total:
+            order.total,
+
+        currency:
+            order.currency,
+
+        createdAt:
+            order.createdAt,
+
+        updatedAt:
+            order.updatedAt
+
+    };
+
+}
 
 /* =========================================================
    EXPORT
@@ -501,6 +580,20 @@ module.exports = {
     getAllOrders,
 
     getOrderById,
+
+    getPublicOrderById,
+
+    createOrder,
+
+    updateOrderStatus
+
+};module.exports = {
+
+    getAllOrders,
+
+    getOrderById,
+
+    getPublicOrderById,
 
     createOrder,
 

@@ -5,7 +5,8 @@ const {
     create,
     getOrder,
     getOrders,
-    updateStatus
+    updateStatus,
+    trackOrder
 } = require(
     "../controllers/orderController"
 );
@@ -33,6 +34,14 @@ router.get(
     getOrders
 );
 
+/* =========================================================
+   PUBLIC ORDER TRACKING
+========================================================= */
+
+router.get(
+    "/track/:id",
+    trackOrder
+);
 
 /* =========================================================
    GET ORDER

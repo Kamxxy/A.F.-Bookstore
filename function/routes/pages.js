@@ -71,14 +71,14 @@ router.get('/checkout', (req, res) => {
 });
 
 /* =========================================================
-   FAQ PAGE
-========================================================= 
+   ORDER TRACKING PAGE
+========================================================= */
 
-router.get('/faq', (req, res) => {
+router.get('/order-tracking', (req, res) => {
     res.sendFile(
-        path.join(__dirname, '../../public/faq.html')
+        path.join(__dirname, '../../public/order-tracking.html')
     );
-});*/
+});
 
 /* =========================================================
    EXPORT

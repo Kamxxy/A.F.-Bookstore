@@ -2,7 +2,8 @@ const {
     createOrder,
     getOrderById,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getPublicOrderById
 } = require("../services/orderService");
 
 
@@ -424,6 +425,68 @@ function updateStatus(
 
 }
 
+/* =========================================================
+   TRACK ORDER
+========================================================= */
+
+function trackOrder(
+    req,
+    res
+) {
+
+    try {
+
+        const order =
+            getPublicOrderById(
+                req.params.id
+            );
+
+
+        if (!order) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "Order not found"
+
+            });
+
+        }
+
+
+        return res.json({
+
+            success: true,
+
+            order
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Order tracking error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to track order"
+
+        });
+
+    }
+
+}
+
 
 /* =========================================================
    EXPORT
@@ -437,6 +500,8 @@ module.exports = {
 
     getOrders,
 
-    updateStatus
+    updateStatus,
+
+    trackOrder
 
 };

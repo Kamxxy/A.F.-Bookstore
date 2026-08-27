@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Track Your Order — A.F. Bookstore</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/order-tracking.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="tracking-header">
+
+        <a
+            href="/"
+            class="tracking-logo"
+        >
+            <span>A.F.</span>
+            <small>BOOKSTORE</small>
+        </a>
+
+
+        <a
+            href="/"
+            class="tracking-back"
+        >
+            ← Back to bookstore
+        </a>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="tracking-page">
+
+
+        <!-- =================================================
+             INTRO
+        ================================================== -->
+
+        <section class="tracking-intro">
+
+            <p class="tracking-eyebrow">
+                A.F. BOOKSTORE
+            </p>
+
+            <h1>
+                Track your <em>order.</em>
+            </h1>
+
+            <p>
+                Enter your order ID below to see the latest
+                status of your order.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SEARCH
+        ================================================== -->
+
+        <section class="tracking-search">
+
+            <form
+                id="trackingForm"
+                novalidate
+            >
+
+                <div class="tracking-input-group">
+
+                    <label for="orderId">
+                        Order ID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="orderId"
+                        name="orderId"
+                        placeholder="AF-1787836554267-7974"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <small
+                        id="trackingError"
+                        class="tracking-error"
+                    ></small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="trackOrderBtn"
+                >
+
+                    <span>
+                        Track Order
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <p class="tracking-help">
+                Your order ID can be found in your order
+                confirmation or email.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOADING
+        ================================================== -->
+
+        <div
+            class="tracking-loading"
+            id="trackingLoading"
+            hidden
+        >
+
+            <span class="loading-symbol">
+                ◌
+            </span>
+
+            <p>
+                Looking up your order...
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ORDER RESULT
+        ================================================== -->
+
+        <section
+            class="order-result"
+            id="orderResult"
+            hidden
+        >
+
+
+            <!-- =============================================
+                 ORDER HEADER
+            ============================================== -->
+
+            <div class="order-result-header">
+
+                <div>
+
+                    <p class="tracking-eyebrow">
+                        ORDER
+                    </p>
+
+                    <h2 id="displayOrderId">
+                        —
+                    </h2>
+
+                </div>
+
+
+                <div
+                    class="order-status-badge"
+                    id="orderStatusBadge"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 STATUS TIMELINE
+            ============================================== -->
+
+            <div class="order-status-section">
+
+                <p class="section-label">
+                    ORDER STATUS
+                </p>
+
+
+                <div class="status-timeline">
+
+
+                    <div
+                        class="status-step"
+                        data-status="pending_payment"
+                    >
+
+                        <div class="status-marker">
+                            01
+                        </div>
+
+                        <div class="status-content">
+
+                            <h3>
+                                Order Received
+                            </h3>
+
+                            <p>
+                                Your order has been received.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="status-step"
+                        data-status="processing"
+                    >
+
+                        <div class="status-marker">
+                            02
+                        </div>
+
+                        <div class="status-content">
+
+                            <h3>
+                                Processing
+                            </h3>
+
+                            <p>
+                                Your order is being prepared.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="status-step"
+                        data-status="shipped"
+                    >
+
+                        <div class="status-marker">
+                            03
+                        </div>
+
+                        <div class="status-content">
+
+                            <h3>
+                                Shipped
+                            </h3>
+
+                            <p>
+                                Your order is on its way.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="status-step"
+                        data-status="delivered"
+                    >
+
+                        <div class="status-marker">
+                            04
+                        </div>
+
+                        <div class="status-content">
+
+                            <h3>
+                                Delivered
+                            </h3>
+
+                            <p>
+                                Your order has been delivered.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div
+                    class="cancelled-order-message"
+                    id="cancelledOrderMessage"
+                    hidden
+                >
+                    <span class="cancelled-order-icon">×</span>
+                
+                    <div>
+                        <h3>Order Cancelled</h3>
+                
+                        <p>
+                            This order has been cancelled and will not be processed
+                            or delivered.
+                        </p>
+                    </div>
+                    
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 ORDER DETAILS
+            ============================================== -->
+
+            <div class="order-details-grid">
+
+
+                <!-- CUSTOMER -->
+
+                <div class="order-detail-card">
+
+                    <p class="section-label">
+                        CUSTOMER
+                    </p>
+
+                    <h3 id="customerName">
+                        —
+                    </h3>
+
+                    <p id="customerEmail">
+                        —
+                    </p>
+
+                    <p id="customerPhone">
+                        —
+                    </p>
+
+                </div>
+
+
+
+                <!-- DELIVERY -->
+
+                <div class="order-detail-card">
+
+                    <p class="section-label">
+                        DELIVERY
+                    </p>
+
+                    <p id="deliveryAddress">
+                        —
+                    </p>
+
+                    <p id="deliveryLocation">
+                        —
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =============================================
+                 ORDER ITEMS
+            ============================================== -->
+
+            <div class="order-items-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="tracking-eyebrow">
+                            YOUR ORDER
+                        </p>
+
+                        <h2>
+                            Books
+                        </h2>
+
+                    </div>
+
+                    <span id="orderItemCount">
+                        0 items
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="order-items"
+                    id="orderItems"
+                >
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 TOTALS
+            ============================================== -->
+
+            <div class="order-total-section">
+
+                <div class="order-total-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong id="orderSubtotal">
+                        ₦0
+                    </strong>
+
+                </div>
+
+
+                <div class="order-total-row">
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <strong id="orderDelivery">
+                        ₦0
+                    </strong>
+
+                </div>
+
+
+                <div class="order-divider"></div>
+
+
+                <div class="order-total-row total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="orderTotal">
+                        ₦0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 TRACK ANOTHER
+            ============================================== -->
+
+            <button
+                type="button"
+                class="track-another"
+                id="trackAnotherBtn"
+            >
+                Track another order →
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             NOT FOUND
+        ================================================== -->
+
+        <div
+            class="tracking-not-found"
+            id="trackingNotFound"
+            hidden
+        >
+
+            <span>
+                ◌
+            </span>
+
+            <h2>
+                Order not found
+            </h2>
+
+            <p>
+                We couldn't find an order with that ID.
+                Please check the ID and try again.
+            </p>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="/js/order-tracking.js"></script>
+
+</body>
+
+</html>

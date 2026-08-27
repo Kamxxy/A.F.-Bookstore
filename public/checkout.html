@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Checkout — A.F. Bookstore</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/checkout.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="checkout-header">
+
+        <a
+            href="index.html"
+            class="checkout-logo"
+        >
+            <span>A.F.</span>
+            <small>BOOKSTORE</small>
+        </a>
+
+
+        <div class="checkout-secure">
+
+            <span>⌁</span>
+
+            Secure Checkout
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="checkout-page">
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <div class="checkout-intro">
+
+            <p class="checkout-eyebrow">
+                A.F. BOOKSTORE
+            </p>
+
+            <h1>
+                Checkout
+            </h1>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CHECKOUT GRID
+        ================================================== -->
+
+        <div class="checkout-grid">
+
+
+            <!-- =================================================
+                 CUSTOMER INFORMATION
+            ================================================== -->
+
+            <section class="checkout-form-section">
+
+                <div class="section-title">
+
+                    <span>01</span>
+
+                    <div>
+
+                        <p>
+                            YOUR DETAILS
+                        </p>
+
+                        <h2>
+                            Customer Information
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <form id="checkoutForm" novalidate>
+
+
+                    <!-- NAME -->
+
+                    <div class="form-group">
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required
+                        >
+
+                        <small
+                            class="form-error"
+                            id="fullNameError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                        <small
+                            class="form-error"
+                            id="emailError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="08012345678"
+                            autocomplete="tel"
+                            required
+                        >
+
+                        <small
+                            class="form-error"
+                            id="phoneError"
+                        ></small>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         DELIVERY
+                    ================================================== -->
+
+                    <div class="section-title delivery-title">
+
+                        <span>02</span>
+
+                        <div>
+
+                            <p>
+                                DELIVERY
+                            </p>
+
+                            <h2>
+                                Delivery Information
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="form-group">
+
+                        <label for="address">
+                            Delivery Address
+                        </label>
+
+                        <textarea
+                            id="address"
+                            name="address"
+                            rows="4"
+                            placeholder="Enter your delivery address"
+                            autocomplete="street-address"
+                            required
+                        ></textarea>
+
+                        <small
+                            class="form-error"
+                            id="addressError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- CITY + STATE -->
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="city">
+                                City
+                            </label>
+
+                            <input
+                                type="text"
+                                id="city"
+                                name="city"
+                                placeholder="City"
+                                autocomplete="address-level2"
+                                required
+                            >
+
+                            <small
+                                class="form-error"
+                                id="cityError"
+                            ></small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="state">
+                                State
+                            </label>
+
+                            <input
+                                type="text"
+                                id="state"
+                                name="state"
+                                placeholder="State"
+                                autocomplete="address-level1"
+                                required
+                            >
+
+                            <small
+                                class="form-error"
+                                id="stateError"
+                            ></small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ORDER BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="place-order-btn"
+                        id="placeOrderBtn"
+                    >
+
+                        <span>
+                            Place Order
+                        </span>
+
+                        <span>
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <p class="checkout-note">
+                        Your order will be reviewed and processed
+                        after submission.
+                    </p>
+
+                </form>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ORDER SUMMARY
+            ================================================== -->
+
+            <aside class="order-summary">
+
+
+                <div class="summary-header">
+
+                    <div>
+
+                        <p class="checkout-eyebrow">
+                            YOUR BAG
+                        </p>
+
+                        <h2>
+                            Order Summary
+                        </h2>
+
+                    </div>
+
+                    <span id="summaryCount">
+                        0 items
+                    </span>
+
+                </div>
+
+
+                <!-- CART ITEMS -->
+
+                <div
+                    class="summary-items"
+                    id="summaryItems"
+                >
+
+                    <!-- JavaScript renders items here -->
+
+                </div>
+
+
+                <!-- TOTALS -->
+
+                <div class="summary-totals">
+
+                    <div class="summary-row">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong id="summarySubtotal">
+                            ₦0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Delivery
+                        </span>
+
+                        <strong id="summaryDelivery">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-row total-row">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="summaryTotal">
+                            ₦0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BACK TO CART -->
+
+                <a
+                    href="cart.html"
+                    class="back-cart"
+                >
+                    ← Back to cart
+                </a>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         EMPTY CART OVERLAY
+    ====================================================== -->
+
+    <div
+        class="checkout-empty"
+        id="emptyCheckout"
+        hidden
+    >
+
+        <div>
+
+            <span>
+                ◌
+            </span>
+
+            <h2>
+                Your bag is empty
+            </h2>
+
+            <p>
+                Add some books before proceeding to checkout.
+            </p>
+
+            <a href="shop.html">
+                Browse Books →
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="js/checkout.js"></script>
+
+</body>
+
+</html>

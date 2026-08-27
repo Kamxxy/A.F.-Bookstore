@@ -7,38 +7,6 @@ if (!requireAdminAuth()) {
 }
 
 /* =========================================================
-   MOBILE SIDEBAR
-========================================================= */
-
-const menuButton =
-    document.querySelector(
-        ".admin-menu-btn"
-    );
-
-
-const sidebar =
-    document.querySelector(
-        ".admin-sidebar"
-    );
-
-
-if (menuButton && sidebar) {
-
-    menuButton.addEventListener(
-        "click",
-        () => {
-
-            sidebar.classList.toggle(
-                "open"
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
    BOOK INVENTORY
 ========================================================= */
 
@@ -143,15 +111,6 @@ async function loadBookStats() {
     }
 
 }
-
-function logoutAdmin() {
-
-    localStorage.removeItem("adminToken");
-
-    window.location.href = "/admin/login";
-
-}
-
 
 document.addEventListener(
     "DOMContentLoaded",

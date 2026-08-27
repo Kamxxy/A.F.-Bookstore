@@ -1,117 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Admin - Books | A.F. Bookstore</title>
 
-    <link rel="stylesheet" href="css/books.css">
+    <!-- Shared admin styles -->
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css"
+    >
+
+    <!-- Books page styles -->
+    <link
+        rel="stylesheet"
+        href="css/books.css"
+    >
+
 </head>
+
 
 <body>
 
-<header>
-    <h1>A.F. Bookstore — Admin</h1>
-    <a href="/admin" class="back-btn">Dashboard</a>
-</header>
 
-<main>
+<div class="admin-layout">
 
-    <div class="top-bar">
-        <h2>Manage Books</h2>
-        <button class="add-btn" onclick="openAddForm()">+ Add Book</button>
-    </div>
 
-    <div id="message" class="message"></div>
+    <!-- =====================================================
+         SHARED ADMIN SIDEBAR
+    ====================================================== -->
 
-    <div id="bookFormContainer" class="form-container">
+    <div id="adminSidebar"></div>
 
-        <h3 id="formTitle">Add New Book</h3>
 
-        <form id="bookForm">
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
-            <input type="hidden" id="bookId">
+    <main class="admin-main">
 
-            <div class="form-grid">
 
-                <div class="form-group">
-                    <label for="title">Book Title</label>
-                    <input type="text" id="title" required>
-                </div>
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
 
-                <div class="form-group">
-                    <label for="author">Author</label>
-                    <input type="text" id="author" required>
-                </div>
+        <header class="admin-header">
 
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <input type="number" id="price" min="0" step="0.01" required>
-                </div>
+            <div>
 
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <input type="text" id="category">
-                </div>
+                <p class="admin-eyebrow">
+                    A.F. BOOKSTORE
+                </p>
 
-                <div class="form-group">
-                    <label for="stock">Stock</label>
-                    <input type="number" id="stock" min="0" value="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="image">Image URL</label>
-                    <input type="text" id="image">
-                </div>
-
-                <div class="form-group full">
-                    <label for="description">Description</label>
-                    <textarea id="description"></textarea>
-                </div>
+                <h1>
+                    Books
+                </h1>
 
             </div>
 
-            <div class="form-buttons">
-                <button type="submit" class="save-btn">Save Book</button>
-                <button type="button" class="cancel-btn" onclick="closeForm()">
-                    Cancel
+
+            <div class="admin-header-right">
+
+                <span class="admin-status">
+
+                    <span class="status-dot"></span>
+
+                    Online
+
+                </span>
+
+
+                <button
+                    class="admin-menu-btn"
+                    type="button"
+                    aria-label="Open menu"
+                >
+                    ☰
                 </button>
+
             </div>
 
-        </form>
-    </div>
+        </header>
 
-    <div class="books-container">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+        <!-- =================================================
+             BOOK MANAGEMENT
+        ================================================== -->
 
-            <tbody id="booksTableBody">
-                <tr>
-                    <td colspan="7" class="loading">
-                        Loading books...
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <section class="books-content">
 
-    </div>
 
-</main>
+            <div class="top-bar">
+
+                <h2>
+                    Manage Books
+                </h2>
+
+                <button
+                    class="add-btn"
+                    onclick="openAddForm()"
+                >
+                    + Add Book
+                </button>
+
+            </div>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+            <!-- =============================================
+                 BOOK FORM
+            ============================================== -->
+
+            <div
+                id="bookFormContainer"
+                class="form-container"
+            >
+
+                <h3 id="formTitle">
+                    Add New Book
+                </h3>
+
+
+                <form id="bookForm">
+
+
+                    <input
+                        type="hidden"
+                        id="bookId"
+                    >
+
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="title">
+                                Book Title
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="author">
+                                Author
+                            </label>
+
+                            <input
+                                type="text"
+                                id="author"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="price">
+                                Price
+                            </label>
+
+                            <input
+                                type="number"
+                                id="price"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Category
+                            </label>
+
+                            <input
+                                type="text"
+                                id="category"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="stock">
+                                Stock
+                            </label>
+
+                            <input
+                                type="number"
+                                id="stock"
+                                min="0"
+                                value="0"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="image">
+                                Image URL
+                            </label>
+
+                            <input
+                                type="text"
+                                id="image"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-buttons">
+
+                        <button
+                            type="submit"
+                            class="save-btn"
+                        >
+                            Save Book
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="cancel-btn"
+                            onclick="closeForm()"
+                        >
+                            Cancel
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+            <!-- =============================================
+                 BOOK TABLE
+            ============================================== -->
+
+            <div class="books-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Image</th>
+
+                            <th>Title</th>
+
+                            <th>Author</th>
+
+                            <th>Category</th>
+
+                            <th>Price</th>
+
+                            <th>Stock</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="booksTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="loading"
+                            >
+                                Loading books...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
 <script src="js/auth.js"></script>
+
+<script src="js/sidebar.js"></script>
+
 <script src="js/books.js"></script>
 
+
 </body>
+
 </html>

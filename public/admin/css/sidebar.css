@@ -1,0 +1,192 @@
+/* =========================================================
+   A.F. BOOKSTORE
+   SHARED ADMIN SIDEBAR
+========================================================= */
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.admin-sidebar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 245px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 35px 22px 25px;
+
+    background: #0d0d0d;
+
+    border-right:
+        1px solid var(--border);
+
+    z-index: 100;
+
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.admin-brand {
+
+    display: flex;
+    flex-direction: column;
+
+    padding:
+        0 12px
+        35px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.brand-mark {
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 31px;
+
+    font-style: italic;
+
+    letter-spacing: -1px;
+
+}
+
+
+.brand-name {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    letter-spacing: 4px;
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.admin-nav {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding-top: 30px;
+
+}
+
+
+.admin-nav-link {
+
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 0 15px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    transition:
+        background var(--transition),
+        color var(--transition);
+
+}
+
+
+.admin-nav-link span {
+
+    width: 18px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+}
+
+
+.admin-nav-link:hover {
+
+    background: var(--panel);
+
+    color: var(--white);
+
+}
+
+
+.admin-nav-link.active {
+
+    background: var(--white);
+
+    color: var(--black);
+
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+========================================================= */
+
+.admin-sidebar-bottom {
+
+    margin-top: auto;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid var(--border);
+
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .admin-sidebar {
+
+        transform:
+            translateX(-100%);
+
+        transition:
+            transform var(--transition);
+
+    }
+
+
+    .admin-sidebar.open {
+
+        transform:
+            translateX(0);
+
+    }
+
+}

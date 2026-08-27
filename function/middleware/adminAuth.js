@@ -10,31 +10,10 @@ function adminAuth(req, res, next) {
         ========================================================= */
 
         const token =
-            req.cookies &&
-            req.cookies.adminToken;
+            req.cookies?.adminToken;
 
 
         if (!token) {
-
-            /* =====================================================
-               PAGE REQUEST
-               Redirect unauthenticated admin pages to login
-            ===================================================== */
-
-            if (
-                req.originalUrl.startsWith('/admin')
-            ) {
-
-                return res.redirect(
-                    '/admin/login'
-                );
-
-            }
-
-
-            /* =====================================================
-               API REQUEST
-            ===================================================== */
 
             return res.status(401).json({
 
@@ -67,17 +46,6 @@ function adminAuth(req, res, next) {
             decoded.role !== 'admin'
         ) {
 
-            if (
-                req.originalUrl.startsWith('/admin')
-            ) {
-
-                return res.redirect(
-                    '/admin/login'
-                );
-
-            }
-
-
             return res.status(403).json({
 
                 success: false,
@@ -91,7 +59,7 @@ function adminAuth(req, res, next) {
 
 
         /* =========================================================
-           ATTACH ADMIN TO REQUEST
+           ATTACH ADMIN
         ========================================================= */
 
         req.admin = decoded;
@@ -111,21 +79,6 @@ function adminAuth(req, res, next) {
             'Admin authentication error:',
             error.message
         );
-
-
-        /* =========================================================
-           INVALID / EXPIRED TOKEN
-        ========================================================= */
-
-        if (
-            req.originalUrl.startsWith('/admin')
-        ) {
-
-            return res.redirect(
-                '/admin/login'
-            );
-
-        }
 
 
         return res.status(401).json({

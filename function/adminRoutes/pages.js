@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
 
-const adminAuth = require('../middleware/adminAuth');
+const adminPageAuth =
+    require('../middleware/adminPageAuth');
 
 const router = express.Router();
+
 
 const adminPath = path.join(
     __dirname,
@@ -12,7 +14,8 @@ const adminPath = path.join(
 
 
 /* =========================================================
-   ADMIN LOGIN PAGE
+   ADMIN LOGIN
+   PUBLIC
 ========================================================= */
 
 router.get('/login', (req, res) => {
@@ -31,7 +34,7 @@ router.get('/login', (req, res) => {
    PROTECTED ADMIN PAGES
 ========================================================= */
 
-router.use(adminAuth);
+router.use(adminPageAuth);
 
 
 /* =========================================================

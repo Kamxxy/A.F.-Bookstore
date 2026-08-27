@@ -1,129 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Admin - Orders | A.F. Bookstore</title>
 
-    <link rel="stylesheet" href="css/order.css">
+
+    <!-- Shared admin styles -->
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css"
+    >
+
+
+    <!-- Orders page styles -->
+
+    <link
+        rel="stylesheet"
+        href="css/order.css"
+    >
+
 </head>
+
 
 <body>
 
-<header>
 
-    <h1>A.F. Bookstore — Admin</h1>
-
-    <a href="/admin" class="back-btn">
-        Dashboard
-    </a>
-
-</header>
+<div class="admin-layout">
 
 
-<main>
+    <!-- =====================================================
+         SHARED ADMIN SIDEBAR
+    ====================================================== -->
 
-    <div class="top-bar">
-
-        <h2>Orders</h2>
-
-        <button class="refresh-btn" onclick="loadOrders()">
-            Refresh Orders
-        </button>
-
-    </div>
+    <div id="adminSidebar"></div>
 
 
-    <div class="stats">
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
-        <div class="stat-card">
-            <h3>Total Orders</h3>
-            <p id="totalOrders">0</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>Pending</h3>
-            <p id="pendingOrders">0</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>Completed</h3>
-            <p id="completedOrders">0</p>
-        </div>
-
-        <div class="stat-card">
-            <h3>Total Revenue</h3>
-            <p id="totalRevenue">₦0</p>
-        </div>
-
-    </div>
+    <main class="admin-main">
 
 
-    <div class="filters">
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search customer or order ID..."
-            oninput="filterOrders()"
-        >
+        <header class="admin-header">
 
-        <label for="statusFilter" class="sr-only">
-    Filter orders by status
-</label>
+            <div>
 
-<select
-    id="statusFilter"
-    onchange="filterOrders()"
->
-    <option value="all">All Statuses</option>
-    <option value="pending">Pending</option>
-    <option value="processing">Processing</option>
-    <option value="shipped">Shipped</option>
-    <option value="delivered">Delivered</option>
-    <option value="cancelled">Cancelled</option>
-</select>
+                <p class="admin-eyebrow">
+                    A.F. BOOKSTORE
+                </p>
 
-    </div>
+                <h1>
+                    Orders
+                </h1>
+
+            </div>
 
 
-    <div class="orders-container">
+            <div class="admin-header-right">
 
-        <table>
+                <span class="admin-status">
 
-            <thead>
+                    <span class="status-dot"></span>
 
-                <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                </tr>
+                    Online
 
-            </thead>
-
-            <tbody id="ordersTableBody">
-
-                <tr>
-                    <td colspan="7" class="loading">
-                        Loading orders...
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</main>
+                </span>
 
 
-<!-- ORDER DETAILS MODAL -->
+                <button
+                    class="admin-menu-btn"
+                    type="button"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             ORDERS CONTENT
+        ================================================== -->
+
+        <section class="orders-content">
+
+
+            <div class="top-bar">
+
+                <h2>
+                    Orders
+                </h2>
+
+
+                <button
+                    class="refresh-btn"
+                    onclick="loadOrders()"
+                >
+                    Refresh Orders
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDER STATS
+            ================================================== -->
+
+            <div class="stats">
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Total Orders
+                    </h3>
+
+                    <p id="totalOrders">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Pending
+                    </h3>
+
+                    <p id="pendingOrders">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Completed
+                    </h3>
+
+                    <p id="completedOrders">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3>
+                        Total Revenue
+                    </h3>
+
+                    <p id="totalRevenue">
+                        ₦0
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <div class="filters">
+
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search customer or order ID..."
+                    oninput="filterOrders()"
+                >
+
+
+                <label
+                    for="statusFilter"
+                    class="sr-only"
+                >
+                    Filter orders by status
+                </label>
+
+
+                <select
+                    id="statusFilter"
+                    onchange="filterOrders()"
+                >
+
+                    <option value="all">
+                        All Statuses
+                    </option>
+
+                    <option value="pending">
+                        Pending
+                    </option>
+
+                    <option value="processing">
+                        Processing
+                    </option>
+
+                    <option value="shipped">
+                        Shipped
+                    </option>
+
+                    <option value="delivered">
+                        Delivered
+                    </option>
+
+                    <option value="cancelled">
+                        Cancelled
+                    </option>
+
+                </select>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 ORDERS TABLE
+            ================================================== -->
+
+            <div class="orders-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order ID
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Items
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="ordersTableBody">
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="loading"
+                            >
+                                Loading orders...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =========================================================
+     ORDER DETAILS MODAL
+========================================================= -->
 
 <div
     class="modal"
@@ -131,14 +327,19 @@
     onclick="closeModal(event)"
 >
 
+
     <div
         class="modal-content"
         onclick="event.stopPropagation()"
     >
 
+
         <div class="modal-header">
 
-            <h2>Order Details</h2>
+            <h2>
+                Order Details
+            </h2>
+
 
             <button
                 class="close-btn"
@@ -149,16 +350,27 @@
 
         </div>
 
+
         <div id="orderDetails"></div>
+
 
     </div>
 
+
 </div>
 
-<script src="js/auth.js"></script>
-<script src="js/order.js">
 
-</script>
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script src="js/auth.js"></script>
+
+<script src="js/sidebar.js"></script>
+
+<script src="js/order.js"></script>
+
 
 </body>
+
 </html>

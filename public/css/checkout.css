@@ -922,3 +922,52 @@ body {
     }
 
 }
+
+/* =========================================================
+   CHECKOUT FORM VALIDATION
+========================================================= */
+
+.form-group input.field-valid,
+.form-group textarea.field-valid {
+
+    border-color: #555;
+
+}
+
+
+.form-group input.field-invalid,
+.form-group textarea.field-invalid {
+
+    border-color: #754f4f;
+
+}
+
+
+.form-group input.field-valid:focus,
+.form-group textarea.field-valid:focus {
+
+    border-color: #777;
+
+}
+
+
+.form-group input.field-invalid:focus,
+.form-group textarea.field-invalid:focus {
+
+    border-color: #956666;
+
+}
+
+
+.field-valid + .form-error {
+
+    color: #777;
+
+}
+
+
+.field-invalid + .form-error {
+
+    color: #a87373;
+
+}

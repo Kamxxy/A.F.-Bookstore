@@ -61,14 +61,14 @@ router.get('/book', (req, res) => {
 });
 
 /* =========================================================
-   CONTACT PAGE
-========================================================= 
+   CHECKOUT PAGE
+========================================================= */
 
-router.get('/contact', (req, res) => {
+router.get('/checkout', (req, res) => {
     res.sendFile(
-        path.join(__dirname, '../../public/contact.html')
+        path.join(__dirname, '../../public/checkout.html')
     );
-});*/
+});
 
 /* =========================================================
    FAQ PAGE

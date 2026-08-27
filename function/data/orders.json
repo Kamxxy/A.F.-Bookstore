@@ -1,0 +1,95 @@
+[
+    {
+        "id": "AF-1787836554267-7974",
+        "status": "processing",
+        "paymentStatus": "unpaid",
+        "customer": {
+            "name": "Test Customer",
+            "email": "test@example.com",
+            "phone": "08012345678"
+        },
+        "delivery": {
+            "address": "123 Test Street",
+            "city": "Abuja",
+            "state": "FCT"
+        },
+        "items": [
+            {
+                "bookId": 1,
+                "title": "The Silent Patient",
+                "author": "Alex Michaelides",
+                "quantity": 1,
+                "price": 8500,
+                "itemTotal": 8500
+            }
+        ],
+        "subtotal": 8500,
+        "deliveryFee": 2000,
+        "total": 10500,
+        "currency": "NGN",
+        "createdAt": "2026-08-27T13:15:54.268Z",
+        "updatedAt": "2026-08-27T13:57:23.640Z"
+    },
+    {
+        "id": "AF-1787837035604-9556",
+        "status": "pending_payment",
+        "paymentStatus": "unpaid",
+        "customer": {
+            "name": "Price Test",
+            "email": "price@test.com",
+            "phone": "08012345678"
+        },
+        "delivery": {
+            "address": "123 Test Street",
+            "city": "Abuja",
+            "state": "FCT"
+        },
+        "items": [
+            {
+                "bookId": 1,
+                "title": "The Silent Patient",
+                "author": "Alex Michaelides",
+                "quantity": 1,
+                "price": 8500,
+                "itemTotal": 8500
+            }
+        ],
+        "subtotal": 8500,
+        "deliveryFee": 2000,
+        "total": 10500,
+        "currency": "NGN",
+        "createdAt": "2026-08-27T13:23:55.604Z",
+        "updatedAt": "2026-08-27T13:23:55.605Z"
+    },
+    {
+        "id": "AF-1787837511836-2378",
+        "status": "pending_payment",
+        "paymentStatus": "unpaid",
+        "customer": {
+            "name": "isaiah",
+            "email": "klasikyemite04@gmail.com",
+            "phone": "09123456789"
+        },
+        "delivery": {
+            "address": "mararaba",
+            "city": "abuja",
+            "state": "abuja"
+        },
+        "items": [
+            {
+                "bookId": 1,
+                "title": "The Silent Patient",
+                "author": "Alex Michaelides",
+                "quantity": 1,
+                "price": 8500,
+                "itemTotal": 8500
+            }
+        ],
+        "subtotal": 8500,
+        "deliveryFee": 2000,
+        "total": 10500,
+        "currency": "NGN",
+        "createdAt": "2026-08-27T13:31:51.836Z",
+        "updatedAt": "2026-08-27T13:31:51.836Z"
+    }
+]

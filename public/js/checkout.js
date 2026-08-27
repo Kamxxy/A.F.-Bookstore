@@ -10,13 +10,17 @@
 
 const CART_STORAGE_KEY = "afCart";
 
+const API_BASE_URL = "http://localhost:8000";
+
+const ORDERS_API_URL =
+    `${API_BASE_URL}/api/orders`;
+
 
 /*
     Temporary delivery fee.
 
-    We are keeping this in the frontend for now.
-    Later your friend's backend should calculate/validate
-    the actual delivery fee.
+    The backend should remain the final authority
+    for the actual delivery fee and total.
 */
 
 const DELIVERY_FEE = 2000;
@@ -266,6 +270,29 @@ function renderSummary() {
 
         emptyCheckout.hidden =
             false;
+
+        summaryItems.innerHTML =
+            "";
+
+        if (summaryCount) {
+            summaryCount.textContent =
+                "0 items";
+        }
+
+        if (summarySubtotal) {
+            summarySubtotal.textContent =
+                formatPrice(0);
+        }
+
+        if (summaryDelivery) {
+            summaryDelivery.textContent =
+                "—";
+        }
+
+        if (summaryTotal) {
+            summaryTotal.textContent =
+                formatPrice(0);
+        }
 
         return;
 
@@ -675,10 +702,6 @@ function createOrderPayload() {
         ).value.trim();
 
 
-    const subtotal =
-        getSubtotal();
-
-
     return {
 
         customer: {
@@ -703,42 +726,204 @@ function createOrderPayload() {
         },
 
 
+        /*
+            Only send the book ID and quantity
+            as authoritative order inputs.
+
+            The backend looks up the current
+            book price and details itself.
+        */
+
         items: cart.map(
             book => ({
 
                 bookId:
                     book.id,
 
-                title:
-                    book.title,
-
                 quantity:
-                    Number(
-                        book.quantity
-                    ) || 1,
-
-                price:
-                    Number(
-                        book.price
-                    ) || 0
+                    Math.max(
+                        1,
+                        Number(
+                            book.quantity
+                        ) || 1
+                    )
 
             })
-        ),
-
-
-        subtotal:
-            subtotal,
-
-
-        deliveryFee:
-            DELIVERY_FEE,
-
-
-        total:
-            subtotal +
-            DELIVERY_FEE
+        )
 
     };
+
+}
+
+
+/* =========================================================
+   SET SUBMITTING STATE
+========================================================= */
+
+function setSubmitting(
+    submitting
+) {
+
+    if (!placeOrderBtn) {
+        return;
+    }
+
+
+    placeOrderBtn.disabled =
+        submitting;
+
+
+    if (submitting) {
+
+        placeOrderBtn.innerHTML = `
+
+            <span>
+                Processing Order...
+            </span>
+
+            <span>
+                ⏳
+            </span>
+
+        `;
+
+    } else {
+
+        placeOrderBtn.innerHTML = `
+
+            <span>
+                Place Order
+            </span>
+
+            <span>
+                →
+            </span>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW API ERROR
+========================================================= */
+
+function showApiError(
+    message
+) {
+
+    /*
+        Use the form's existing note area
+        if available.
+    */
+
+    const checkoutNote =
+        document.querySelector(
+            ".checkout-note"
+        );
+
+
+    if (checkoutNote) {
+
+        checkoutNote.textContent =
+            message;
+
+        checkoutNote.style.color =
+            "#a87373";
+
+        return;
+
+    }
+
+
+    alert(message);
+
+}
+
+
+/* =========================================================
+   SUBMIT ORDER TO API
+========================================================= */
+
+async function submitOrder(
+    order
+) {
+
+    const response =
+        await fetch(
+            ORDERS_API_URL,
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body:
+                    JSON.stringify(
+                        order
+                    )
+
+            }
+        );
+
+
+    let data = null;
+
+
+    try {
+
+        data =
+            await response.json();
+
+    } catch (error) {
+
+        data = null;
+
+    }
+
+
+    /*
+        Handle HTTP errors.
+    */
+
+    if (!response.ok) {
+
+        throw new Error(
+
+            data?.message ||
+            "Unable to create your order. Please try again."
+
+        );
+
+    }
+
+
+    /*
+        Make sure the API returned
+        the expected success response.
+    */
+
+    if (
+        !data ||
+        data.success !== true ||
+        !data.order
+    ) {
+
+        throw new Error(
+            "The server returned an unexpected response."
+        );
+
+    }
+
+
+    return data;
 
 }
 
@@ -751,7 +936,7 @@ if (checkoutForm) {
 
     checkoutForm.addEventListener(
         "submit",
-        event => {
+        async event => {
 
             event.preventDefault();
 
@@ -773,6 +958,20 @@ if (checkoutForm) {
 
 
             /*
+                Prevent duplicate submissions.
+            */
+
+            if (
+                placeOrderBtn &&
+                placeOrderBtn.disabled
+            ) {
+
+                return;
+
+            }
+
+
+            /*
                 Validate customer details.
             */
 
@@ -786,35 +985,136 @@ if (checkoutForm) {
 
 
             /*
-                Build the order.
-
-                For now we're only creating the
-                payload. Your friend's backend
-                will receive this later.
+                Build order payload.
             */
 
             const order =
                 createOrderPayload();
 
 
-            console.log(
-                "Order ready:",
-                order
-            );
-
-
             /*
-                TEMPORARY BEHAVIOUR
-
-                We aren't sending this to
-                /api/orders yet because the
-                backend contract hasn't been
-                finalized.
+                Start loading state.
             */
 
-            alert(
-                "Checkout information is valid. The order API will be connected next."
-            );
+            setSubmitting(true);
+
+
+            try {
+
+                console.log(
+                    "Submitting order:",
+                    order
+                );
+
+
+                /*
+                    Send order to backend.
+                */
+
+                const result =
+                    await submitOrder(
+                        order
+                    );
+
+
+                const createdOrder =
+                    result.order;
+
+
+                /*
+                    Store the order ID.
+
+                    This will be useful when we
+                    build the payment flow later.
+                */
+
+                if (
+                    createdOrder.id
+                ) {
+
+                    sessionStorage.setItem(
+                        "afLastOrderId",
+                        createdOrder.id
+                    );
+
+                }
+
+
+                /*
+                    Clear cart ONLY after the
+                    backend successfully created
+                    the order.
+                */
+
+                cart = [];
+
+
+                localStorage.removeItem(
+                    CART_STORAGE_KEY
+                );
+
+
+                renderSummary();
+
+
+                /*
+                    Temporary success message.
+
+                    Later this will become a proper
+                    order confirmation/payment flow.
+                */
+
+                const checkoutNote =
+                    document.querySelector(
+                        ".checkout-note"
+                    );
+
+
+                if (checkoutNote) {
+
+                    checkoutNote.textContent =
+                        `Order created successfully. Order ID: ${createdOrder.id}`;
+
+                    checkoutNote.style.color =
+                        "var(--checkout-muted)";
+
+                }
+
+
+                alert(
+                    `Order created successfully!\n\nOrder ID: ${createdOrder.id}`
+                );
+
+
+                console.log(
+                    "Created order:",
+                    createdOrder
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Order submission error:",
+                    error
+                );
+
+
+                showApiError(
+                    error.message ||
+                    "Unable to create your order. Please try again."
+                );
+
+            }
+
+            finally {
+
+                setSubmitting(
+                    false
+                );
+
+            }
 
         }
     );

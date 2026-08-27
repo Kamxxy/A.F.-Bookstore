@@ -7,9 +7,17 @@ const rateLimit = require("express-rate-limit");
 const cookieParser = require('cookie-parser');
 
 const booksRouter = require('./routes/books');
+
 const pagesRouter = require('./routes/pages');
-const adminRouter = require('./adminRoutes/admin');
-const adminRoutes = require('./adminRoutes/pages');
+
+const adminRouter =
+    require('./adminRoutes/admin');
+
+const adminRoutes =
+    require('./adminRoutes/pages');
+
+const ordersRouter =
+    require('./routes/orders');
 
 
 
@@ -102,6 +110,11 @@ app.use(
 app.use(
     '/api/books',
     booksRouter
+);
+
+app.use(
+    '/api/orders',
+    ordersRouter
 );
 
 app.use(

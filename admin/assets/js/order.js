@@ -2,9 +2,12 @@ if (!requireAdminAuth()) {
     window.location.href = "/admin/login";
 }
 
+
 const API_URL = "/api/orders";
 
+
 let orders = [];
+
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -12,10 +15,17 @@ document.addEventListener(
 );
 
 
+/* =========================================================
+   LOAD ORDERS
+========================================================= */
+
 async function loadOrders() {
 
     const tableBody =
-        document.getElementById("ordersTableBody");
+        document.getElementById(
+            "ordersTableBody"
+        );
+
 
     tableBody.innerHTML = `
         <tr>
@@ -25,24 +35,42 @@ async function loadOrders() {
         </tr>
     `;
 
+
     try {
 
         const response =
-            await fetch(API_URL);
+            await fetch(
+                API_URL
+            );
+
 
         if (!response.ok) {
-            throw new Error("Failed to load orders");
+
+            throw new Error(
+                "Failed to load orders"
+            );
+
         }
 
-        orders = await response.json();
+
+        orders =
+            await response.json();
+
 
         updateStats();
 
-        renderOrders(orders);
+        renderOrders(
+            orders
+        );
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Error loading orders:",
+            error
+        );
+
 
         tableBody.innerHTML = `
             <tr>
@@ -57,32 +85,70 @@ async function loadOrders() {
 }
 
 
+/* =========================================================
+   UPDATE DASHBOARD STATS
+========================================================= */
+
 function updateStats() {
 
     const total =
         orders.length;
 
+
+    /*
+        Orders awaiting payment.
+
+        The backend currently creates
+        orders with:
+
+        status: "pending_payment"
+    */
+
     const pending =
         orders.filter(
             order =>
-                String(order.status || "")
-                    .toLowerCase() === "pending"
+                String(
+                    order.status || ""
+                ).toLowerCase() ===
+                "pending_payment"
         ).length;
+
+
+    /*
+        Completed orders
+    */
 
     const completed =
         orders.filter(
             order =>
-                String(order.status || "")
-                    .toLowerCase() === "delivered"
+                String(
+                    order.status || ""
+                ).toLowerCase() ===
+                "delivered"
         ).length;
+
+
+    /*
+        Revenue
+
+        For now this is the total value
+        of orders, regardless of payment
+        status.
+
+        Once payment is implemented,
+        this should probably count only
+        successfully paid orders.
+    */
 
     const revenue =
         orders.reduce(
-            (sum, order) =>
-                sum + Number(
-                    order.total ||
-                    order.totalAmount ||
-                    0
+            (
+                sum,
+                order
+            ) =>
+                sum +
+                Number(
+                    order.total || 0
                 ),
             0
         );
@@ -90,25 +156,40 @@ function updateStats() {
 
     document.getElementById(
         "totalOrders"
-    ).textContent = total;
+    ).textContent =
+        total;
+
 
     document.getElementById(
         "pendingOrders"
-    ).textContent = pending;
+    ).textContent =
+        pending;
+
 
     document.getElementById(
         "completedOrders"
-    ).textContent = completed;
+    ).textContent =
+        completed;
+
 
     document.getElementById(
         "totalRevenue"
     ).textContent =
-        "₦" + revenue.toLocaleString();
+        "₦" +
+        revenue.toLocaleString(
+            "en-NG"
+        );
 
 }
 
 
-function renderOrders(list) {
+/* =========================================================
+   RENDER ORDERS
+========================================================= */
+
+function renderOrders(
+    list
+) {
 
     const tableBody =
         document.getElementById(
@@ -116,7 +197,10 @@ function renderOrders(list) {
         );
 
 
-    if (!list || list.length === 0) {
+    if (
+        !list ||
+        list.length === 0
+    ) {
 
         tableBody.innerHTML = `
             <tr>
@@ -127,181 +211,243 @@ function renderOrders(list) {
         `;
 
         return;
+
     }
 
 
     tableBody.innerHTML =
-        list.map(order => {
+        list.map(
+            order => {
 
-            const items =
-                order.items ||
-                order.products ||
-                [];
-
-
-            const itemText =
-                Array.isArray(items)
-                    ? items.map(item =>
-                        `${escapeHTML(
-                            item.title ||
-                            item.name ||
-                            "Book"
-                        )} × ${item.quantity || 1}`
-                    ).join("<br>")
-                    : "—";
+                const items =
+                    Array.isArray(
+                        order.items
+                    )
+                        ? order.items
+                        : [];
 
 
-            const total =
-                Number(
-                    order.total ||
-                    order.totalAmount ||
-                    0
-                );
+                const itemText =
+                    items.length > 0
+
+                        ? items
+                            .map(
+                                item =>
+                                    `${escapeHTML(
+                                        item.title ||
+                                        "Book"
+                                    )} × ${
+                                        Number(
+                                            item.quantity
+                                        ) || 1
+                                    }`
+                            )
+                            .join(
+                                "<br>"
+                            )
+
+                        : "—";
 
 
-            const status =
-                order.status ||
-                "pending";
+                const total =
+                    Number(
+                        order.total || 0
+                    );
 
 
-            const customer =
-                order.customerName ||
-                order.name ||
-                order.customer?.name ||
-                "Unknown";
+                const status =
+                    order.status ||
+                    "pending_payment";
 
 
-            const date =
-                order.createdAt ||
-                order.date ||
-                order.created ||
-                null;
+                const customer =
+                    order.customer?.name ||
+                    "Unknown";
 
 
-            return `
+                const date =
+                    order.createdAt ||
+                    null;
 
-                <tr>
 
-                    <td>
-                        #${escapeHTML(
-                            String(order.id || "N/A")
-                        )}
-                    </td>
+                return `
 
-                    <td>
-                        ${escapeHTML(customer)}
-                    </td>
+                    <tr>
 
-                    <td class="order-items">
-                        ${itemText}
-                    </td>
+                        <td>
+                            #${escapeHTML(
+                                String(
+                                    order.id ||
+                                    "N/A"
+                                )
+                            )}
+                        </td>
 
-                    <td>
-                        ₦${total.toLocaleString()}
-                    </td>
 
-                    <td>
+                        <td>
+                            ${escapeHTML(
+                                customer
+                            )}
+                        </td>
 
-                        <span class="status">
-                            ${escapeHTML(status)}
-                        </span>
 
-                    </td>
+                        <td class="order-items">
+                            ${itemText}
+                        </td>
 
-                    <td>
-                        ${formatDate(date)}
-                    </td>
 
-                    <td>
+                        <td>
+                            ₦${total.toLocaleString(
+                                "en-NG"
+                            )}
+                        </td>
 
-                        <button
-                            class="view-btn"
-                            onclick="viewOrder('${order.id}')"
-                        >
-                            View
-                        </button>
 
-                    </td>
+                        <td>
 
-                </tr>
+                            <span class="status">
+                                ${escapeHTML(
+                                    formatStatus(
+                                        status
+                                    )
+                                )}
+                            </span>
 
-            `;
+                        </td>
 
-        }).join("");
+
+                        <td>
+                            ${formatDate(
+                                date
+                            )}
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                class="view-btn"
+                                onclick="viewOrder('${escapeHTML(
+                                    String(
+                                        order.id
+                                    )
+                                )}')"
+                            >
+                                View
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
+
+/* =========================================================
+   FILTER ORDERS
+========================================================= */
 
 function filterOrders() {
 
-    const search =
+    const searchInput =
         document.getElementById(
             "searchInput"
-        ).value
-            .toLowerCase()
-            .trim();
+        );
+
+
+    const statusFilter =
+        document.getElementById(
+            "statusFilter"
+        );
+
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
 
 
     const status =
-        document.getElementById(
-            "statusFilter"
-        ).value;
+        statusFilter
+            ? statusFilter.value
+            : "all";
 
 
     const filtered =
-        orders.filter(order => {
+        orders.filter(
+            order => {
 
-            const customer =
-                order.customerName ||
-                order.name ||
-                order.customer?.name ||
-                "";
-
-
-            const id =
-                String(order.id || "");
+                const customer =
+                    order.customer?.name ||
+                    "";
 
 
-            const matchesSearch =
-                customer
-                    .toLowerCase()
-                    .includes(search) ||
-                id
-                    .toLowerCase()
-                    .includes(search);
+                const id =
+                    String(
+                        order.id || ""
+                    );
 
 
-            const orderStatus =
-                String(
-                    order.status ||
-                    "pending"
-                ).toLowerCase();
+                const matchesSearch =
+                    customer
+                        .toLowerCase()
+                        .includes(search) ||
+
+                    id
+                        .toLowerCase()
+                        .includes(search);
 
 
-            const matchesStatus =
-                status === "all" ||
-                orderStatus === status;
+                const orderStatus =
+                    String(
+                        order.status ||
+                        "pending_payment"
+                    ).toLowerCase();
 
 
-            return (
-                matchesSearch &&
-                matchesStatus
-            );
-
-        });
+                const matchesStatus =
+                    status === "all" ||
+                    orderStatus === status;
 
 
-    renderOrders(filtered);
+                return (
+                    matchesSearch &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    renderOrders(
+        filtered
+    );
 
 }
 
 
-function viewOrder(id) {
+/* =========================================================
+   VIEW ORDER
+========================================================= */
+
+function viewOrder(
+    id
+) {
 
     const order =
         orders.find(
             order =>
-                String(order.id) === String(id)
+                String(
+                    order.id
+                ) ===
+                String(id)
         );
 
 
@@ -311,88 +457,123 @@ function viewOrder(id) {
 
 
     const items =
-        order.items ||
-        order.products ||
-        [];
+        Array.isArray(
+            order.items
+        )
+            ? order.items
+            : [];
 
 
     const customer =
-        order.customerName ||
-        order.name ||
         order.customer?.name ||
         "Unknown";
 
 
     const email =
-        order.email ||
         order.customer?.email ||
         "—";
 
 
     const phone =
-        order.phone ||
         order.customer?.phone ||
         "—";
 
 
     const address =
-        order.address ||
-        order.shippingAddress ||
-        order.customer?.address ||
+        order.delivery?.address ||
+        "—";
+
+
+    const city =
+        order.delivery?.city ||
+        "—";
+
+
+    const state =
+        order.delivery?.state ||
         "—";
 
 
     const total =
         Number(
-            order.total ||
-            order.totalAmount ||
-            0
+            order.total || 0
+        );
+
+
+    const subtotal =
+        Number(
+            order.subtotal || 0
+        );
+
+
+    const deliveryFee =
+        Number(
+            order.deliveryFee || 0
         );
 
 
     const status =
         order.status ||
-        "pending";
+        "pending_payment";
+
+
+    const paymentStatus =
+        order.paymentStatus ||
+        "unpaid";
 
 
     const itemsHTML =
-        Array.isArray(items)
-            ? items.map(item => {
+        items.length > 0
 
-                const name =
-                    item.title ||
-                    item.name ||
-                    "Book";
+            ? items
+                .map(
+                    item => {
 
-                const quantity =
-                    item.quantity || 1;
+                        const name =
+                            item.title ||
+                            "Book";
 
-                const price =
-                    Number(
-                        item.price || 0
-                    );
 
-                return `
+                        const quantity =
+                            Number(
+                                item.quantity
+                            ) || 1;
 
-                    <div class="item">
 
-                        <span>
-                            ${escapeHTML(name)}
-                            × ${quantity}
-                        </span>
+                        const price =
+                            Number(
+                                item.price
+                            ) || 0;
 
-                        <span>
-                            ₦${(
-                                price *
-                                quantity
-                            ).toLocaleString()}
-                        </span>
 
-                    </div>
+                        return `
 
-                `;
+                            <div class="item">
 
-            }).join("")
+                                <span>
+                                    ${escapeHTML(
+                                        name
+                                    )}
+                                    × ${quantity}
+                                </span>
+
+                                <span>
+                                    ₦${(
+                                        price *
+                                        quantity
+                                    ).toLocaleString(
+                                        "en-NG"
+                                    )}
+                                </span>
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("")
+
             : "<p>No item information.</p>";
 
 
@@ -402,16 +583,19 @@ function viewOrder(id) {
 
         <div class="order-detail">
 
-            <h3>Order #${escapeHTML(
-                String(order.id || "N/A")
-            )}</h3>
+            <h3>
+                Order #${escapeHTML(
+                    String(
+                        order.id ||
+                        "N/A"
+                    )
+                )}
+            </h3>
 
             <p>
                 Date:
                 ${formatDate(
-                    order.createdAt ||
-                    order.date ||
-                    order.created
+                    order.createdAt
                 )}
             </p>
 
@@ -420,22 +604,29 @@ function viewOrder(id) {
 
         <div class="order-detail">
 
-            <h3>Customer</h3>
+            <h3>
+                Customer
+            </h3>
 
             <p>
-                Name: ${escapeHTML(customer)}
+                Name:
+                ${escapeHTML(
+                    customer
+                )}
             </p>
 
             <p>
-                Email: ${escapeHTML(email)}
+                Email:
+                ${escapeHTML(
+                    email
+                )}
             </p>
 
             <p>
-                Phone: ${escapeHTML(phone)}
-            </p>
-
-            <p>
-                Address: ${escapeHTML(address)}
+                Phone:
+                ${escapeHTML(
+                    phone
+                )}
             </p>
 
         </div>
@@ -443,7 +634,39 @@ function viewOrder(id) {
 
         <div class="order-detail">
 
-            <h3>Items</h3>
+            <h3>
+                Delivery
+            </h3>
+
+            <p>
+                Address:
+                ${escapeHTML(
+                    address
+                )}
+            </p>
+
+            <p>
+                City:
+                ${escapeHTML(
+                    city
+                )}
+            </p>
+
+            <p>
+                State:
+                ${escapeHTML(
+                    state
+                )}
+            </p>
+
+        </div>
+
+
+        <div class="order-detail">
+
+            <h3>
+                Items
+            </h3>
 
             <div class="items-list">
                 ${itemsHTML}
@@ -454,10 +677,42 @@ function viewOrder(id) {
 
         <div class="order-detail">
 
-            <h3>Total</h3>
+            <h3>
+                Payment
+            </h3>
 
             <p>
-                ₦${total.toLocaleString()}
+                Payment Status:
+                <strong>
+                    ${escapeHTML(
+                        formatPaymentStatus(
+                            paymentStatus
+                        )
+                    )}
+                </strong>
+            </p>
+
+            <p>
+                Subtotal:
+                ₦${subtotal.toLocaleString(
+                    "en-NG"
+                )}
+            </p>
+
+            <p>
+                Delivery:
+                ₦${deliveryFee.toLocaleString(
+                    "en-NG"
+                )}
+            </p>
+
+            <p>
+                Total:
+                <strong>
+                    ₦${total.toLocaleString(
+                        "en-NG"
+                    )}
+                </strong>
             </p>
 
         </div>
@@ -465,46 +720,98 @@ function viewOrder(id) {
 
         <div class="order-detail">
 
-            <h3>Order Status</h3>
-            <label for="orderStatus" class="sr-only">
+            <h3>
+                Order Status
+            </h3>
+
+
+            <label
+                for="orderStatus"
+                class="sr-only"
+            >
                 Order status
             </label>
+
 
             <select
                 id="orderStatus"
                 class="status-select"
             >
 
-                <option value="pending"
-                    ${status === "pending" ? "selected" : ""}>
-                    Pending
+                <option
+                    value="pending_payment"
+                    ${
+                        status ===
+                        "pending_payment"
+                            ? "selected"
+                            : ""
+                    }
+                >
+                    Pending Payment
                 </option>
 
-                <option value="processing"
-                    ${status === "processing" ? "selected" : ""}>
+
+                <option
+                    value="processing"
+                    ${
+                        status ===
+                        "processing"
+                            ? "selected"
+                            : ""
+                    }
+                >
                     Processing
                 </option>
 
-                <option value="shipped"
-                    ${status === "shipped" ? "selected" : ""}>
+
+                <option
+                    value="shipped"
+                    ${
+                        status ===
+                        "shipped"
+                            ? "selected"
+                            : ""
+                    }
+                >
                     Shipped
                 </option>
 
-                <option value="delivered"
-                    ${status === "delivered" ? "selected" : ""}>
+
+                <option
+                    value="delivered"
+                    ${
+                        status ===
+                        "delivered"
+                            ? "selected"
+                            : ""
+                    }
+                >
                     Delivered
                 </option>
 
-                <option value="cancelled"
-                    ${status === "cancelled" ? "selected" : ""}>
+
+                <option
+                    value="cancelled"
+                    ${
+                        status ===
+                        "cancelled"
+                            ? "selected"
+                            : ""
+                    }
+                >
                     Cancelled
                 </option>
 
             </select>
 
+
             <button
                 class="save-status-btn"
-                onclick="updateOrderStatus('${order.id}')"
+                onclick="updateOrderStatus('${escapeHTML(
+                    String(
+                        order.id
+                    )
+                )}')"
             >
                 Update Status
             </button>
@@ -516,12 +823,20 @@ function viewOrder(id) {
 
     document.getElementById(
         "orderModal"
-    ).classList.add("show");
+    ).classList.add(
+        "show"
+    );
 
 }
 
 
-async function updateOrderStatus(id) {
+/* =========================================================
+   UPDATE ORDER STATUS
+========================================================= */
+
+async function updateOrderStatus(
+    id
+) {
 
     const status =
         document.getElementById(
@@ -535,16 +850,20 @@ async function updateOrderStatus(id) {
             await fetch(
                 `${API_URL}/${id}`,
                 {
-                    method: "PUT",
+
+                    method:
+                        "PUT",
 
                     headers: {
                         "Content-Type":
                             "application/json"
                     },
 
-                    body: JSON.stringify({
-                        status
-                    })
+                    body:
+                        JSON.stringify({
+                            status
+                        })
+
                 }
             );
 
@@ -552,10 +871,15 @@ async function updateOrderStatus(id) {
         if (!response.ok) {
 
             const result =
-                await response.json()
-                    .catch(() => ({}));
+                await response
+                    .json()
+                    .catch(
+                        () => ({})
+                    );
+
 
             throw new Error(
+                result.message ||
                 result.error ||
                 "Failed to update order"
             );
@@ -565,7 +889,9 @@ async function updateOrderStatus(id) {
 
         closeModal();
 
+
         await loadOrders();
+
 
         alert(
             "Order status updated successfully."
@@ -574,57 +900,172 @@ async function updateOrderStatus(id) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Order status update error:",
+            error
+        );
 
-        alert(error.message);
+
+        alert(
+            error.message
+        );
 
     }
 
 }
 
 
-function closeModal(event) {
+/* =========================================================
+   FORMAT STATUS
+========================================================= */
+
+function formatStatus(
+    status
+) {
+
+    const labels = {
+
+        pending_payment:
+            "Pending Payment",
+
+        processing:
+            "Processing",
+
+        shipped:
+            "Shipped",
+
+        delivered:
+            "Delivered",
+
+        cancelled:
+            "Cancelled"
+
+    };
+
+
+    return (
+        labels[status] ||
+        status
+    );
+
+}
+
+
+/* =========================================================
+   FORMAT PAYMENT STATUS
+========================================================= */
+
+function formatPaymentStatus(
+    status
+) {
+
+    const labels = {
+
+        unpaid:
+            "Unpaid",
+
+        paid:
+            "Paid",
+
+        failed:
+            "Failed",
+
+        refunded:
+            "Refunded"
+
+    };
+
+
+    return (
+        labels[status] ||
+        status
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeModal(
+    event
+) {
 
     if (
         event &&
         event.target !==
-        document.getElementById("orderModal")
+        document.getElementById(
+            "orderModal"
+        )
     ) {
+
         return;
+
     }
+
 
     document.getElementById(
         "orderModal"
-    ).classList.remove("show");
+    ).classList.remove(
+        "show"
+    );
 
 }
 
 
-function formatDate(date) {
+/* =========================================================
+   FORMAT DATE
+========================================================= */
+
+function formatDate(
+    date
+) {
 
     if (!date) {
         return "—";
     }
 
+
     const parsed =
         new Date(date);
 
-    if (isNaN(parsed.getTime())) {
+
+    if (
+        isNaN(
+            parsed.getTime()
+        )
+    ) {
+
         return "—";
+
     }
 
-    return parsed.toLocaleString();
+
+    return parsed.toLocaleString(
+        "en-NG"
+    );
 
 }
 
 
-function escapeHTML(value) {
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(
+    value
+) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     div.textContent =
         value ?? "";
+
 
     return div.innerHTML;
 

@@ -3,6 +3,7 @@
    ADMIN LOGIN
 ========================================================= */
 
+
 /* ================= API ================= */
 
 const LOGIN_API_URL =
@@ -42,13 +43,10 @@ loginForm.addEventListener(
             ).value;
 
 
-        loginMessage.textContent =
-            "";
+        loginMessage.textContent = "";
 
 
-        loginButton.disabled =
-            true;
-
+        loginButton.disabled = true;
 
         loginButton.textContent =
             "Signing In...";
@@ -61,6 +59,8 @@ loginForm.addEventListener(
                     LOGIN_API_URL,
                     {
                         method: "POST",
+
+                        credentials: "include",
 
                         headers: {
                             "Content-Type":
@@ -80,7 +80,14 @@ loginForm.addEventListener(
                 await response.json();
 
 
-            if (!response.ok) {
+            /* =================
+               CHECK RESPONSE
+            ================= */
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
 
                 throw new Error(
                     result.message ||
@@ -90,34 +97,19 @@ loginForm.addEventListener(
             }
 
 
-            if (!result.success || !result.token) {
-
-                throw new Error(
-                    result.message ||
-                    "Login failed"
-                );
-
-            }
-
-
             /* =================
-               STORE TOKEN
-            ================= */
-
-            localStorage.setItem(
-                "adminToken",
-                result.token
-            );
-
-
-            /* =================
-               REDIRECT
+               LOGIN SUCCESS
+               
+               The JWT is already
+               stored by the server
+               in the HTTP-only cookie.
             ================= */
 
             window.location.href =
                 "/admin";
 
         }
+
 
         catch (error) {
 
@@ -128,9 +120,11 @@ loginForm.addEventListener(
 
 
             loginMessage.textContent =
-                error.message;
+                error.message ||
+                "Login failed.";
 
         }
+
 
         finally {
 

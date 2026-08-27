@@ -2,28 +2,52 @@
    A.F. BOOKSTORE
    ADMIN BOOK MANAGEMENT
 ========================================================= */
+
 if (!requireAdminAuth()) {
-    window.location.href = "/admin/login";
+
+    window.location.href =
+        "/admin/login";
+
 }
+
 
 /* ================= API ================= */
 
-const API_URL = "/api/admin/books";
+const API_URL =
+    "/api/admin/books";
 
 
 /* ================= DOM ELEMENTS ================= */
 
 const formContainer =
-    document.getElementById("bookFormContainer");
+    document.getElementById(
+        "bookFormContainer"
+    );
 
 const bookForm =
-    document.getElementById("bookForm");
+    document.getElementById(
+        "bookForm"
+    );
 
 const tableBody =
-    document.getElementById("booksTableBody");
+    document.getElementById(
+        "booksTableBody"
+    );
 
 const message =
-    document.getElementById("message");
+    document.getElementById(
+        "message"
+    );
+
+const imageInput =
+    document.getElementById(
+        "image"
+    );
+
+const currentCover =
+    document.getElementById(
+        "currentCover"
+    );
 
 
 /* ================= BOOK DATA ================= */
@@ -49,12 +73,17 @@ async function loadBooks() {
         </tr>
     `;
 
+
     try {
 
         const response =
-            await fetch(API_URL, {
-                headers: getAdminHeaders()
-            });
+            await fetch(
+                API_URL,
+                {
+                    headers:
+                        getAdminHeaders()
+                }
+            );
 
 
         const result =
@@ -139,6 +168,7 @@ function renderBooks() {
                 <tr>
 
                     <td>
+
                         ${
                             book.cover
                                 ? `
@@ -155,6 +185,7 @@ function renderBooks() {
                                     <div class="book-image"></div>
                                   `
                         }
+
                     </td>
 
 
@@ -244,6 +275,9 @@ function openAddForm() {
         "Add New Book";
 
 
+    currentCover.innerHTML = "";
+
+
     formContainer.classList.add(
         "show"
     );
@@ -275,6 +309,9 @@ function closeForm() {
     document.getElementById(
         "bookId"
     ).value = "";
+
+
+    currentCover.innerHTML = "";
 
 }
 
@@ -338,10 +375,44 @@ function editBook(id) {
         book.stockNumber ?? 0;
 
 
-    document.getElementById(
-        "image"
-    ).value =
-        book.cover || "";
+    /*
+       Browsers do not allow JavaScript
+       to assign an existing file to
+       a file input.
+
+       Therefore the input is cleared
+       when editing.
+    */
+
+    imageInput.value = "";
+
+
+    if (book.cover) {
+
+        currentCover.innerHTML = `
+            <div class="current-cover-label">
+                Current Cover
+            </div>
+
+            <img
+                src="${escapeHTML(book.cover)}"
+                class="current-cover-image"
+                alt="Current book cover"
+            >
+
+            <small>
+                Choose a new image only if you want
+                to replace the current cover.
+            </small>
+        `;
+
+    }
+
+    else {
+
+        currentCover.innerHTML = "";
+
+    }
 
 
     document.getElementById(
@@ -372,6 +443,111 @@ function editBook(id) {
 }
 
 
+/* ================= IMAGE PREVIEW ================= */
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        const file =
+            imageInput.files[0];
+
+
+        if (!file) {
+
+            return;
+
+        }
+
+
+        if (
+            !file.type.startsWith(
+                "image/"
+            )
+        ) {
+
+            showMessage(
+                "Please select a valid image file."
+            );
+
+            imageInput.value = "";
+
+            return;
+
+        }
+
+
+        /*
+           Prevent unnecessarily large
+           client-side previews.
+        */
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+
+            showMessage(
+                "Image must be smaller than 5MB."
+            );
+
+            imageInput.value = "";
+
+            return;
+
+        }
+
+
+        const imageURL =
+            URL.createObjectURL(file);
+
+
+        currentCover.innerHTML = `
+            <div class="current-cover-label">
+                New Cover Preview
+            </div>
+
+            <img
+                src="${imageURL}"
+                class="current-cover-image"
+                alt="New book cover preview"
+            >
+
+            <small>
+                This image will replace the current
+                cover when the book is saved.
+            </small>
+        `;
+
+
+        /*
+           Release the temporary object URL
+           after the image has loaded.
+        */
+
+        const previewImage =
+            currentCover.querySelector(
+                ".current-cover-image"
+            );
+
+
+        if (previewImage) {
+
+            previewImage.onload =
+                () => {
+
+                    URL.revokeObjectURL(
+                        imageURL
+                    );
+
+                };
+
+        }
+
+    }
+);
+
+
 /* ================= SAVE BOOK ================= */
 
 bookForm.addEventListener(
@@ -387,48 +563,81 @@ bookForm.addEventListener(
             ).value;
 
 
-        const bookData = {
+        /*
+           FormData handles:
 
-            title:
-                document.getElementById(
-                    "title"
-                ).value.trim(),
+           - Text fields
+           - Uploaded image
+        */
 
-            author:
-                document.getElementById(
-                    "author"
-                ).value.trim(),
+        const formData =
+            new FormData();
 
-            price:
-                Number(
-                    document.getElementById(
-                        "price"
-                    ).value
-                ),
 
-            category:
-                document.getElementById(
-                    "category"
-                ).value.trim(),
+        formData.append(
+            "title",
+            document.getElementById(
+                "title"
+            ).value.trim()
+        );
 
-            stockNumber:
-                Number(
-                    document.getElementById(
-                        "stock"
-                    ).value
-                ),
 
-            cover:
-                document.getElementById(
-                    "image"
-                ).value.trim(),
+        formData.append(
+            "author",
+            document.getElementById(
+                "author"
+            ).value.trim()
+        );
 
-            description:
-                document.getElementById(
-                    "description"
-                ).value.trim()
 
-        };
+        formData.append(
+            "price",
+            document.getElementById(
+                "price"
+            ).value
+        );
+
+
+        formData.append(
+            "category",
+            document.getElementById(
+                "category"
+            ).value.trim()
+        );
+
+
+        formData.append(
+            "stockNumber",
+            document.getElementById(
+                "stock"
+            ).value
+        );
+
+
+        formData.append(
+            "description",
+            document.getElementById(
+                "description"
+            ).value.trim()
+        );
+
+
+        /*
+           Only send an image when one
+           was actually selected.
+        */
+
+        if (
+            imageInput.files &&
+            imageInput.files.length > 0
+        ) {
+
+            formData.append(
+                "image",
+                imageInput.files[0]
+            );
+
+        }
 
 
         try {
@@ -440,18 +649,20 @@ bookForm.addEventListener(
 
             if (id !== "") {
 
-                response = await fetch(
-                    `${API_URL}/${encodeURIComponent(id)}`,
-                    {
-                        method: "PUT",
-                
-                        headers: getAdminHeaders({
-                            "Content-Type": "application/json"
-                        }),
-                
-                        body: JSON.stringify(bookData)
-                    }
-                );
+                response =
+                    await fetch(
+                        `${API_URL}/${encodeURIComponent(id)}`,
+                        {
+
+                            method: "PUT",
+
+                            headers:
+                                getAdminHeaders(),
+
+                            body: formData
+
+                        }
+                    );
 
             }
 
@@ -460,18 +671,20 @@ bookForm.addEventListener(
 
             else {
 
-                response = await fetch(
-                    API_URL,
-                    {
-                        method: "POST",
-                
-                        headers: getAdminHeaders({
-                            "Content-Type": "application/json"
-                        }),
-                
-                        body: JSON.stringify(bookData)
-                    }
-                );
+                response =
+                    await fetch(
+                        API_URL,
+                        {
+
+                            method: "POST",
+
+                            headers:
+                                getAdminHeaders(),
+
+                            body: formData
+
+                        }
+                    );
 
             }
 
@@ -523,7 +736,8 @@ bookForm.addEventListener(
 
 
             showMessage(
-                error.message
+                error.message ||
+                "Failed to save book."
             );
 
         }
@@ -536,9 +750,28 @@ bookForm.addEventListener(
 
 async function deleteBook(id) {
 
+    const book =
+        books.find(
+            book =>
+                String(book.id) ===
+                String(id)
+        );
+
+
+    if (!book) {
+
+        showMessage(
+            "Book not found."
+        );
+
+        return;
+
+    }
+
+
     const confirmed =
         confirm(
-            "Are you sure you want to delete this book?"
+            `Are you sure you want to delete "${book.title}"?`
         );
 
 
@@ -551,11 +784,16 @@ async function deleteBook(id) {
 
     try {
 
-        const response = await fetch(`${API_URL}/${encodeURIComponent(id)}`, {
-            method: "DELETE",
+        const response =
+            await fetch(
+                `${API_URL}/${encodeURIComponent(id)}`,
+                {
+                    method: "DELETE",
 
-            headers: getAdminHeaders()
-        });
+                    headers:
+                        getAdminHeaders()
+                }
+            );
 
 
         const result =
@@ -583,7 +821,7 @@ async function deleteBook(id) {
 
 
         showMessage(
-            "Book deleted successfully."
+            `"${book.title}" deleted successfully.`
         );
 
 
@@ -600,7 +838,8 @@ async function deleteBook(id) {
 
 
         showMessage(
-            error.message
+            error.message ||
+            "Failed to delete book."
         );
 
     }

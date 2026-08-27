@@ -1,15 +1,19 @@
-const fs = require('fs');
-const path = require('path');
+const fs =
+    require("fs");
+
+const path =
+    require("path");
 
 
 /* =========================================================
    BOOK DATA PATH
 ========================================================= */
 
-const booksPath = path.join(
-    __dirname,
-    '../data/books.json'
-);
+const booksPath =
+    path.join(
+        __dirname,
+        "../data/books.json"
+    );
 
 
 /* =========================================================
@@ -20,22 +24,29 @@ function getAllBooks() {
 
     try {
 
-        const data = fs.readFileSync(
-            booksPath,
-            'utf8'
+        const data =
+            fs.readFileSync(
+                booksPath,
+                "utf8"
+            );
+
+
+        return JSON.parse(
+            data
         );
 
-        return JSON.parse(data);
+    }
 
-    } catch (error) {
+    catch (error) {
 
         console.error(
-            'Error reading books.json:',
+            "Error reading books.json:",
             error
         );
 
+
         throw new Error(
-            'Unable to load book data'
+            "Unable to load book data"
         );
 
     }
@@ -47,16 +58,22 @@ function getAllBooks() {
    SAVE BOOKS
 ========================================================= */
 
-function saveBooks(books) {
+function saveBooks(
+    books
+) {
 
     fs.writeFileSync(
+
         booksPath,
+
         JSON.stringify(
             books,
             null,
             4
         ),
-        'utf8'
+
+        "utf8"
+
     );
 
 }
@@ -66,13 +83,20 @@ function saveBooks(books) {
    GET BOOK BY ID
 ========================================================= */
 
-function getBookById(id) {
+function getBookById(
+    id
+) {
 
-    const books = getAllBooks();
+    const books =
+        getAllBooks();
+
 
     return books.find(
+
         book =>
-            Number(book.id) === Number(id)
+            Number(book.id) ===
+            Number(id)
+
     );
 
 }
@@ -82,64 +106,101 @@ function getBookById(id) {
    CREATE BOOK
 ========================================================= */
 
-function createBook(bookData) {
+function createBook(
+    bookData
+) {
 
-    const books = getAllBooks();
+    const books =
+        getAllBooks();
 
 
     const newId =
         books.length > 0
+
             ? Math.max(
+
                 ...books.map(
-                    book => Number(book.id)
+
+                    book =>
+                        Number(book.id)
+
                 )
+
             ) + 1
+
             : 1;
 
 
     const newBook = {
 
-        id: newId,
+        id:
+            newId,
 
-        title: bookData.title,
+        title:
+            bookData.title,
 
-        author: bookData.author,
+        author:
+            bookData.author,
 
-        price: Number(bookData.price),
+        price:
+            Number(
+                bookData.price
+            ),
 
-        category: bookData.category,
+        category:
+            bookData.category,
 
         rating:
             bookData.rating !== undefined
-                ? Number(bookData.rating)
+
+                ? Number(
+                    bookData.rating
+                )
+
                 : 0,
 
         description:
-            bookData.description || '',
+            bookData.description ||
+            "",
 
         cover:
-            bookData.cover || '',
+            bookData.cover ||
+            "",
 
         stockStatus:
-            bookData.stockStatus === 'Out of Stock'
-                ? 'Out of Stock'
-                : 'In Stock',
+            bookData.stockStatus ===
+            "Out of Stock"
 
-        /*stockNumber: 
-            bookData.stockNumber || ''*/
+                ? "Out of Stock"
+
+                : "In Stock",
 
         stockNumber:
-            bookData.stockNumber !== undefined &&
-            bookData.stockNumber !== ''
-                ? Number(bookData.stockNumber)
+
+            bookData.stockNumber !==
+                undefined &&
+
+            bookData.stockNumber !==
+                ""
+
+                ? Number(
+                    bookData.stockNumber
+                )
+
                 : 0
 
     };
 
 
-    books.push(newBook);
+    books.push(
+        newBook
+    );
 
-    saveBooks(books);
+
+    saveBooks(
+        books
+    );
+
 
     return newBook;
 
@@ -150,19 +211,28 @@ function createBook(bookData) {
    UPDATE BOOK
 ========================================================= */
 
-function updateBook(id, bookData) {
+function updateBook(
+    id,
+    bookData
+) {
 
-    const books = getAllBooks();
+    const books =
+        getAllBooks();
 
 
     const index =
         books.findIndex(
+
             book =>
-                Number(book.id) === Number(id)
+                Number(book.id) ===
+                Number(id)
+
         );
 
 
-    if (index === -1) {
+    if (
+        index === -1
+    ) {
 
         return null;
 
@@ -177,57 +247,109 @@ function updateBook(id, bookData) {
 
         ...currentBook,
 
+
         title:
-            bookData.title !== undefined
+            bookData.title !==
+            undefined
+
                 ? bookData.title
+
                 : currentBook.title,
 
+
         author:
-            bookData.author !== undefined
+            bookData.author !==
+            undefined
+
                 ? bookData.author
+
                 : currentBook.author,
 
+
         price:
-            bookData.price !== undefined
-                ? Number(bookData.price)
+            bookData.price !==
+            undefined
+
+                ? Number(
+                    bookData.price
+                )
+
                 : currentBook.price,
 
+
         category:
-            bookData.category !== undefined
+            bookData.category !==
+            undefined
+
                 ? bookData.category
+
                 : currentBook.category,
 
+
         rating:
-            bookData.rating !== undefined
-                ? Number(bookData.rating)
+            bookData.rating !==
+            undefined
+
+                ? Number(
+                    bookData.rating
+                )
+
                 : currentBook.rating,
 
+
         description:
-            bookData.description !== undefined
+            bookData.description !==
+            undefined
+
                 ? bookData.description
+
                 : currentBook.description,
 
+
+        /*
+           Cover is only changed when
+           a new cover was uploaded.
+        */
+
         cover:
-            bookData.cover !== undefined
+            bookData.cover !==
+            undefined
+
                 ? bookData.cover
+
                 : currentBook.cover,
 
+
         stockStatus:
-            bookData.stockStatus === 'Out of Stock'
-                ? 'Out of Stock'
-                : 'In Stock',
+            bookData.stockStatus ===
+            "Out of Stock"
+
+                ? "Out of Stock"
+
+                : "In Stock",
+
 
         stockNumber:
-            bookData.stockNumber != undefined
-                ? Number(bookData.stockNumber)
+            bookData.stockNumber !==
+            undefined
+
+                ? Number(
+                    bookData.stockNumber
+                )
+
                 : currentBook.stockNumber
 
     };
 
 
-    books[index] = updatedBook;
+    books[index] =
+        updatedBook;
 
-    saveBooks(books);
+
+    saveBooks(
+        books
+    );
+
 
     return updatedBook;
 
@@ -238,19 +360,27 @@ function updateBook(id, bookData) {
    DELETE BOOK
 ========================================================= */
 
-function deleteBook(id) {
+function deleteBook(
+    id
+) {
 
-    const books = getAllBooks();
+    const books =
+        getAllBooks();
 
 
     const index =
         books.findIndex(
+
             book =>
-                Number(book.id) === Number(id)
+                Number(book.id) ===
+                Number(id)
+
         );
 
 
-    if (index === -1) {
+    if (
+        index === -1
+    ) {
 
         return null;
 
@@ -264,7 +394,10 @@ function deleteBook(id) {
         )[0];
 
 
-    saveBooks(books);
+    saveBooks(
+        books
+    );
+
 
     return deletedBook;
 

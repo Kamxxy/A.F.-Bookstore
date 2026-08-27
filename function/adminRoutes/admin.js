@@ -1,36 +1,84 @@
-const express = require('express');
+const express =
+    require("express");
+
 
 const adminAuth =
-    require('../middleware/adminAuth');
+    require("../middleware/adminAuth");
+
+
+const upload =
+    require("../middleware/upload");
+
 
 const {
+
     login,
+    logout,
     getBooks,
     getBook,
     create,
     update,
     remove
-} = require('../controllers/adminController');
+
+} = require(
+    "../controllers/adminController"
+);
 
 
-const router = express.Router();
+const router =
+    express.Router();
 
 
 /* =========================================================
    ADMIN LOGIN
+   PUBLIC
 ========================================================= */
 
 router.post(
-    '/login',
+    "/login",
     login
 );
 
 
 /* =========================================================
-   PROTECTED ADMIN ROUTES
+   ADMIN LOGOUT
+   PUBLIC
 ========================================================= */
 
-router.use(adminAuth);
+router.post(
+    "/logout",
+    logout
+);
+
+
+/* =========================================================
+   PROTECTED ADMIN API ROUTES
+========================================================= */
+
+router.use(
+    adminAuth
+);
+
+
+/* =========================================================
+   CHECK ADMIN AUTHENTICATION
+========================================================= */
+
+router.get(
+    "/auth",
+    (req, res) => {
+
+        res.json({
+
+            success: true,
+
+            admin:
+                req.admin
+
+        });
+
+    }
+);
 
 
 /* =========================================================
@@ -38,33 +86,48 @@ router.use(adminAuth);
 ========================================================= */
 
 router.get(
-    '/books',
+    "/books",
     getBooks
 );
 
 
 router.get(
-    '/books/:id',
+    "/books/:id",
     getBook
 );
 
 
+/* =========================================================
+   CREATE BOOK
+========================================================= */
+
 router.post(
-    '/books',
+    "/books",
+    upload.single("image"),
     create
 );
 
 
+/* =========================================================
+   UPDATE BOOK
+========================================================= */
+
 router.put(
-    '/books/:id',
+    "/books/:id",
+    upload.single("image"),
     update
 );
 
 
+/* =========================================================
+   DELETE BOOK
+========================================================= */
+
 router.delete(
-    '/books/:id',
+    "/books/:id",
     remove
 );
 
 
-module.exports = router;
+module.exports =
+    router;

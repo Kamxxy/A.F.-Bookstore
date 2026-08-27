@@ -166,5 +166,17 @@
         "cover": "/images/books/great-gatsby.jpg",
         "stockStatus": "In Stock",
         "stockNumber": 10
+    },
+    {
+        "id": 16,
+        "title": "Atomic Habits",
+        "author": "James Clear",
+        "price": 15000,
+        "category": "Self-Development",
+        "rating": 0,
+        "description": "A practical guide to building good habits, breaking bad ones, and making small changes that lead to remarkable results.",
+        "cover": "/uploads/covers/book-1787823732074-256738353.png",
+        "stockStatus": "In Stock",
+        "stockNumber": 12
     }
 ]

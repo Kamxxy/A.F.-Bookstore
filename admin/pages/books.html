@@ -15,18 +15,18 @@
     <!-- Shared admin styles -->
     <link
         rel="stylesheet"
-        href="css/admin.css"
+        href="/admin-assets/css/admin.css"
     >
 
     <link
         rel="stylesheet"
-        href="css/sidebar.css"
+        href="/admin-assets/css/sidebar.css"
     >
 
     <!-- Books page styles -->
     <link
         rel="stylesheet"
-        href="css/books.css"
+        href="/admin-assets/css/books.css"
     >
 
 </head>
@@ -138,7 +138,10 @@
                 </h3>
 
 
-                <form id="bookForm">
+                <form
+                    id="bookForm"
+                    enctype="multipart/form-data"
+                >
 
 
                     <input
@@ -206,6 +209,7 @@
                             <input
                                 type="text"
                                 id="category"
+                                required
                             >
 
                         </div>
@@ -227,17 +231,47 @@
                         </div>
 
 
+                        <!-- =================================
+                             BOOK COVER
+                        ================================== -->
+                        
                         <div class="form-group">
-
+                        
                             <label for="image">
-                                Image URL
+                                Book Cover
                             </label>
-
+                        
                             <input
-                                type="text"
+                                type="file"
                                 id="image"
+                                name="image"
+                                accept="image/jpeg,image/png,image/webp,image/gif"
                             >
-
+                        
+                            <small>
+                                JPG, PNG, WEBP or GIF. Maximum 5MB.
+                            </small>
+                        
+                        
+                            <!-- Existing cover when editing -->
+                        
+                            <div
+                                id="currentCover"
+                                class="current-cover"
+                            ></div>
+                        
+                        
+                            <!-- Preview for newly selected image -->
+                        
+                            <div
+                                id="imagePreview"
+                                class="image-preview"
+                            >
+                                <span>
+                                    No new cover selected
+                                </span>
+                            </div>
+                        
                         </div>
 
 
@@ -347,13 +381,12 @@
      JAVASCRIPT
 ========================================================= -->
 
-<script src="js/auth.js"></script>
+<script src="/admin-assets/js/auth.js"></script>
 
-<script src="js/sidebar.js"></script>
+<script src="/admin-assets/js/sidebar.js"></script>
 
-<script src="js/books.js"></script>
+<script src="/admin-assets/js/books.js"></script>
 
 
 </body>
-
 </html>

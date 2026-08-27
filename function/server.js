@@ -34,6 +34,16 @@ app.use(
     })
 );
 
+app.use(
+    "/uploads",
+    express.static(
+        path.join(
+            __dirname,
+            "uploads"
+        )
+    )
+);
+
 // ========================
 // RATE LIMITERS
 // ========================
@@ -68,8 +78,9 @@ app.use(
 ========================================================= */
 
 app.use(
+    '/admin-assets',
     express.static(
-        path.join(__dirname, '../public/admin')
+        path.join(__dirname, '../admin/assets')
     )
 );
 
@@ -85,7 +96,6 @@ app.use(
 
 app.use(
     '/admin',
-    //adminRouter,
     adminRoutes
 );
 
@@ -98,7 +108,6 @@ app.use(
     '/api/admin',
     adminRouter
 );
-
 
 /* =========================================================
    404 PAGE

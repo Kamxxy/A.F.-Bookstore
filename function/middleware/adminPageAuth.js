@@ -9,6 +9,10 @@ function adminPageAuth(req, res, next) {
             req.cookies?.adminToken;
 
 
+        /* =====================================================
+           NO TOKEN
+        ===================================================== */
+
         if (!token) {
 
             return res.redirect(
@@ -18,12 +22,20 @@ function adminPageAuth(req, res, next) {
         }
 
 
+        /* =====================================================
+           VERIFY TOKEN
+        ===================================================== */
+
         const decoded =
             jwt.verify(
                 token,
                 process.env.JWT_SECRET
             );
 
+
+        /* =====================================================
+           CHECK ADMIN ROLE
+        ===================================================== */
 
         if (
             decoded.role !== 'admin'
@@ -35,6 +47,10 @@ function adminPageAuth(req, res, next) {
 
         }
 
+
+        /* =====================================================
+           AUTHENTICATED
+        ===================================================== */
 
         req.admin = decoded;
 

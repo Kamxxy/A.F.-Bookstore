@@ -1,4 +1,6 @@
-const jwt = require('jsonwebtoken');
+const jwt =
+    require("jsonwebtoken");
+
 
 const {
     getAllBooks,
@@ -6,14 +8,19 @@ const {
     createBook,
     updateBook,
     deleteBook
-} = require('../services/bookService');
+} = require(
+    "../services/bookService"
+);
 
 
 /* =========================================================
    ADMIN LOGIN
 ========================================================= */
 
-function login(req, res) {
+function login(
+    req,
+    res
+) {
 
     try {
 
@@ -29,60 +36,85 @@ function login(req, res) {
         ) {
 
             return res.status(400).json({
+
                 success: false,
+
                 message:
-                    'Username and password are required'
+                    "Username and password are required"
+
             });
 
         }
 
 
         if (
-            username !== process.env.ADMIN_USERNAME ||
-            password !== process.env.ADMIN_PASSWORD
+            username !==
+                process.env.ADMIN_USERNAME ||
+
+            password !==
+                process.env.ADMIN_PASSWORD
         ) {
 
             return res.status(401).json({
+
                 success: false,
+
                 message:
-                    'Invalid admin credentials'
+                    "Invalid admin credentials"
+
             });
 
         }
 
 
-        const token = jwt.sign(
-            {
-                username,
-                role: 'admin'
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: '2h'
-            }
-        );
+        const token =
+            jwt.sign(
+
+                {
+                    username,
+                    role: "admin"
+                },
+
+                process.env.JWT_SECRET,
+
+                {
+                    expiresIn: "2h"
+                }
+
+            );
 
 
         res.cookie(
-            'adminToken',
-            token,
-            {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 2 * 60 * 60 * 1000
-            }
-        );
-        
-        res.json({
-        
-            success: true,
-        
-            message:
-                'Admin login successful',
 
-            token
-        
+            "adminToken",
+
+            token,
+
+            {
+
+                httpOnly: true,
+
+                secure:
+                    process.env.NODE_ENV ===
+                    "production",
+
+                sameSite: "lax",
+
+                maxAge:
+                    2 * 60 * 60 * 1000
+
+            }
+
+        );
+
+
+        res.json({
+
+            success: true,
+
+            message:
+                "Admin login successful"
+
         });
 
     }
@@ -90,14 +122,81 @@ function login(req, res) {
     catch (error) {
 
         console.error(
-            'Admin login error:',
+            "Admin login error:",
             error
         );
 
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Login failed'
+                "Login failed"
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   ADMIN LOGOUT
+========================================================= */
+
+function logout(
+    req,
+    res
+) {
+
+    try {
+
+        /*
+           Remove the HTTP-only JWT cookie.
+
+           The cookie options should match the
+           options used when the cookie was created.
+        */
+
+        res.clearCookie(
+            "adminToken",
+            {
+                httpOnly: true,
+                secure:
+                    process.env.NODE_ENV ===
+                    "production",
+                sameSite: "lax"
+            }
+        );
+
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "Admin logged out successfully"
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Admin logout error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Logout failed"
+
         });
 
     }
@@ -109,7 +208,10 @@ function login(req, res) {
    GET ALL BOOKS
 ========================================================= */
 
-function getBooks(req, res) {
+function getBooks(
+    req,
+    res
+) {
 
     try {
 
@@ -118,8 +220,11 @@ function getBooks(req, res) {
 
 
         res.json({
+
             success: true,
+
             books
+
         });
 
     }
@@ -127,14 +232,18 @@ function getBooks(req, res) {
     catch (error) {
 
         console.error(
-            'Admin book loading error:',
+            "Admin book loading error:",
             error
         );
 
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Failed to load books'
+                "Failed to load books"
+
         });
 
     }
@@ -146,7 +255,10 @@ function getBooks(req, res) {
    GET BOOK
 ========================================================= */
 
-function getBook(req, res) {
+function getBook(
+    req,
+    res
+) {
 
     try {
 
@@ -159,17 +271,23 @@ function getBook(req, res) {
         if (!book) {
 
             return res.status(404).json({
+
                 success: false,
+
                 message:
-                    'Book not found'
+                    "Book not found"
+
             });
 
         }
 
 
         res.json({
+
             success: true,
+
             book
+
         });
 
     }
@@ -177,14 +295,18 @@ function getBook(req, res) {
     catch (error) {
 
         console.error(
-            'Admin book loading error:',
+            "Admin book loading error:",
             error
         );
 
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Failed to load book'
+                "Failed to load book"
+
         });
 
     }
@@ -196,37 +318,65 @@ function getBook(req, res) {
    CREATE BOOK
 ========================================================= */
 
-function create(req, res) {
+function create(
+    req,
+    res
+) {
 
     try {
 
         const {
+
             title,
             author,
             price,
             category,
             description,
-            cover,
             rating,
             stockStatus,
             stockNumber
+
         } = req.body;
 
 
         if (
+
             !title ||
             !author ||
             price === undefined ||
             !category
+
         ) {
 
+            if (req.file) {
+
+                const fs =
+                    require("fs");
+
+                fs.unlink(
+                    req.file.path,
+                    () => {}
+                );
+
+            }
+
+
             return res.status(400).json({
+
                 success: false,
+
                 message:
-                    'Title, author, price and category are required'
+                    "Title, author, price and category are required"
+
             });
 
         }
+
+
+        const cover =
+            req.file
+                ? `/uploads/covers/${req.file.filename}`
+                : "";
 
 
         const newBook =
@@ -237,10 +387,10 @@ function create(req, res) {
                 price,
                 category,
                 description,
-                cover,
                 rating,
                 stockStatus,
-                stockNumber
+                stockNumber,
+                cover
 
             });
 
@@ -250,7 +400,7 @@ function create(req, res) {
             success: true,
 
             message:
-                'Book created successfully',
+                "Book created successfully",
 
             book:
                 newBook
@@ -262,14 +412,31 @@ function create(req, res) {
     catch (error) {
 
         console.error(
-            'Admin book creation error:',
+            "Admin book creation error:",
             error
         );
 
+
+        if (req.file) {
+
+            const fs =
+                require("fs");
+
+            fs.unlink(
+                req.file.path,
+                () => {}
+            );
+
+        }
+
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Failed to create book'
+                "Failed to create book"
+
         });
 
     }
@@ -281,23 +448,58 @@ function create(req, res) {
    UPDATE BOOK
 ========================================================= */
 
-function update(req, res) {
+function update(
+    req,
+    res
+) {
 
     try {
 
+        const updateData = {
+            ...req.body
+        };
+
+
+        if (req.file) {
+
+            updateData.cover =
+                `/uploads/covers/${req.file.filename}`;
+
+        }
+
+
         const updatedBook =
             updateBook(
+
                 req.params.id,
-                req.body
+
+                updateData
+
             );
 
 
         if (!updatedBook) {
 
+            if (req.file) {
+
+                const fs =
+                    require("fs");
+
+                fs.unlink(
+                    req.file.path,
+                    () => {}
+                );
+
+            }
+
+
             return res.status(404).json({
+
                 success: false,
+
                 message:
-                    'Book not found'
+                    "Book not found"
+
             });
 
         }
@@ -308,7 +510,7 @@ function update(req, res) {
             success: true,
 
             message:
-                'Book updated successfully',
+                "Book updated successfully",
 
             book:
                 updatedBook
@@ -320,14 +522,31 @@ function update(req, res) {
     catch (error) {
 
         console.error(
-            'Admin book update error:',
+            "Admin book update error:",
             error
         );
 
+
+        if (req.file) {
+
+            const fs =
+                require("fs");
+
+            fs.unlink(
+                req.file.path,
+                () => {}
+            );
+
+        }
+
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Failed to update book'
+                "Failed to update book"
+
         });
 
     }
@@ -339,7 +558,10 @@ function update(req, res) {
    DELETE BOOK
 ========================================================= */
 
-function remove(req, res) {
+function remove(
+    req,
+    res
+) {
 
     try {
 
@@ -352,9 +574,12 @@ function remove(req, res) {
         if (!deletedBook) {
 
             return res.status(404).json({
+
                 success: false,
+
                 message:
-                    'Book not found'
+                    "Book not found"
+
             });
 
         }
@@ -365,7 +590,7 @@ function remove(req, res) {
             success: true,
 
             message:
-                'Book deleted successfully',
+                "Book deleted successfully",
 
             book:
                 deletedBook
@@ -377,14 +602,18 @@ function remove(req, res) {
     catch (error) {
 
         console.error(
-            'Admin book deletion error:',
+            "Admin book deletion error:",
             error
         );
 
+
         res.status(500).json({
+
             success: false,
+
             message:
-                'Failed to delete book'
+                "Failed to delete book"
+
         });
 
     }
@@ -399,6 +628,8 @@ function remove(req, res) {
 module.exports = {
 
     login,
+
+    logout,
 
     getBooks,
 

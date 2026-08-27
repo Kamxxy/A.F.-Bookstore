@@ -1,88 +1,138 @@
-const express = require('express');
-const path = require('path');
+const express =
+    require("express");
+
+const path =
+    require("path");
+
 
 const adminPageAuth =
-    require('../middleware/adminPageAuth');
-
-const router = express.Router();
+    require("../middleware/adminPageAuth");
 
 
-const adminPath = path.join(
-    __dirname,
-    '../../public/admin'
-);
+const router =
+    express.Router();
+
+
+const adminPagesPath =
+    path.join(
+        __dirname,
+        "../../admin/pages"
+    );
 
 
 /* =========================================================
-   ADMIN LOGIN
+   LOGIN
    PUBLIC
 ========================================================= */
 
-router.get('/login', (req, res) => {
+router.get(
+    "/login",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            adminPath,
-            'login.html'
-        )
-    );
+        res.sendFile(
+            path.join(
+                adminPagesPath,
+                "login.html"
+            )
+        );
 
-});
+    }
+);
 
 
 /* =========================================================
    PROTECTED ADMIN PAGES
 ========================================================= */
 
-router.use(adminPageAuth);
+router.use(
+    adminPageAuth
+);
+
+
+/* =========================================================
+   DISABLE ADMIN PAGE CACHING
+========================================================= */
+
+router.use(
+    (req, res, next) => {
+
+        res.set(
+            "Cache-Control",
+            "no-store, no-cache, must-revalidate, private"
+        );
+
+        res.set(
+            "Pragma",
+            "no-cache"
+        );
+
+        res.set(
+            "Expires",
+            "0"
+        );
+
+        next();
+
+    }
+);
 
 
 /* =========================================================
    DASHBOARD
 ========================================================= */
 
-router.get('/', (req, res) => {
+router.get(
+    "/",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            adminPath,
-            'index.html'
-        )
-    );
+        res.sendFile(
+            path.join(
+                adminPagesPath,
+                "index.html"
+            )
+        );
 
-});
+    }
+);
 
 
 /* =========================================================
    BOOKS
 ========================================================= */
 
-router.get('/books', (req, res) => {
+router.get(
+    "/books",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            adminPath,
-            'books.html'
-        )
-    );
+        res.sendFile(
+            path.join(
+                adminPagesPath,
+                "books.html"
+            )
+        );
 
-});
+    }
+);
 
 
 /* =========================================================
    ORDERS
 ========================================================= */
 
-router.get('/orders', (req, res) => {
+router.get(
+    "/orders",
+    (req, res) => {
 
-    res.sendFile(
-        path.join(
-            adminPath,
-            'orders.html'
-        )
-    );
+        res.sendFile(
+            path.join(
+                adminPagesPath,
+                "orders.html"
+            )
+        );
 
-});
+    }
+);
 
 
-module.exports = router;
+module.exports =
+    router;

@@ -1380,16 +1380,11 @@ if (checkoutForm) {
                     CART_STORAGE_KEY
                 );
 
+                /* Render to prper order confirmation page */
+
 
                 renderSummary();
-
-
-                /*
-                    Temporary success message.
-
-                    Later this will become a proper
-                    order confirmation/payment flow.
-                */
+                window.location.href = "order-success.html";
 
                 const checkoutNote =
                     document.querySelector(
@@ -1406,12 +1401,6 @@ if (checkoutForm) {
                         "var(--checkout-muted)";
 
                 }
-
-
-                alert(
-                    `Order created successfully!\n\nOrder ID: ${createdOrder.id}`
-                );
-
 
                 console.log(
                     "Created order:",

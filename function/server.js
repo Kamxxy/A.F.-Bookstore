@@ -182,4 +182,58 @@ app.listen(PORT, () => {
 
 }
 
+/* =========================================================
+   START SERVER
+========================================================= */
+
+async function startServer() {
+
+    /* =====================================================
+       START SERVER FIRST
+    ===================================================== */
+
+    app.listen(PORT, () => {
+
+        console.log(
+            `Server running on http://localhost:${PORT}`
+        );
+
+        console.log(
+            `Open http://localhost:${PORT} in your browser to view the bookstore`
+        );
+
+    });
+
+
+    /* =====================================================
+       TRY MONGODB IN BACKGROUND
+    ===================================================== */
+
+    const mongoConnected =
+        await connectDatabase();
+
+
+    /* =====================================================
+       DATABASE MODE
+    ===================================================== */
+
+    if (mongoConnected) {
+
+        console.log(
+            "Database mode: MongoDB"
+        );
+
+    }
+
+    else {
+
+        console.log(
+            "Database mode: JSON"
+        );
+
+    }
+
+}
+
+
 startServer();

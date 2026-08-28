@@ -664,6 +664,333 @@ function validateForm() {
    CREATE ORDER DATA
 ========================================================= */
 
+
+/* =========================================================
+   LIVE FORM VALIDATION
+========================================================= */
+
+const checkoutFields = [
+
+    document.getElementById("fullName"),
+
+    document.getElementById("email"),
+
+    document.getElementById("phone"),
+
+    document.getElementById("address"),
+
+    document.getElementById("city"),
+
+    document.getElementById("state")
+
+].filter(Boolean);
+
+
+/* =========================================================
+   VALIDATE FIELD WHILE TYPING
+========================================================= */
+
+checkoutFields.forEach(field => {
+
+    /*
+        Validate after the customer leaves
+        the field for the first time.
+    */
+
+    field.addEventListener(
+        "blur",
+        () => {
+
+            validateSingleField(field);
+
+        }
+    );
+
+
+    /*
+        Once a field has been marked invalid,
+        validate it again while typing.
+    */
+
+    field.addEventListener(
+        "input",
+        () => {
+
+            if (
+                field.classList.contains(
+                    "field-invalid"
+                )
+            ) {
+
+                validateSingleField(field);
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   VALIDATE SINGLE FIELD
+========================================================= */
+
+function validateSingleField(field) {
+
+    const value =
+        field.value.trim();
+
+
+    /*
+        Clear previous state.
+    */
+
+    field.classList.remove(
+        "field-invalid",
+        "field-valid"
+    );
+
+
+    field.removeAttribute(
+        "aria-invalid"
+    );
+
+
+    const errorElement =
+        document.getElementById(
+            `${field.id}Error`
+        );
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            "";
+
+    }
+
+
+    /*
+        REQUIRED
+    */
+
+    if (!value) {
+
+        markFieldInvalid(
+            field,
+            "This field is required."
+        );
+
+        return false;
+
+    }
+
+
+    /*
+        FULL NAME
+    */
+
+    if (
+        field.id === "fullName" &&
+        value.length < 2
+    ) {
+
+        markFieldInvalid(
+            field,
+            "Please enter your full name."
+        );
+
+        return false;
+
+    }
+
+
+    /*
+        EMAIL
+    */
+
+    if (
+        field.id === "email"
+    ) {
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (
+            !emailPattern.test(value)
+        ) {
+
+            markFieldInvalid(
+                field,
+                "Please enter a valid email address."
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+        NIGERIAN PHONE NUMBER
+    */
+
+    if (
+        field.id === "phone"
+    ) {
+
+        const cleanedPhone =
+            value.replace(
+                /[\s()-]/g,
+                ""
+            );
+
+
+        const phonePattern =
+            /^(?:\+234|0)(?:7|8|9)[0-9]{9}$/;
+
+
+        if (
+            !phonePattern.test(
+                cleanedPhone
+            )
+        ) {
+
+            markFieldInvalid(
+                field,
+                "Please enter a valid Nigerian phone number."
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /*
+        ADDRESS
+    */
+
+    if (
+        field.id === "address" &&
+        value.length < 5
+    ) {
+
+        markFieldInvalid(
+            field,
+            "Please enter your delivery address."
+        );
+
+        return false;
+
+    }
+
+
+    /*
+        CITY / STATE
+    */
+
+    if (
+        (
+            field.id === "city" ||
+            field.id === "state"
+        ) &&
+        value.length < 2
+    ) {
+
+        markFieldInvalid(
+            field,
+            "Please enter a valid location."
+        );
+
+        return false;
+
+    }
+
+
+    /*
+        EVERYTHING PASSED
+    */
+
+    markFieldValid(field);
+
+    return true;
+
+}
+
+
+/* =========================================================
+   INVALID FIELD
+========================================================= */
+
+function markFieldInvalid(
+    field,
+    message
+) {
+
+    field.classList.add(
+        "field-invalid"
+    );
+
+
+    field.setAttribute(
+        "aria-invalid",
+        "true"
+    );
+
+
+    const errorElement =
+        document.getElementById(
+            `${field.id}Error`
+        );
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            message;
+
+    }
+
+}
+
+
+/* =========================================================
+   VALID FIELD
+========================================================= */
+
+function markFieldValid(field) {
+
+    field.classList.add(
+        "field-valid"
+    );
+
+
+    field.setAttribute(
+        "aria-invalid",
+        "false"
+    );
+
+
+    const errorElement =
+        document.getElementById(
+            `${field.id}Error`
+        );
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            "✓ Looks good.";
+
+    }
+
+}
+
 function createOrderPayload() {
 
     const fullName =
@@ -1053,16 +1380,11 @@ if (checkoutForm) {
                     CART_STORAGE_KEY
                 );
 
+                /* Render to prper order confirmation page */
+
 
                 renderSummary();
-
-
-                /*
-                    Temporary success message.
-
-                    Later this will become a proper
-                    order confirmation/payment flow.
-                */
+                window.location.href = "order-success.html";
 
                 const checkoutNote =
                     document.querySelector(
@@ -1079,12 +1401,6 @@ if (checkoutForm) {
                         "var(--checkout-muted)";
 
                 }
-
-
-                alert(
-                    `Order created successfully!\n\nOrder ID: ${createdOrder.id}`
-                );
-
 
                 console.log(
                     "Created order:",

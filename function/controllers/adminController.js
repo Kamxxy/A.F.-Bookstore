@@ -12,6 +12,13 @@ const {
     "../services/bookService"
 );
 
+const {
+    uploadBookCover,
+    deleteLocalCover
+} = require(
+    "../services/imageService"
+);
+
 
 /* =========================================================
    ADMIN LOGIN
@@ -350,19 +357,6 @@ async function create(
 
         ) {
 
-            if (req.file) {
-
-                const fs =
-                    require("fs");
-
-                fs.unlink(
-                    req.file.path,
-                    () => {}
-                );
-
-            }
-
-
             return res.status(400).json({
 
                 success: false,
@@ -375,11 +369,29 @@ async function create(
         }
 
 
-        const cover =
-            req.file
-                ? `/uploads/covers/${req.file.filename}`
-                : "";
+        /* =================================================
+           COVER UPLOAD
+        ================================================= */
 
+        let cover = "";
+
+
+        if (req.file) {
+
+            const uploadedCover =
+                await uploadBookCover(
+                    req.file
+                );
+
+            cover =
+                uploadedCover.url;
+
+        }
+
+
+        /* =================================================
+           CREATE BOOK
+        ================================================= */
 
         const newBook =
             await createBook({
@@ -419,19 +431,6 @@ async function create(
         );
 
 
-        if (req.file) {
-
-            const fs =
-                require("fs");
-
-            fs.unlink(
-                req.file.path,
-                () => {}
-            );
-
-        }
-
-
         return res.status(500).json({
 
             success: false,
@@ -462,38 +461,17 @@ async function update(
         };
 
 
-        if (req.file) {
+        /* =================================================
+           GET EXISTING BOOK
+        ================================================= */
 
-            updateData.cover =
-                `/uploads/covers/${req.file.filename}`;
-
-        }
-
-
-        const updatedBook =
-            await updateBook(
-
-                req.params.id,
-
-                updateData
-
+        const existingBook =
+            await getBookById(
+                req.params.id
             );
 
 
-        if (!updatedBook) {
-
-            if (req.file) {
-
-                const fs =
-                    require("fs");
-
-                fs.unlink(
-                    req.file.path,
-                    () => {}
-                );
-
-            }
-
+        if (!existingBook) {
 
             return res.status(404).json({
 
@@ -505,6 +483,51 @@ async function update(
             });
 
         }
+
+
+        /* =================================================
+           NEW COVER
+        ================================================= */
+
+        if (req.file) {
+
+            const uploadedCover =
+                await uploadBookCover(
+                    req.file
+                );
+
+
+            updateData.cover =
+                uploadedCover.url;
+
+
+            /*
+             * Remove the old LOCAL image.
+             *
+             * Cloudinary images are not deleted here yet.
+             * We'll handle Cloudinary cleanup properly after
+             * the main upload flow is confirmed working.
+             */
+
+            deleteLocalCover(
+                existingBook.cover
+            );
+
+        }
+
+
+        /* =================================================
+           UPDATE BOOK
+        ================================================= */
+
+        const updatedBook =
+            await updateBook(
+
+                req.params.id,
+
+                updateData
+
+            );
 
 
         return res.json({
@@ -527,19 +550,6 @@ async function update(
             "Admin book update error:",
             error
         );
-
-
-        if (req.file) {
-
-            const fs =
-                require("fs");
-
-            fs.unlink(
-                req.file.path,
-                () => {}
-            );
-
-        }
 
 
         return res.status(500).json({

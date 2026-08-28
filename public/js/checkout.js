@@ -10,7 +10,7 @@
 
 const CART_STORAGE_KEY = "afCart";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "";
 
 const ORDERS_API_URL =
     `${API_BASE_URL}/api/orders`;

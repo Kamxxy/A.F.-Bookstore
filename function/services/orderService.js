@@ -527,6 +527,12 @@ function getPublicOrderById(id) {
         paymentStatus:
             order.paymentStatus,
 
+        customer:
+            order.customer,
+
+        delivery:
+            order.delivery,
+
         items:
             order.items.map(
                 item => ({

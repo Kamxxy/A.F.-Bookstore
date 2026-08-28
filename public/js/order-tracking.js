@@ -438,22 +438,19 @@ function renderOrder(
     document.getElementById(
         "customerName"
     ).textContent =
-        order.customer?.name ||
-        "—";
+        `NAME: ${order.customer?.name || "—"}`;
 
 
     document.getElementById(
         "customerEmail"
     ).textContent =
-        order.customer?.email ||
-        "—";
+        `EMAIL: ${order.customer?.email || "—"}`;
 
 
     document.getElementById(
         "customerPhone"
     ).textContent =
-        order.customer?.phone ||
-        "—";
+        `PHONE: ${order.customer?.phone || "—"}`;
 
 
 
@@ -464,13 +461,12 @@ function renderOrder(
     document.getElementById(
         "deliveryAddress"
     ).textContent =
-        order.delivery?.address ||
-        "—";
+        `DELIVERY ADDRESS: ${order.delivery?.address || "—"}`;
 
 
     document.getElementById(
         "deliveryLocation"
-    ).textContent = [
+    ).textContent = `DELIVERY LOCATION: ${[
 
         order.delivery?.city,
 
@@ -482,7 +478,7 @@ function renderOrder(
 
         .join(
             ", "
-        ) || "—";
+        ) || "—"}`;
 
 
 

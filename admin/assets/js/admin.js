@@ -26,6 +26,18 @@ async function loadBookStats() {
 
         }
 
+        const response2 =
+            await fetch("/api/orders");
+        
+        
+        if (!response2.ok) {
+    
+            throw new Error(
+                `Failed to load books: ${response2.status}`
+            );
+    
+        }
+
 
         const books =
             await response.json();
@@ -33,6 +45,12 @@ async function loadBookStats() {
 
         const totalBooks =
             books.length;
+
+        const orders = 
+            await response2.json();
+
+        const totalOrders = 
+            orders.length;
 
 
         const outOfStock =
@@ -74,6 +92,10 @@ async function loadBookStats() {
         document.getElementById(
             "totalBooks"
         ).textContent = totalBooks;
+
+        document.getElementById(
+            "totalOrders"
+        ).textContent = totalOrders;
 
 
         document.getElementById(

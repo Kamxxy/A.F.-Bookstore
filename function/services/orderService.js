@@ -593,16 +593,4 @@ module.exports = {
 
     updateOrderStatus
 
-};module.exports = {
-
-    getAllOrders,
-
-    getOrderById,
-
-    getPublicOrderById,
-
-    createOrder,
-
-    updateOrderStatus
-
 };

@@ -26,16 +26,17 @@ async function loadBookStats() {
 
         }
 
+
         const response2 =
             await fetch("/api/orders");
-        
-        
+
+
         if (!response2.ok) {
-    
+
             throw new Error(
-                `Failed to load books: ${response2.status}`
+                `Failed to load orders: ${response2.status}`
             );
-    
+
         }
 
 
@@ -43,13 +44,15 @@ async function loadBookStats() {
             await response.json();
 
 
+        const orders =
+            await response2.json();
+
+
         const totalBooks =
             books.length;
 
-        const orders = 
-            await response2.json();
 
-        const totalOrders = 
+        const totalOrders =
             orders.length;
 
 
@@ -80,6 +83,7 @@ async function loadBookStats() {
                             book.stockNumber || 0
                         );
 
+
                     return (
                         stock > 0 &&
                         stock <= 5
@@ -91,46 +95,322 @@ async function loadBookStats() {
 
         document.getElementById(
             "totalBooks"
-        ).textContent = totalBooks;
+        ).textContent =
+            totalBooks;
+
 
         document.getElementById(
             "totalOrders"
-        ).textContent = totalOrders;
+        ).textContent =
+            totalOrders;
 
 
         document.getElementById(
             "lowStock"
-        ).textContent = lowStock;
+        ).textContent =
+            lowStock;
 
 
         document.getElementById(
             "outOfStock"
-        ).textContent = outOfStock;
+        ).textContent =
+            outOfStock;
 
 
         document.getElementById(
             "inStock"
-        ).textContent = inStock;
+        ).textContent =
+            inStock;
 
 
         document.getElementById(
             "inventoryLowStock"
-        ).textContent = lowStock;
+        ).textContent =
+            lowStock;
 
 
         document.getElementById(
             "inventoryOutOfStock"
-        ).textContent = outOfStock;
+        ).textContent =
+            outOfStock;
+
+
+        /*
+            Recent orders
+        */
+
+        renderRecentOrders(
+            orders
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Admin book statistics error:",
+            "Admin dashboard error:",
             error
         );
 
     }
+
+}
+
+/* =========================================================
+   RECENT ORDERS
+========================================================= */
+
+function renderRecentOrders(
+    orders
+) {
+
+    const container =
+        document.getElementById(
+            "recentOrders"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        !Array.isArray(orders) ||
+        orders.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="empty-panel">
+
+                <span>
+                    ◌
+                </span>
+
+                <p>
+                    No orders available yet.
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const recentOrders =
+        [...orders]
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    new Date(
+                        b.createdAt || 0
+                    ) -
+                    new Date(
+                        a.createdAt || 0
+                    )
+            )
+            .slice(
+                0,
+                5
+            );
+
+
+    container.innerHTML =
+        recentOrders
+            .map(
+                order => {
+
+                    const customer =
+                        order.customer?.name ||
+                        "Unknown";
+
+
+                    const items =
+                        Array.isArray(
+                            order.items
+                        )
+                            ? order.items
+                            : [];
+
+
+                    const itemCount =
+                        items.reduce(
+                            (
+                                total,
+                                item
+                            ) =>
+                                total +
+                                (
+                                    Number(
+                                        item.quantity
+                                    ) || 1
+                                ),
+                            0
+                        );
+
+
+                    const total =
+                        Number(
+                            order.total || 0
+                        );
+
+
+                    const status =
+                        order.status ||
+                        "pending_payment";
+
+
+                    return `
+
+                        <div class="recent-order">
+
+                            <div class="recent-order-info">
+
+                                <strong>
+                                    ${escapeHTML(
+                                        customer
+                                    )}
+                                </strong>
+
+                                <span>
+                                    #${escapeHTML(
+                                        String(
+                                            order.id ||
+                                            "N/A"
+                                        )
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div class="recent-order-items">
+
+                                <span>
+                                    ${itemCount}
+                                    ${
+                                        itemCount === 1
+                                            ? "item"
+                                            : "items"
+                                    }
+                                </span>
+
+                                <span>
+                                    ₦${total.toLocaleString(
+                                        "en-NG"
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div class="recent-order-meta">
+
+                                <span
+                                    class="recent-order-status status-${escapeHTML(
+                                        status
+                                    )}"
+                                >
+                                    ${escapeHTML(
+                                        formatStatus(
+                                            status
+                                        )
+                                    )}
+                                </span>
+
+                                <span>
+                                    ${formatDate(
+                                        order.createdAt
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+function formatStatus(status) {
+
+    const labels = {
+
+        pending_payment:
+            "Pending Payment",
+
+        processing:
+            "Processing",
+
+        shipped:
+            "Shipped",
+
+        delivered:
+            "Delivered",
+
+        cancelled:
+            "Cancelled"
+
+    };
+
+
+    return (
+        labels[status] ||
+        status
+    );
+
+}
+
+
+function formatDate(date) {
+
+    if (!date) {
+        return "—";
+    }
+
+
+    const parsed =
+        new Date(date);
+
+
+    if (
+        isNaN(
+            parsed.getTime()
+        )
+    ) {
+
+        return "—";
+
+    }
+
+
+    return parsed.toLocaleString(
+        "en-NG"
+    );
+
+}
+
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        value ?? "";
+
+
+    return div.innerHTML;
 
 }
 

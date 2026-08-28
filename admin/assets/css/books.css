@@ -256,7 +256,14 @@ textarea {
 ========================================================= */
 
 .books-container {
+    width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.books-container table {
+    min-width: 850px;
 }
 
 
@@ -407,6 +414,17 @@ tr:hover {
     .current-cover-image {
         width: 90px;
         height: 120px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .books-container th,
+    .books-container td,
+    .orders-container th,
+    .orders-container td {
+        padding: 12px;
     }
 
 }

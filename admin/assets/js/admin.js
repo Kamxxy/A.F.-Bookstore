@@ -14,6 +14,8 @@ async function loadBookStats() {
 
     try {
 
+        /* ================= BOOKS ================= */
+
         const response =
             await fetch("/api/books");
 
@@ -26,6 +28,40 @@ async function loadBookStats() {
 
         }
 
+
+        const booksResult =
+            await response.json();
+
+
+        console.log(
+            "Books API result:",
+            booksResult
+        );
+
+
+        if (
+            !booksResult ||
+            !Array.isArray(booksResult.books)
+        ) {
+
+            throw new Error(
+                "Books API did not return a valid books array"
+            );
+
+        }
+
+
+        const books =
+            booksResult.books;
+
+
+        console.log(
+            "Admin books:",
+            books
+        );
+
+
+        /* ================= ORDERS ================= */
 
         const response2 =
             await fetch("/api/orders");
@@ -40,13 +76,46 @@ async function loadBookStats() {
         }
 
 
-        const books =
-            await response.json();
-
-
-        const orders =
+        const ordersResult =
             await response2.json();
 
+
+        console.log(
+            "Orders API result:",
+            ordersResult
+        );
+
+
+        /*
+         * If /api/orders returns an array directly,
+         * use it.
+         *
+         * If it returns:
+         *
+         * {
+         *     success: true,
+         *     orders: [...]
+         * }
+         *
+         * use ordersResult.orders instead.
+         */
+
+        const orders =
+            Array.isArray(ordersResult)
+                ? ordersResult
+                : ordersResult.orders;
+
+
+        if (!Array.isArray(orders)) {
+
+            throw new Error(
+                "Orders API did not return a valid orders array"
+            );
+
+        }
+
+
+        /* ================= STATISTICS ================= */
 
         const totalBooks =
             books.length;
@@ -68,9 +137,9 @@ async function loadBookStats() {
         const inStock =
             books.filter(
                 book =>
-                    String(
-                        book.stockStatus || ""
-                    ).toLowerCase() === "in stock"
+                    Number(
+                        book.stockNumber || 0
+                    ) > 0
             ).length;
 
 
@@ -92,6 +161,8 @@ async function loadBookStats() {
                 }
             ).length;
 
+
+        /* ================= UPDATE DASHBOARD ================= */
 
         document.getElementById(
             "totalBooks"
@@ -135,16 +206,16 @@ async function loadBookStats() {
             outOfStock;
 
 
-        /*
-            Recent orders
-        */
+        /* ================= RECENT ORDERS ================= */
 
         renderRecentOrders(
             orders
         );
 
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Admin dashboard error:",

@@ -108,7 +108,7 @@ function login(
         );
 
 
-        res.json({
+        return res.json({
 
             success: true,
 
@@ -127,7 +127,7 @@ function login(
         );
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -163,9 +163,11 @@ function logout(
             "adminToken",
             {
                 httpOnly: true,
+
                 secure:
                     process.env.NODE_ENV ===
                     "production",
+
                 sameSite: "lax"
             }
         );
@@ -208,7 +210,7 @@ function logout(
    GET ALL BOOKS
 ========================================================= */
 
-function getBooks(
+async function getBooks(
     req,
     res
 ) {
@@ -216,10 +218,10 @@ function getBooks(
     try {
 
         const books =
-            getAllBooks();
+            await getAllBooks();
 
 
-        res.json({
+        return res.json({
 
             success: true,
 
@@ -237,7 +239,7 @@ function getBooks(
         );
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -255,7 +257,7 @@ function getBooks(
    GET BOOK
 ========================================================= */
 
-function getBook(
+async function getBook(
     req,
     res
 ) {
@@ -263,7 +265,7 @@ function getBook(
     try {
 
         const book =
-            getBookById(
+            await getBookById(
                 req.params.id
             );
 
@@ -282,7 +284,7 @@ function getBook(
         }
 
 
-        res.json({
+        return res.json({
 
             success: true,
 
@@ -300,7 +302,7 @@ function getBook(
         );
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -318,7 +320,7 @@ function getBook(
    CREATE BOOK
 ========================================================= */
 
-function create(
+async function create(
     req,
     res
 ) {
@@ -380,7 +382,7 @@ function create(
 
 
         const newBook =
-            createBook({
+            await createBook({
 
                 title,
                 author,
@@ -395,7 +397,7 @@ function create(
             });
 
 
-        res.status(201).json({
+        return res.status(201).json({
 
             success: true,
 
@@ -430,7 +432,7 @@ function create(
         }
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -448,7 +450,7 @@ function create(
    UPDATE BOOK
 ========================================================= */
 
-function update(
+async function update(
     req,
     res
 ) {
@@ -469,7 +471,7 @@ function update(
 
 
         const updatedBook =
-            updateBook(
+            await updateBook(
 
                 req.params.id,
 
@@ -505,7 +507,7 @@ function update(
         }
 
 
-        res.json({
+        return res.json({
 
             success: true,
 
@@ -540,7 +542,7 @@ function update(
         }
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 
@@ -558,7 +560,7 @@ function update(
    DELETE BOOK
 ========================================================= */
 
-function remove(
+async function remove(
     req,
     res
 ) {
@@ -566,7 +568,7 @@ function remove(
     try {
 
         const deletedBook =
-            deleteBook(
+            await deleteBook(
                 req.params.id
             );
 
@@ -585,7 +587,7 @@ function remove(
         }
 
 
-        res.json({
+        return res.json({
 
             success: true,
 
@@ -607,7 +609,7 @@ function remove(
         );
 
 
-        res.status(500).json({
+        return res.status(500).json({
 
             success: false,
 

@@ -6,6 +6,9 @@ const cors = require('cors');
 const rateLimit = require("express-rate-limit");
 const cookieParser = require('cookie-parser');
 
+const connectDatabase =
+    require('./config/database');
+
 const booksRouter = require('./routes/books');
 
 const pagesRouter = require('./routes/pages');
@@ -136,6 +139,35 @@ app.use((req, res) => {
    START SERVER
 ========================================================= */
 
+async function startServer() {
+
+const mongoConnected =
+    await connectDatabase();
+
+
+/* =====================================================
+   DATABASE MODE
+===================================================== */
+
+if (mongoConnected) {
+
+    console.log(
+        "Database mode: MongoDB"
+    );
+
+} else {
+
+    console.log(
+        "Database mode: JSON"
+    );
+
+}
+
+
+/* =====================================================
+   START SERVER
+===================================================== */
+
 app.listen(PORT, () => {
 
     console.log(
@@ -147,3 +179,7 @@ app.listen(PORT, () => {
     );
 
 });
+
+}
+
+startServer();

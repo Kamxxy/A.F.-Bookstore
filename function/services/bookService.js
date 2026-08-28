@@ -4,9 +4,16 @@ const fs =
 const path =
     require("path");
 
+const {
+    isMongoConnected
+} = require("../config/databaseState");
+
+const Book =
+    require("../models/Book");
+
 
 /* =========================================================
-   BOOK DATA PATH
+   JSON DATA PATH
 ========================================================= */
 
 const booksPath =
@@ -17,10 +24,10 @@ const booksPath =
 
 
 /* =========================================================
-   READ BOOKS
+   JSON HELPERS
 ========================================================= */
 
-function getAllBooks() {
+function readBooksFromJSON() {
 
     try {
 
@@ -30,10 +37,7 @@ function getAllBooks() {
                 "utf8"
             );
 
-
-        return JSON.parse(
-            data
-        );
+        return JSON.parse(data);
 
     }
 
@@ -44,7 +48,6 @@ function getAllBooks() {
             error
         );
 
-
         throw new Error(
             "Unable to load book data"
         );
@@ -54,11 +57,7 @@ function getAllBooks() {
 }
 
 
-/* =========================================================
-   SAVE BOOKS
-========================================================= */
-
-function saveBooks(
+function saveBooksToJSON(
     books
 ) {
 
@@ -80,22 +79,123 @@ function saveBooks(
 
 
 /* =========================================================
+   GET ALL BOOKS
+========================================================= */
+
+async function getAllBooks() {
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            return await Book
+                .find()
+                .sort({ id: 1 })
+                .lean();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB getAllBooks failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    return readBooksFromJSON();
+
+}
+
+
+/* =========================================================
    GET BOOK BY ID
 ========================================================= */
 
-function getBookById(
-    id
+async function getBookById(
+    id,
+    session = null
 ) {
 
-    const books =
-        getAllBooks();
+    const bookId =
+        Number(id);
 
+
+    if (
+        !Number.isInteger(bookId) ||
+        bookId <= 0
+    ) {
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       MONGODB
+    ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            const query =
+                Book.findOne({
+                    id: bookId
+                });
+
+
+            if (
+                session
+            ) {
+
+                query.session(
+                    session
+                );
+
+            }
+
+
+            return await query.lean();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB getBookById failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON
+    ===================================================== */
+
+    const books =
+        readBooksFromJSON();
 
     return books.find(
 
         book =>
             Number(book.id) ===
-            Number(id)
+            bookId
 
     );
 
@@ -106,13 +206,182 @@ function getBookById(
    ADJUST BOOK STOCK
 ========================================================= */
 
-function adjustBookStock(
+async function adjustBookStock(
     id,
-    quantityChange
+    quantityChange,
+    session = null
 ) {
 
+    const bookId =
+        Number(id);
+
+    const change =
+        Number(quantityChange);
+
+
+    if (
+        !Number.isInteger(bookId) ||
+        bookId <= 0
+    ) {
+
+        throw new Error(
+            "Invalid book ID"
+        );
+
+    }
+
+
+    if (
+        !Number.isInteger(change)
+    ) {
+
+        throw new Error(
+            "Stock adjustment must be a whole number"
+        );
+
+    }
+
+
+    /* =====================================================
+       MONGODB
+    ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            /*
+             * Atomic stock update.
+             *
+             * For a deduction:
+             *
+             * stockNumber + change >= 0
+             *
+             * This prevents two simultaneous orders
+             * from reducing stock below zero.
+             */
+
+            const query = {
+
+                id: bookId
+
+            };
+
+
+            if (
+                change < 0
+            ) {
+
+                query.stockNumber = {
+
+                    $gte:
+                        Math.abs(change)
+
+                };
+
+            }
+
+
+            const options = {
+
+                new: true,
+
+                session
+
+            };
+
+
+            const updatedBook =
+                await Book.findOneAndUpdate(
+
+                    query,
+
+                    {
+
+                        $inc: {
+
+                            stockNumber:
+                                change
+
+                        }
+
+                    },
+
+                    options
+
+                ).lean();
+
+
+            if (
+                !updatedBook
+            ) {
+
+                const existingBook =
+                    await getBookById(
+                        bookId,
+                        session
+                    );
+
+
+                if (
+                    !existingBook
+                ) {
+
+                    return null;
+
+                }
+
+
+                if (
+                    change < 0 &&
+                    Number(
+                        existingBook.stockNumber
+                    ) <
+                    Math.abs(change)
+                ) {
+
+                    throw new Error(
+
+                        `Insufficient stock for "${existingBook.title}"`
+
+                    );
+
+                }
+
+
+                throw new Error(
+                    "Unable to adjust book stock"
+                );
+
+            }
+
+
+            return updatedBook;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB adjustBookStock failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON
+    ===================================================== */
+
     const books =
-        getAllBooks();
+        readBooksFromJSON();
 
 
     const index =
@@ -120,7 +389,7 @@ function adjustBookStock(
 
             book =>
                 Number(book.id) ===
-                Number(id)
+                bookId
 
         );
 
@@ -140,23 +409,6 @@ function adjustBookStock(
         ) || 0;
 
 
-    const change =
-        Number(
-            quantityChange
-        );
-
-
-    if (
-        !Number.isInteger(change)
-    ) {
-
-        throw new Error(
-            "Stock adjustment must be a whole number"
-        );
-
-    }
-
-
     const newStock =
         currentStock +
         change;
@@ -167,7 +419,9 @@ function adjustBookStock(
     ) {
 
         throw new Error(
+
             `Insufficient stock for "${books[index].title}"`
+
         );
 
     }
@@ -177,18 +431,13 @@ function adjustBookStock(
         newStock;
 
 
-    /*
-       Stock status is ALWAYS derived
-       from stockNumber.
-    */
-
     books[index].stockStatus =
         newStock > 0
             ? "In Stock"
             : "Out of Stock";
 
 
-    saveBooks(
+    saveBooksToJSON(
         books
     );
 
@@ -202,30 +451,9 @@ function adjustBookStock(
    CREATE BOOK
 ========================================================= */
 
-function createBook(
+async function createBook(
     bookData
 ) {
-
-    const books =
-        getAllBooks();
-
-
-    const newId =
-        books.length > 0
-
-            ? Math.max(
-
-                ...books.map(
-
-                    book =>
-                        Number(book.id)
-
-                )
-
-            ) + 1
-
-            : 1;
-
 
     const stockNumber =
         bookData.stockNumber !== undefined &&
@@ -250,6 +478,108 @@ function createBook(
     }
 
 
+    /* =====================================================
+       MONGODB
+    ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            const lastBook =
+                await Book
+                    .findOne()
+                    .sort({ id: -1 })
+                    .lean();
+
+
+            const newId =
+                lastBook
+                    ? Number(lastBook.id) + 1
+                    : 1;
+
+
+            const newBook =
+                await Book.create({
+
+                    id:
+                        newId,
+
+                    title:
+                        bookData.title,
+
+                    author:
+                        bookData.author,
+
+                    price:
+                        Number(
+                            bookData.price
+                        ),
+
+                    category:
+                        bookData.category,
+
+                    rating:
+                        bookData.rating !== undefined
+                            ? Number(
+                                bookData.rating
+                            )
+                            : 0,
+
+                    description:
+                        bookData.description ||
+                        "",
+
+                    cover:
+                        bookData.cover ||
+                        "",
+
+                    stockNumber
+
+                });
+
+
+            return newBook.toObject();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB createBook failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON
+    ===================================================== */
+
+    const books =
+        readBooksFromJSON();
+
+
+    const newId =
+        books.length > 0
+
+            ? Math.max(
+                ...books.map(
+                    book =>
+                        Number(book.id)
+                )
+            ) + 1
+
+            : 1;
+
+
     const newBook = {
 
         id:
@@ -271,11 +601,9 @@ function createBook(
 
         rating:
             bookData.rating !== undefined
-
                 ? Number(
                     bookData.rating
                 )
-
                 : 0,
 
         description:
@@ -285,11 +613,6 @@ function createBook(
         cover:
             bookData.cover ||
             "",
-
-        /*
-           Stock status is derived from
-           the actual stock number.
-        */
 
         stockStatus:
             stockNumber > 0
@@ -306,7 +629,7 @@ function createBook(
     );
 
 
-    saveBooks(
+    saveBooksToJSON(
         books
     );
 
@@ -320,13 +643,200 @@ function createBook(
    UPDATE BOOK
 ========================================================= */
 
-function updateBook(
+async function updateBook(
     id,
-    bookData
+    bookData,
+    session = null
 ) {
 
+    const bookId =
+        Number(id);
+
+
+    /* =====================================================
+       MONGODB
+    ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            const query =
+                Book.findOne({
+                    id: bookId
+                });
+
+
+            if (
+                session
+            ) {
+
+                query.session(
+                    session
+                );
+
+            }
+
+
+            const book =
+                await query;
+
+
+            if (
+                !book
+            ) {
+
+                return null;
+
+            }
+
+
+            if (
+                bookData.title !== undefined
+            ) {
+
+                book.title =
+                    bookData.title;
+
+            }
+
+
+            if (
+                bookData.author !== undefined
+            ) {
+
+                book.author =
+                    bookData.author;
+
+            }
+
+
+            if (
+                bookData.price !== undefined
+            ) {
+
+                book.price =
+                    Number(
+                        bookData.price
+                    );
+
+            }
+
+
+            if (
+                bookData.category !== undefined
+            ) {
+
+                book.category =
+                    bookData.category;
+
+            }
+
+
+            if (
+                bookData.rating !== undefined
+            ) {
+
+                book.rating =
+                    Number(
+                        bookData.rating
+                    );
+
+            }
+
+
+            if (
+                bookData.description !== undefined
+            ) {
+
+                book.description =
+                    bookData.description;
+
+            }
+
+
+            if (
+                bookData.cover !== undefined
+            ) {
+
+                book.cover =
+                    bookData.cover;
+
+            }
+
+
+            if (
+                bookData.stockNumber !== undefined &&
+                bookData.stockNumber !== ""
+            ) {
+
+                const stockNumber =
+                    Number(
+                        bookData.stockNumber
+                    );
+
+
+                if (
+                    !Number.isInteger(stockNumber) ||
+                    stockNumber < 0
+                ) {
+
+                    throw new Error(
+                        "Stock must be a whole number greater than or equal to 0"
+                    );
+
+                }
+
+
+                book.stockNumber =
+                    stockNumber;
+
+            }
+
+
+            if (
+                session
+            ) {
+
+                await book.save({
+                    session
+                });
+
+            }
+
+            else {
+
+                await book.save();
+
+            }
+
+
+            return book.toObject();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB updateBook failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON
+    ===================================================== */
+
     const books =
-        getAllBooks();
+        readBooksFromJSON();
 
 
     const index =
@@ -334,7 +844,7 @@ function updateBook(
 
             book =>
                 Number(book.id) ===
-                Number(id)
+                bookId
 
         );
 
@@ -396,89 +906,49 @@ function updateBook(
 
         ...currentBook,
 
-
         title:
-            bookData.title !==
-            undefined
-
+            bookData.title !== undefined
                 ? bookData.title
-
                 : currentBook.title,
 
-
         author:
-            bookData.author !==
-            undefined
-
+            bookData.author !== undefined
                 ? bookData.author
-
                 : currentBook.author,
 
-
         price:
-            bookData.price !==
-            undefined
-
+            bookData.price !== undefined
                 ? Number(
                     bookData.price
                 )
-
                 : currentBook.price,
 
-
         category:
-            bookData.category !==
-            undefined
-
+            bookData.category !== undefined
                 ? bookData.category
-
                 : currentBook.category,
 
-
         rating:
-            bookData.rating !==
-            undefined
-
+            bookData.rating !== undefined
                 ? Number(
                     bookData.rating
                 )
-
                 : currentBook.rating,
 
-
         description:
-            bookData.description !==
-            undefined
-
+            bookData.description !== undefined
                 ? bookData.description
-
                 : currentBook.description,
 
-
-        /*
-           Cover is only changed when
-           a new cover was uploaded.
-        */
-
         cover:
-            bookData.cover !==
-            undefined
-
+            bookData.cover !== undefined
                 ? bookData.cover
-
                 : currentBook.cover,
-
-
-        /*
-           Stock status is derived from
-           stockNumber.
-        */
 
         stockStatus:
             stockNumber > 0
                 ? "In Stock"
                 : "Out of Stock",
-
 
         stockNumber
 
@@ -489,7 +959,7 @@ function updateBook(
         updatedBook;
 
 
-    saveBooks(
+    saveBooksToJSON(
         books
     );
 
@@ -503,12 +973,44 @@ function updateBook(
    DELETE BOOK
 ========================================================= */
 
-function deleteBook(
+async function deleteBook(
     id
 ) {
 
+    const bookId =
+        Number(id);
+
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            return await Book
+                .findOneAndDelete({
+                    id: bookId
+                })
+                .lean();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB deleteBook failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
     const books =
-        getAllBooks();
+        readBooksFromJSON();
 
 
     const index =
@@ -516,7 +1018,7 @@ function deleteBook(
 
             book =>
                 Number(book.id) ===
-                Number(id)
+                bookId
 
         );
 
@@ -537,7 +1039,7 @@ function deleteBook(
         )[0];
 
 
-    saveBooks(
+    saveBooksToJSON(
         books
     );
 

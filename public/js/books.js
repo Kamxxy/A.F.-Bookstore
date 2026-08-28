@@ -33,13 +33,67 @@ async function loadBooksData() {
         }
 
 
-        books =
+        const result =
             await response.json();
+
+
+        console.log(
+            "API result:",
+            result
+        );
+
+
+        /*
+         * API response:
+         *
+         * {
+         *     success: true,
+         *     books: [...]
+         * }
+         *
+         * Store only the books array
+         * in the global `books` variable.
+         */
+
+        if (
+            !result ||
+            !Array.isArray(result.books)
+        ) {
+
+            throw new Error(
+                "Invalid books API response"
+            );
+
+        }
+
+
+        books =
+            result.books;
+
+
+        console.log(
+            "Loaded books:",
+            books
+        );
+
+
+        console.log(
+            "Is books an array?",
+            Array.isArray(books)
+        );
+
+
+        console.log(
+            "Book count:",
+            books.length
+        );
 
 
         return books;
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Book loading error:",

@@ -1384,7 +1384,7 @@ if (checkoutForm) {
 
 
                 renderSummary();
-                window.location.href = "order-success.html";
+                window.location.href = "/order-success";
 
                 const checkoutNote =
                     document.querySelector(

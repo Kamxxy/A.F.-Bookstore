@@ -4,9 +4,20 @@ const fs =
 const path =
     require("path");
 
+const mongoose =
+    require("mongoose");
+
+const {
+    isMongoConnected
+} = require("../config/databaseState");
+
+const Order =
+    require("../models/Order");
+
 const {
     getBookById,
-    adjustBookStock
+    adjustBookStock,
+    updateBook
 } = require("./bookService");
 
 
@@ -25,14 +36,15 @@ const ordersPath =
    DELIVERY FEE
 ========================================================= */
 
-const DELIVERY_FEE = 2000;
+const DELIVERY_FEE =
+    2000;
 
 
 /* =========================================================
-   READ ORDERS
+   JSON HELPERS
 ========================================================= */
 
-function getAllOrders() {
+function readOrdersFromJSON() {
 
     try {
 
@@ -42,10 +54,7 @@ function getAllOrders() {
                 "utf8"
             );
 
-
-        return JSON.parse(
-            data
-        );
+        return JSON.parse(data);
 
     }
 
@@ -56,7 +65,6 @@ function getAllOrders() {
             error
         );
 
-
         throw new Error(
             "Unable to load order data"
         );
@@ -66,11 +74,7 @@ function getAllOrders() {
 }
 
 
-/* =========================================================
-   SAVE ORDERS
-========================================================= */
-
-function saveOrders(
+function saveOrdersToJSON(
     orders
 ) {
 
@@ -100,13 +104,11 @@ function generateOrderId() {
     const timestamp =
         Date.now();
 
-
     const random =
         Math.floor(
             1000 +
             Math.random() * 9000
         );
-
 
     return `AF-${timestamp}-${random}`;
 
@@ -114,45 +116,119 @@ function generateOrderId() {
 
 
 /* =========================================================
-   CREATE ORDER
+   GET ALL ORDERS
 ========================================================= */
 
-function createOrder(
-    orderData
-) {
-
-    const {
-        customer,
-        delivery,
-        items
-    } = orderData;
-
-
-    /* =====================================================
-       VALIDATE ITEMS
-    ===================================================== */
+async function getAllOrders() {
 
     if (
-        !Array.isArray(items) ||
-        items.length === 0
+        isMongoConnected()
     ) {
 
-        throw new Error(
-            "Order must contain at least one item"
-        );
+        try {
+
+            return await Order
+                .find()
+                .sort({
+                    createdAt: -1
+                })
+                .lean();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB getAllOrders failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
 
     }
 
 
-    /* =====================================================
-       VALIDATE ALL BOOKS FIRST
-       
-       Nothing is changed yet.
-    ===================================================== */
+    return readOrdersFromJSON();
+
+}
+
+
+/* =========================================================
+   GET ORDER BY ID
+========================================================= */
+
+async function getOrderById(
+    id,
+    session = null
+) {
+
+    if (
+        isMongoConnected()
+    ) {
+
+        try {
+
+            const query =
+                Order.findOne({
+                    id: String(id)
+                });
+
+
+            if (
+                session
+            ) {
+
+                query.session(
+                    session
+                );
+
+            }
+
+
+            return await query.lean();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB getOrderById failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+    }
+
+
+    const orders =
+        readOrdersFromJSON();
+
+    return orders.find(
+
+        order =>
+            String(order.id) ===
+            String(id)
+
+    );
+
+}
+
+
+/* =========================================================
+   BUILD ORDER ITEMS
+========================================================= */
+
+async function buildOrderItems(
+    items,
+    session = null
+) {
 
     const orderItems = [];
-
-    const stockChanges = [];
 
 
     for (
@@ -163,7 +239,6 @@ function createOrder(
             Number(
                 item.bookId
             );
-
 
         const quantity =
             Number(
@@ -195,17 +270,16 @@ function createOrder(
         }
 
 
-        /* =================================================
-           GET REAL BOOK FROM SERVER
-        ================================================= */
-
         const book =
-            getBookById(
-                bookId
+            await getBookById(
+                bookId,
+                session
             );
 
 
-        if (!book) {
+        if (
+            !book
+        ) {
 
             throw new Error(
                 `Book with ID ${bookId} was not found`
@@ -213,10 +287,6 @@ function createOrder(
 
         }
 
-
-        /* =================================================
-           CHECK STOCK
-        ================================================= */
 
         const stock =
             Number(
@@ -240,19 +310,17 @@ function createOrder(
         ) {
 
             throw new Error(
+
                 `Only ${stock} cop${
                     stock === 1
                         ? "y"
                         : "ies"
                 } of "${book.title}" are available`
+
             );
 
         }
 
-
-        /* =================================================
-           USE SERVER PRICE
-        ================================================= */
 
         const price =
             Number(
@@ -292,29 +360,234 @@ function createOrder(
 
         });
 
+    }
 
-        /*
-           Record the stock change.
 
-           We DON'T modify the book yet.
-        */
+    return orderItems;
 
-        stockChanges.push({
+}
 
-            bookId:
-                book.id,
 
-            quantity:
-                quantity
+/* =========================================================
+   CREATE ORDER
+========================================================= */
 
-        });
+async function createOrder(
+    orderData
+) {
+
+    const {
+        customer,
+        delivery,
+        items
+    } = orderData;
+
+
+    if (
+        !Array.isArray(items) ||
+        items.length === 0
+    ) {
+
+        throw new Error(
+            "Order must contain at least one item"
+        );
 
     }
 
 
     /* =====================================================
-       CALCULATE SUBTOTAL
+       MONGODB TRANSACTION
     ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        const session =
+            await mongoose.startSession();
+
+
+        try {
+
+            let createdOrder;
+
+
+            await session.withTransaction(
+
+                async () => {
+
+                    /* =====================================
+                       VALIDATE ITEMS
+                    ===================================== */
+
+                    const orderItems =
+                        await buildOrderItems(
+                            items,
+                            session
+                        );
+
+
+                    /* =====================================
+                       CALCULATE TOTALS
+                    ===================================== */
+
+                    const subtotal =
+                        orderItems.reduce(
+
+                            (
+                                total,
+                                item
+                            ) => {
+
+                                return total +
+                                    item.itemTotal;
+
+                            },
+
+                            0
+
+                        );
+
+
+                    const deliveryFee =
+                        DELIVERY_FEE;
+
+
+                    const total =
+                        subtotal +
+                        deliveryFee;
+
+
+                    /* =====================================
+                       DEDUCT INVENTORY
+                    ===================================== */
+
+                    for (
+                        const item of orderItems
+                    ) {
+
+                        await adjustBookStock(
+
+                            item.bookId,
+
+                            -item.quantity,
+
+                            session
+
+                        );
+
+                    }
+
+
+                    /* =====================================
+                       CREATE ORDER
+                    ===================================== */
+
+                    const order = {
+
+                        id:
+                            generateOrderId(),
+
+                        status:
+                            "pending_payment",
+
+                        paymentStatus:
+                            "unpaid",
+
+                        customer: {
+
+                            name:
+                                customer.name,
+
+                            email:
+                                customer.email,
+
+                            phone:
+                                customer.phone
+
+                        },
+
+                        delivery: {
+
+                            address:
+                                delivery.address,
+
+                            city:
+                                delivery.city,
+
+                            state:
+                                delivery.state
+
+                        },
+
+                        items:
+                            orderItems,
+
+                        subtotal,
+
+                        deliveryFee,
+
+                        total,
+
+                        currency:
+                            "NGN"
+
+                    };
+
+
+                    const documents =
+                        await Order.create(
+
+                            [order],
+
+                            {
+                                session
+                            }
+
+                        );
+
+
+                    createdOrder =
+                        documents[0].toObject();
+
+                }
+
+            );
+
+
+            return createdOrder;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "MongoDB createOrder transaction failed:",
+                error.message
+            );
+
+            throw error;
+
+        }
+
+        finally {
+
+            await session.endSession();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON MODE
+    ===================================================== */
+
+    const orderItems =
+        await buildOrderItems(
+            items
+        );
+
 
     const subtotal =
         orderItems.reduce(
@@ -334,10 +607,6 @@ function createOrder(
         );
 
 
-    /* =====================================================
-       CALCULATE TOTAL
-    ===================================================== */
-
     const deliveryFee =
         DELIVERY_FEE;
 
@@ -346,10 +615,6 @@ function createOrder(
         subtotal +
         deliveryFee;
 
-
-    /* =====================================================
-       CREATE ORDER
-    ===================================================== */
 
     const order = {
 
@@ -398,7 +663,40 @@ function createOrder(
         total,
 
         currency:
-            "NGN",
+            "NGN"
+
+    };
+
+
+    /*
+     * JSON does not have database transactions.
+     *
+     * We therefore deduct stock only after all
+     * validation has completed.
+     */
+
+    for (
+        const item of orderItems
+    ) {
+
+        await adjustBookStock(
+
+            item.bookId,
+
+            -item.quantity
+
+        );
+
+    }
+
+
+    const orders =
+        readOrdersFromJSON();
+
+
+    orders.push({
+
+        ...order,
 
         createdAt:
             new Date().toISOString(),
@@ -406,89 +704,17 @@ function createOrder(
         updatedAt:
             new Date().toISOString()
 
-    };
+    });
 
 
-    /* =====================================================
-       RESERVE / DEDUCT STOCK
-       
-       Every item was already validated above.
-    ===================================================== */
-
-    try {
-
-        for (
-            const change of stockChanges
-        ) {
-
-            adjustBookStock(
-
-                change.bookId,
-
-                -change.quantity
-
-            );
-
-        }
-
-    }
-
-    catch (error) {
-
-        /*
-           If something unexpectedly fails while
-           adjusting stock, stop the order.
-        */
-
-        throw new Error(
-            error.message ||
-            "Unable to update book stock"
-        );
-
-    }
-
-
-    /* =====================================================
-       SAVE ORDER
-    ===================================================== */
-
-    const orders =
-        getAllOrders();
-
-
-    orders.push(
-        order
-    );
-
-
-    saveOrders(
+    saveOrdersToJSON(
         orders
     );
 
 
-    return order;
-
-}
-
-
-/* =========================================================
-   GET ORDER BY ID
-========================================================= */
-
-function getOrderById(
-    id
-) {
-
-    const orders =
-        getAllOrders();
-
-
-    return orders.find(
-
-        order =>
-            order.id === id
-
-    );
+    return orders[
+        orders.length - 1
+    ];
 
 }
 
@@ -497,24 +723,22 @@ function getOrderById(
    UPDATE ORDER STATUS
 ========================================================= */
 
-function updateOrderStatus(
+async function updateOrderStatus(
     id,
     status
 ) {
 
     const allowedStatuses = [
+
         "pending_payment",
         "pending",
         "processing",
         "shipped",
         "delivered",
         "cancelled"
+
     ];
 
-
-    /* =====================================================
-       VALIDATE STATUS
-    ===================================================== */
 
     if (
         !allowedStatuses.includes(
@@ -530,18 +754,289 @@ function updateOrderStatus(
 
 
     /* =====================================================
-       LOAD ORDERS
+       MONGODB TRANSACTION
+    ===================================================== */
+
+    if (
+        isMongoConnected()
+    ) {
+
+        const session =
+            await mongoose.startSession();
+
+
+        try {
+
+            let updatedOrder;
+
+
+            await session.withTransaction(
+
+                async () => {
+
+                    const order =
+                        await getOrderById(
+                            id,
+                            session
+                        );
+
+
+                    if (
+                        !order
+                    ) {
+
+                        throw new Error(
+                            "Order not found"
+                        );
+
+                    }
+
+
+                    const previousStatus =
+                        order.status;
+
+
+                    if (
+                        previousStatus === status
+                    ) {
+
+                        updatedOrder =
+                            order;
+
+                        return;
+
+                    }
+
+
+                    /* =================================
+                       CANCEL ORDER
+                    ================================= */
+
+                    if (
+
+                        previousStatus !==
+                            "cancelled" &&
+
+                        status ===
+                            "cancelled"
+
+                    ) {
+
+                        for (
+                            const item of order.items
+                        ) {
+
+                            await adjustBookStock(
+
+                                item.bookId,
+
+                                Number(
+                                    item.quantity
+                                ),
+
+                                session
+
+                            );
+
+                        }
+
+                    }
+
+
+                    /* =================================
+                       REACTIVATE ORDER
+                    ================================= */
+
+                    if (
+
+                        previousStatus ===
+                            "cancelled" &&
+
+                        status !==
+                            "cancelled"
+
+                    ) {
+
+                        /* =============================
+                           CHECK STOCK
+                        ============================= */
+
+                        for (
+                            const item of order.items
+                        ) {
+
+                            const book =
+                                await getBookById(
+
+                                    item.bookId,
+
+                                    session
+
+                                );
+
+
+                            if (
+                                !book
+                            ) {
+
+                                throw new Error(
+
+                                    `Book with ID ${item.bookId} was not found`
+
+                                );
+
+                            }
+
+
+                            const stock =
+                                Number(
+                                    book.stockNumber
+                                ) || 0;
+
+
+                            const quantity =
+                                Number(
+                                    item.quantity
+                                );
+
+
+                            if (
+                                stock < quantity
+                            ) {
+
+                                throw new Error(
+
+                                    `Not enough stock for "${book.title}". Only ${stock} ${
+                                        stock === 1
+                                            ? "copy"
+                                            : "copies"
+                                    } available, but this order requires ${quantity}.`
+
+                                );
+
+                            }
+
+                        }
+
+
+                        /* =============================
+                           DEDUCT STOCK
+                        ============================= */
+
+                        for (
+                            const item of order.items
+                        ) {
+
+                            await adjustBookStock(
+
+                                item.bookId,
+
+                                -Number(
+                                    item.quantity
+                                ),
+
+                                session
+
+                            );
+
+                        }
+
+                    }
+
+
+                    /* =================================
+                       UPDATE ORDER
+                    ================================= */
+
+                    updatedOrder =
+                        await Order.findOneAndUpdate(
+
+                            {
+                                id:
+                                    String(id)
+                            },
+
+                            {
+
+                                $set: {
+
+                                    status,
+
+                                    updatedAt:
+                                        new Date()
+
+                                }
+
+                            },
+
+                            {
+
+                                new: true,
+
+                                session
+
+                            }
+
+                        ).lean();
+
+
+                    if (
+                        !updatedOrder
+                    ) {
+
+                        throw new Error(
+                            "Order could not be updated"
+                        );
+
+                    }
+
+                }
+
+            );
+
+
+            return updatedOrder;
+
+        }
+
+        catch (error) {
+
+            console.error(
+
+                "MongoDB updateOrderStatus transaction failed:",
+
+                error.message
+
+            );
+
+            throw error;
+
+        }
+
+        finally {
+
+            await session.endSession();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON MODE
     ===================================================== */
 
     const orders =
-        getAllOrders();
+        readOrdersFromJSON();
 
 
     const index =
         orders.findIndex(
+
             order =>
                 String(order.id) ===
                 String(id)
+
         );
 
 
@@ -562,13 +1057,6 @@ function updateOrderStatus(
         order.status;
 
 
-    /* =====================================================
-       NO CHANGE NEEDED
-       
-       If the status is already the requested status,
-       do not touch inventory.
-    ===================================================== */
-
     if (
         previousStatus === status
     ) {
@@ -578,68 +1066,32 @@ function updateOrderStatus(
     }
 
 
-    /* =====================================================
-       LOAD BOOKS
-    ===================================================== */
-
-    const {
-        getBookById,
-        updateBook
-    } = require("./bookService");
-
-
-    /* =====================================================
-       CANCEL ORDER
-       
-       ACTIVE → CANCELLED
-
-       Restore the quantity that was originally deducted
-       when the order was created.
-    ===================================================== */
+    /* ================================================
+       CANCEL
+    ================================================ */
 
     if (
-        previousStatus !== "cancelled" &&
-        status === "cancelled"
+
+        previousStatus !==
+            "cancelled" &&
+
+        status ===
+            "cancelled"
+
     ) {
 
         for (
             const item of order.items
         ) {
 
-            const book =
-                getBookById(
-                    item.bookId
-                );
+            await adjustBookStock(
 
+                item.bookId,
 
-            if (!book) {
-
-                throw new Error(
-                    `Book with ID ${item.bookId} was not found`
-                );
-
-            }
-
-
-            const currentStock =
-                Number(
-                    book.stockNumber
-                ) || 0;
-
-
-            const quantity =
                 Number(
                     item.quantity
-                );
+                )
 
-
-            updateBook(
-                item.bookId,
-                {
-                    stockNumber:
-                        currentStock +
-                        quantity
-                }
             );
 
         }
@@ -647,47 +1099,44 @@ function updateOrderStatus(
     }
 
 
-    /* =====================================================
-       REACTIVATE CANCELLED ORDER
-       
-       CANCELLED → ACTIVE
-
-       Deduct the order quantity again because the order
-       is no longer cancelled.
-    ===================================================== */
+    /* ================================================
+       REACTIVATE
+    ================================================ */
 
     if (
-        previousStatus === "cancelled" &&
-        status !== "cancelled"
+
+        previousStatus ===
+            "cancelled" &&
+
+        status !==
+            "cancelled"
+
     ) {
-
-        /* ================================================
-           FIRST CHECK ALL STOCK
-
-           We do this BEFORE changing anything so that
-           a partially-restored order cannot occur.
-        ================================================= */
 
         for (
             const item of order.items
         ) {
 
             const book =
-                getBookById(
+                await getBookById(
                     item.bookId
                 );
 
 
-            if (!book) {
+            if (
+                !book
+            ) {
 
                 throw new Error(
+
                     `Book with ID ${item.bookId} was not found`
+
                 );
 
             }
 
 
-            const currentStock =
+            const stock =
                 Number(
                     book.stockNumber
                 ) || 0;
@@ -700,15 +1149,17 @@ function updateOrderStatus(
 
 
             if (
-                currentStock < quantity
+                stock < quantity
             ) {
 
                 throw new Error(
-                    `Not enough stock for "${book.title}". Only ${currentStock} ${
-                        currentStock === 1
+
+                    `Not enough stock for "${book.title}". Only ${stock} ${
+                        stock === 1
                             ? "copy"
                             : "copies"
                     } available, but this order requires ${quantity}.`
+
                 );
 
             }
@@ -716,39 +1167,18 @@ function updateOrderStatus(
         }
 
 
-        /* ================================================
-           NOW DEDUCT STOCK
-        ================================================= */
-
         for (
             const item of order.items
         ) {
 
-            const book =
-                getBookById(
-                    item.bookId
-                );
+            await adjustBookStock(
 
-
-            const currentStock =
-                Number(
-                    book.stockNumber
-                ) || 0;
-
-
-            const quantity =
-                Number(
-                    item.quantity
-                );
-
-
-            updateBook(
                 item.bookId,
-                {
-                    stockNumber:
-                        currentStock -
-                        quantity
-                }
+
+                -Number(
+                    item.quantity
+                )
+
             );
 
         }
@@ -756,55 +1186,41 @@ function updateOrderStatus(
     }
 
 
-    /* =====================================================
-       UPDATE ORDER STATUS
-    ===================================================== */
-
-    order.status =
+    orders[index].status =
         status;
 
 
-    order.updatedAt =
+    orders[index].updatedAt =
         new Date().toISOString();
 
 
-    /* =====================================================
-       SAVE ORDER
-    ===================================================== */
-
-    saveOrders(
+    saveOrdersToJSON(
         orders
     );
 
 
-    return order;
+    return orders[index];
 
 }
 
 
 /* =========================================================
-   ORDER STATUS TRACKING
+   PUBLIC ORDER
 ========================================================= */
 
-function getPublicOrderById(
+async function getPublicOrderById(
     id
 ) {
 
-    const orders =
-        getAllOrders();
-
-
     const order =
-        orders.find(
-
-            order =>
-                String(order.id) ===
-                String(id)
-
+        await getOrderById(
+            id
         );
 
 
-    if (!order) {
+    if (
+        !order
+    ) {
 
         return null;
 

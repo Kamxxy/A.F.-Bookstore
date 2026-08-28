@@ -11,7 +11,7 @@ const {
    CREATE ORDER
 ========================================================= */
 
-function create(
+async function create(
     req,
     res
 ) {
@@ -129,37 +129,31 @@ function create(
         ================================================= */
 
         const order =
-            createOrder({
+            await createOrder({
 
                 customer: {
 
                     name:
-                        customer.name
-                            .trim(),
+                        customer.name.trim(),
 
                     email:
-                        customer.email
-                            .trim(),
+                        customer.email.trim(),
 
                     phone:
-                        customer.phone
-                            .trim()
+                        customer.phone.trim()
 
                 },
 
                 delivery: {
 
                     address:
-                        delivery.address
-                            .trim(),
+                        delivery.address.trim(),
 
                     city:
-                        delivery.city
-                            .trim(),
+                        delivery.city.trim(),
 
                     state:
-                        delivery.state
-                            .trim()
+                        delivery.state.trim()
 
                 },
 
@@ -241,7 +235,7 @@ function create(
    GET ORDER
 ========================================================= */
 
-function getOrder(
+async function getOrder(
     req,
     res
 ) {
@@ -249,7 +243,7 @@ function getOrder(
     try {
 
         const order =
-            getOrderById(
+            await getOrderById(
                 req.params.id
             );
 
@@ -299,11 +293,12 @@ function getOrder(
 
 }
 
+
 /* =========================================================
    GET ALL ORDERS
 ========================================================= */
 
-function getOrders(
+async function getOrders(
     req,
     res
 ) {
@@ -311,7 +306,8 @@ function getOrders(
     try {
 
         const orders =
-            getAllOrders();
+            await getAllOrders();
+
 
         return res.json(
             orders
@@ -326,6 +322,7 @@ function getOrders(
             error
         );
 
+
         return res.status(500).json({
 
             success: false,
@@ -339,11 +336,12 @@ function getOrders(
 
 }
 
+
 /* =========================================================
    UPDATE ORDER STATUS
 ========================================================= */
 
-function updateStatus(
+async function updateStatus(
     req,
     res
 ) {
@@ -370,9 +368,12 @@ function updateStatus(
 
 
         const order =
-            updateOrderStatus(
+            await updateOrderStatus(
+
                 req.params.id,
+
                 status
+
             );
 
 
@@ -425,11 +426,12 @@ function updateStatus(
 
 }
 
+
 /* =========================================================
    TRACK ORDER
 ========================================================= */
 
-function trackOrder(
+async function trackOrder(
     req,
     res
 ) {
@@ -437,7 +439,7 @@ function trackOrder(
     try {
 
         const order =
-            getPublicOrderById(
+            await getPublicOrderById(
                 req.params.id
             );
 

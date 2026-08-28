@@ -110,10 +110,13 @@ async function loadBooks() {
         }
 
 
+        console.log("API result:", result);
+        console.log("result.books:", result.books);
+        console.log("Is result.books an array?", Array.isArray(result.books));
+        
         books =
             result.books;
-
-
+        
         renderBooks();
 
     }

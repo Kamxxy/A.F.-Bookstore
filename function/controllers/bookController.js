@@ -1,30 +1,62 @@
 const {
     getAllBooks,
     getBookById
-} = require('../services/bookService');
+} = require("../services/bookService");
 
 
 /* =========================================================
    GET ALL BOOKS
 ========================================================= */
 
-function getBooks(req, res) {
+async function getBooks(req, res) {
 
     try {
 
-        const books = getAllBooks();
+        const books =
+            await getAllBooks();
 
-        res.json(books);
 
-    } catch (error) {
+        console.log(
+            "BOOKS FROM SERVICE:",
+            books
+        );
+
+        console.log(
+            "BOOKS IS ARRAY:",
+            Array.isArray(books)
+        );
+
+        console.log(
+            "BOOKS TYPE:",
+            typeof books
+        );
+
+
+        return res.json({
+
+            success: true,
+
+            books
+
+        });
+
+    }
+
+    catch (error) {
 
         console.error(
-            'Error loading books:',
+            "Error loading books:",
             error
         );
 
-        res.status(500).json({
-            error: 'Failed to load books'
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Failed to load books"
+
         });
 
     }
@@ -36,35 +68,54 @@ function getBooks(req, res) {
    GET BOOK BY ID
 ========================================================= */
 
-function getBook(req, res) {
+async function getBook(
+    req,
+    res
+) {
 
     try {
 
-        const book = getBookById(
-            req.params.id
-        );
+        const book =
+            await getBookById(
+                req.params.id
+            );
 
 
         if (!book) {
 
             return res.status(404).json({
-                error: 'Book not found'
+
+                success: false,
+
+                message:
+                    "Book not found"
+
             });
 
         }
 
 
-        res.json(book);
+        return res.json(
+            book
+        );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            'Error loading book:',
+            "Error loading book:",
             error
         );
 
-        res.status(500).json({
-            error: 'Failed to load book'
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Failed to load book"
+
         });
 
     }
@@ -77,6 +128,9 @@ function getBook(req, res) {
 ========================================================= */
 
 module.exports = {
+
     getBooks,
+
     getBook
+
 };

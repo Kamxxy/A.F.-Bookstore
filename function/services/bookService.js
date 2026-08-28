@@ -103,6 +103,102 @@ function getBookById(
 
 
 /* =========================================================
+   ADJUST BOOK STOCK
+========================================================= */
+
+function adjustBookStock(
+    id,
+    quantityChange
+) {
+
+    const books =
+        getAllBooks();
+
+
+    const index =
+        books.findIndex(
+
+            book =>
+                Number(book.id) ===
+                Number(id)
+
+        );
+
+
+    if (
+        index === -1
+    ) {
+
+        return null;
+
+    }
+
+
+    const currentStock =
+        Number(
+            books[index].stockNumber
+        ) || 0;
+
+
+    const change =
+        Number(
+            quantityChange
+        );
+
+
+    if (
+        !Number.isInteger(change)
+    ) {
+
+        throw new Error(
+            "Stock adjustment must be a whole number"
+        );
+
+    }
+
+
+    const newStock =
+        currentStock +
+        change;
+
+
+    if (
+        newStock < 0
+    ) {
+
+        throw new Error(
+            `Insufficient stock for "${books[index].title}"`
+        );
+
+    }
+
+
+    books[index].stockNumber =
+        newStock;
+
+
+    /*
+       Stock status is ALWAYS derived
+       from stockNumber.
+    */
+
+    books[index].stockStatus =
+        newStock > 0
+            ? "In Stock"
+            : "Out of Stock";
+
+
+    saveBooks(
+        books
+    );
+
+
+    return books[index];
+
+}
+
+
+/* =========================================================
    CREATE BOOK
 ========================================================= */
 
@@ -129,6 +225,29 @@ function createBook(
             ) + 1
 
             : 1;
+
+
+    const stockNumber =
+        bookData.stockNumber !== undefined &&
+        bookData.stockNumber !== ""
+
+            ? Number(
+                bookData.stockNumber
+            )
+
+            : 0;
+
+
+    if (
+        !Number.isInteger(stockNumber) ||
+        stockNumber < 0
+    ) {
+
+        throw new Error(
+            "Stock must be a whole number greater than or equal to 0"
+        );
+
+    }
 
 
     const newBook = {
@@ -167,27 +286,17 @@ function createBook(
             bookData.cover ||
             "",
 
+        /*
+           Stock status is derived from
+           the actual stock number.
+        */
+
         stockStatus:
-            bookData.stockStatus ===
-            "Out of Stock"
+            stockNumber > 0
+                ? "In Stock"
+                : "Out of Stock",
 
-                ? "Out of Stock"
-
-                : "In Stock",
-
-        stockNumber:
-
-            bookData.stockNumber !==
-                undefined &&
-
-            bookData.stockNumber !==
-                ""
-
-                ? Number(
-                    bookData.stockNumber
-                )
-
-                : 0
+        stockNumber
 
     };
 
@@ -241,6 +350,46 @@ function updateBook(
 
     const currentBook =
         books[index];
+
+
+    let stockNumber =
+        currentBook.stockNumber;
+
+
+    if (
+        bookData.stockNumber !== undefined &&
+        bookData.stockNumber !== ""
+    ) {
+
+        stockNumber =
+            Number(
+                bookData.stockNumber
+            );
+
+    }
+
+
+    if (
+        stockNumber === undefined ||
+        stockNumber === null ||
+        stockNumber === ""
+    ) {
+
+        stockNumber = 0;
+
+    }
+
+
+    if (
+        !Number.isInteger(stockNumber) ||
+        stockNumber < 0
+    ) {
+
+        throw new Error(
+            "Stock must be a whole number greater than or equal to 0"
+        );
+
+    }
 
 
     const updatedBook = {
@@ -320,24 +469,18 @@ function updateBook(
                 : currentBook.cover,
 
 
+        /*
+           Stock status is derived from
+           stockNumber.
+        */
+
         stockStatus:
-            bookData.stockStatus ===
-            "Out of Stock"
-
-                ? "Out of Stock"
-
-                : "In Stock",
+            stockNumber > 0
+                ? "In Stock"
+                : "Out of Stock",
 
 
-        stockNumber:
-            bookData.stockNumber !==
-            undefined
-
-                ? Number(
-                    bookData.stockNumber
-                )
-
-                : currentBook.stockNumber
+        stockNumber
 
     };
 
@@ -413,6 +556,8 @@ module.exports = {
     getAllBooks,
 
     getBookById,
+
+    adjustBookStock,
 
     createBook,
 

@@ -1,7 +1,7 @@
 [
     {
-        "id": "AF-1787909285041-7089",
-        "status": "delivered",
+        "id": "AF-1787912770485-8492",
+        "status": "cancelled",
         "paymentStatus": "unpaid",
         "customer": {
             "name": "isaiah",
@@ -27,7 +27,7 @@
         "deliveryFee": 2000,
         "total": 87000,
         "currency": "NGN",
-        "createdAt": "2026-08-28T09:28:05.041Z",
-        "updatedAt": "2026-08-28T10:01:59.021Z"
+        "createdAt": "2026-08-28T10:26:10.486Z",
+        "updatedAt": "2026-08-28T10:28:23.391Z"
     }
 ]

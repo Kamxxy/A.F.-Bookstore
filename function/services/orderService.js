@@ -5,7 +5,8 @@ const path =
     require("path");
 
 const {
-    getBookById
+    getBookById,
+    adjustBookStock
 } = require("./bookService");
 
 
@@ -41,7 +42,10 @@ function getAllOrders() {
                 "utf8"
             );
 
-        return JSON.parse(data);
+
+        return JSON.parse(
+            data
+        );
 
     }
 
@@ -51,6 +55,7 @@ function getAllOrders() {
             "Error reading orders.json:",
             error
         );
+
 
         throw new Error(
             "Unable to load order data"
@@ -95,11 +100,13 @@ function generateOrderId() {
     const timestamp =
         Date.now();
 
+
     const random =
         Math.floor(
             1000 +
             Math.random() * 9000
         );
+
 
     return `AF-${timestamp}-${random}`;
 
@@ -138,10 +145,14 @@ function createOrder(
 
 
     /* =====================================================
-       VALIDATE BOOKS AND BUILD SERVER-SIDE ITEMS
+       VALIDATE ALL BOOKS FIRST
+       
+       Nothing is changed yet.
     ===================================================== */
 
     const orderItems = [];
+
+    const stockChanges = [];
 
 
     for (
@@ -152,6 +163,7 @@ function createOrder(
             Number(
                 item.bookId
             );
+
 
         const quantity =
             Number(
@@ -280,6 +292,23 @@ function createOrder(
 
         });
 
+
+        /*
+           Record the stock change.
+
+           We DON'T modify the book yet.
+        */
+
+        stockChanges.push({
+
+            bookId:
+                book.id,
+
+            quantity:
+                quantity
+
+        });
+
     }
 
 
@@ -381,6 +410,45 @@ function createOrder(
 
 
     /* =====================================================
+       RESERVE / DEDUCT STOCK
+       
+       Every item was already validated above.
+    ===================================================== */
+
+    try {
+
+        for (
+            const change of stockChanges
+        ) {
+
+            adjustBookStock(
+
+                change.bookId,
+
+                -change.quantity
+
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        /*
+           If something unexpectedly fails while
+           adjusting stock, stop the order.
+        */
+
+        throw new Error(
+            error.message ||
+            "Unable to update book stock"
+        );
+
+    }
+
+
+    /* =====================================================
        SAVE ORDER
     ===================================================== */
 
@@ -416,11 +484,14 @@ function getOrderById(
 
 
     return orders.find(
+
         order =>
             order.id === id
+
     );
 
 }
+
 
 /* =========================================================
    UPDATE ORDER STATUS
@@ -441,6 +512,10 @@ function updateOrderStatus(
     ];
 
 
+    /* =====================================================
+       VALIDATE STATUS
+    ===================================================== */
+
     if (
         !allowedStatuses.includes(
             status
@@ -453,6 +528,10 @@ function updateOrderStatus(
 
     }
 
+
+    /* =====================================================
+       LOAD ORDERS
+    ===================================================== */
 
     const orders =
         getAllOrders();
@@ -475,27 +554,241 @@ function updateOrderStatus(
     }
 
 
-    orders[index].status =
+    const order =
+        orders[index];
+
+
+    const previousStatus =
+        order.status;
+
+
+    /* =====================================================
+       NO CHANGE NEEDED
+       
+       If the status is already the requested status,
+       do not touch inventory.
+    ===================================================== */
+
+    if (
+        previousStatus === status
+    ) {
+
+        return order;
+
+    }
+
+
+    /* =====================================================
+       LOAD BOOKS
+    ===================================================== */
+
+    const {
+        getBookById,
+        updateBook
+    } = require("./bookService");
+
+
+    /* =====================================================
+       CANCEL ORDER
+       
+       ACTIVE → CANCELLED
+
+       Restore the quantity that was originally deducted
+       when the order was created.
+    ===================================================== */
+
+    if (
+        previousStatus !== "cancelled" &&
+        status === "cancelled"
+    ) {
+
+        for (
+            const item of order.items
+        ) {
+
+            const book =
+                getBookById(
+                    item.bookId
+                );
+
+
+            if (!book) {
+
+                throw new Error(
+                    `Book with ID ${item.bookId} was not found`
+                );
+
+            }
+
+
+            const currentStock =
+                Number(
+                    book.stockNumber
+                ) || 0;
+
+
+            const quantity =
+                Number(
+                    item.quantity
+                );
+
+
+            updateBook(
+                item.bookId,
+                {
+                    stockNumber:
+                        currentStock +
+                        quantity
+                }
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       REACTIVATE CANCELLED ORDER
+       
+       CANCELLED → ACTIVE
+
+       Deduct the order quantity again because the order
+       is no longer cancelled.
+    ===================================================== */
+
+    if (
+        previousStatus === "cancelled" &&
+        status !== "cancelled"
+    ) {
+
+        /* ================================================
+           FIRST CHECK ALL STOCK
+
+           We do this BEFORE changing anything so that
+           a partially-restored order cannot occur.
+        ================================================= */
+
+        for (
+            const item of order.items
+        ) {
+
+            const book =
+                getBookById(
+                    item.bookId
+                );
+
+
+            if (!book) {
+
+                throw new Error(
+                    `Book with ID ${item.bookId} was not found`
+                );
+
+            }
+
+
+            const currentStock =
+                Number(
+                    book.stockNumber
+                ) || 0;
+
+
+            const quantity =
+                Number(
+                    item.quantity
+                );
+
+
+            if (
+                currentStock < quantity
+            ) {
+
+                throw new Error(
+                    `Not enough stock for "${book.title}". Only ${currentStock} ${
+                        currentStock === 1
+                            ? "copy"
+                            : "copies"
+                    } available, but this order requires ${quantity}.`
+                );
+
+            }
+
+        }
+
+
+        /* ================================================
+           NOW DEDUCT STOCK
+        ================================================= */
+
+        for (
+            const item of order.items
+        ) {
+
+            const book =
+                getBookById(
+                    item.bookId
+                );
+
+
+            const currentStock =
+                Number(
+                    book.stockNumber
+                ) || 0;
+
+
+            const quantity =
+                Number(
+                    item.quantity
+                );
+
+
+            updateBook(
+                item.bookId,
+                {
+                    stockNumber:
+                        currentStock -
+                        quantity
+                }
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       UPDATE ORDER STATUS
+    ===================================================== */
+
+    order.status =
         status;
 
-    orders[index].updatedAt =
+
+    order.updatedAt =
         new Date().toISOString();
 
+
+    /* =====================================================
+       SAVE ORDER
+    ===================================================== */
 
     saveOrders(
         orders
     );
 
 
-    return orders[index];
+    return order;
 
 }
+
 
 /* =========================================================
    ORDER STATUS TRACKING
 ========================================================= */
 
-function getPublicOrderById(id) {
+function getPublicOrderById(
+    id
+) {
 
     const orders =
         getAllOrders();
@@ -503,9 +796,11 @@ function getPublicOrderById(id) {
 
     const order =
         orders.find(
+
             order =>
                 String(order.id) ===
                 String(id)
+
         );
 
 
@@ -535,6 +830,7 @@ function getPublicOrderById(id) {
 
         items:
             order.items.map(
+
                 item => ({
 
                     title:
@@ -553,6 +849,7 @@ function getPublicOrderById(id) {
                         item.itemTotal
 
                 })
+
             ),
 
         subtotal:
@@ -576,6 +873,7 @@ function getPublicOrderById(id) {
     };
 
 }
+
 
 /* =========================================================
    EXPORT

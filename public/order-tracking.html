@@ -61,6 +61,7 @@
     <main class="tracking-page">
 
 
+
         <!-- =================================================
              INTRO
         ================================================== -->
@@ -209,6 +210,85 @@
 
 
             <!-- =============================================
+                 PAYMENT STATUS
+            ============================================== -->
+
+            <div class="payment-status-section">
+
+                <p class="section-label">
+                    PAYMENT STATUS
+                </p>
+
+                <div class="payment-status-display">
+
+                    <div
+                        class="payment-status-indicator"
+                        id="paymentStatusIndicator"
+                    >
+
+                        <span
+                            class="payment-status-icon"
+                            id="paymentStatusIcon"
+                        >
+                            ◌
+                        </span>
+
+                        <div>
+
+                            <h3 id="paymentStatusTitle">
+                                Awaiting Payment
+                            </h3>
+
+                            <p id="paymentStatusDescription">
+                                Payment has not been completed yet.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="payment-action"
+                    id="paymentAction"
+                    hidden
+                >
+
+                    <p
+                        class="payment-action-note"
+                        id="paymentActionNote"
+                    ></p>
+
+                    <button
+                        type="button"
+                        class="payment-action-btn"
+                        id="paymentActionBtn"
+                    >
+                        Complete Payment
+                    </button>
+
+                    <a
+                        href="/shop"
+                        class="payment-action-btn"
+                        id="paymentActionShopLink"
+                        hidden
+                    >
+                        Continue Shopping
+                    </a>
+
+                    <p
+                        class="payment-action-error"
+                        id="paymentActionError"
+                    ></p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
                  STATUS TIMELINE
             ============================================== -->
 
@@ -224,7 +304,7 @@
 
                     <div
                         class="status-step"
-                        data-status="pending_payment"
+                        data-status="pending"
                     >
 
                         <div class="status-marker">
@@ -328,17 +408,20 @@
                     id="cancelledOrderMessage"
                     hidden
                 >
+
                     <span class="cancelled-order-icon">×</span>
-                
+
                     <div>
+
                         <h3>Order Cancelled</h3>
-                
+
                         <p>
                             This order has been cancelled and will not be processed
                             or delivered.
                         </p>
+
                     </div>
-                    
+
                 </div>
 
             </div>
@@ -373,7 +456,6 @@
                     </p>
 
                 </div>
-
 
 
                 <!-- DELIVERY -->
@@ -430,6 +512,7 @@
                     class="order-items"
                     id="orderItems"
                 >
+
                 </div>
 
             </div>
@@ -466,7 +549,6 @@
                     </strong>
 
                 </div>
-
 
                 <div class="order-divider"></div>
 

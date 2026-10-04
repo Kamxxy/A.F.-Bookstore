@@ -86,7 +86,6 @@
                 ✓
             </div>
 
-
             <!-- TITLE -->
 
             <p class="success-eyebrow">
@@ -122,9 +121,30 @@
             </div>
 
 
+            <!-- PAYMENT STATUS -->
+
+            <div
+                class="payment-status-badge"
+                id="paymentStatusBadge"
+            >
+                —
+            </div>
+
+
+            <p
+                class="payment-message"
+                id="paymentMessage"
+            >
+                Verifying payment status...
+            </p>
+
+
             <!-- DETAILS -->
 
-            <div class="success-details">
+            <div
+                class="success-details"
+                id="successDetails"
+            >
 
                 <p>
                     Your order has been successfully
@@ -146,8 +166,21 @@
                 <a
                     href="/shop"
                     class="success-btn primary"
+                    id="continueShoppingBtn"
                 >
                     Continue Shopping
+                    <span aria-hidden="true">
+                        →
+                    </span>
+                </a>
+
+
+                <a
+                    href="/order-tracking"
+                    class="success-btn primary"
+                    id="trackOrderBtn"
+                >
+                    Track Order
                     <span aria-hidden="true">
                         →
                     </span>

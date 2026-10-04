@@ -22,6 +22,9 @@ const adminRoutes =
 const ordersRouter =
     require('./routes/orders');
 
+const paymentsRouter =
+    require('./routes/payments');
+
 
 
 const app = express();
@@ -35,7 +38,11 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 
 app.use(cookieParser());
 
@@ -118,6 +125,11 @@ app.use(
 app.use(
     '/api/orders',
     ordersRouter
+);
+
+app.use(
+    '/api/payments',
+    paymentsRouter
 );
 
 app.use(
@@ -232,6 +244,36 @@ async function startServer() {
         );
 
     }
+
+
+    /* =====================================================
+       RESERVATION CLEANUP
+       Periodically expire unpaid orders whose payment
+       reservation window has passed. The stored
+       reservationExpiresAt timestamp remains the
+       authoritative expiry check; API paths also
+       enforce expiry independently.
+    ===================================================== */
+
+    const {
+        cleanupExpiredReservations
+    } = require("./services/orderService");
+
+    const CLEANUP_INTERVAL_MS =
+        5 * 60 * 1000;
+
+    setTimeout(
+        () => cleanupExpiredReservations(),
+        30 * 1000
+    );
+
+    const cleanupTimer =
+        setInterval(
+            () => cleanupExpiredReservations(),
+            CLEANUP_INTERVAL_MS
+        );
+
+    cleanupTimer.unref();
 
 }
 

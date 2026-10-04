@@ -698,6 +698,193 @@ body {
 
 
 /* =========================================================
+   PAYMENT STATUS
+========================================================= */
+
+.payment-status-section {
+
+    padding:
+        40px 35px;
+
+    border-bottom:
+        1px solid
+        var(--tracking-border);
+
+}
+
+
+.payment-status-display {
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+.payment-status-indicator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+}
+
+
+.payment-status-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    flex-shrink: 0;
+
+    display: grid;
+
+    place-items: center;
+
+    border:
+        1px solid
+        var(--tracking-border-light);
+
+    border-radius: 50%;
+
+    color: var(--tracking-muted);
+
+    font-size: 20px;
+
+}
+
+
+.payment-status-indicator.paid .payment-status-icon {
+
+    border-color: #4a7;
+
+    color: #4a7;
+
+}
+
+
+.payment-status-indicator.unpaid .payment-status-icon {
+
+    border-color: var(--tracking-border-light);
+
+    color: var(--tracking-muted);
+
+}
+
+
+.payment-status-indicator.failed .payment-status-icon {
+
+    border-color: #a87373;
+
+    color: #a87373;
+
+}
+
+
+.payment-status-indicator h3 {
+
+    font-family:
+        var(--serif);
+
+    font-size: 20px;
+
+    font-weight: 400;
+
+}
+
+
+.payment-status-indicator p {
+
+    margin-top: 5px;
+
+    color: var(--tracking-dark-muted);
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   PAYMENT ACTION (Complete Payment / Try Again)
+======================================================== */
+
+.payment-action {
+
+    margin-top: 24px;
+
+}
+
+
+.payment-action-note {
+
+    margin-bottom: 14px;
+
+    color: var(--tracking-dark-muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+.payment-action-btn {
+
+    padding: 14px 28px;
+
+    border: none;
+
+    background: var(--tracking-white);
+
+    color: var(--tracking-black);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition: background 0.25s ease;
+
+}
+
+
+.payment-action-btn:hover {
+
+    background: #d5d2ca;
+
+}
+
+
+.payment-action-btn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+.payment-action-error {
+
+    margin-top: 10px;
+
+    color: #a87373;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
    DETAILS
 ========================================================= */
 

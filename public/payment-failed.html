@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment Failed — A.F. Bookstore</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/payment-failed.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="failed-header">
+
+        <a
+            href="/"
+            class="failed-logo"
+            aria-label="A.F. Bookstore home"
+        >
+            A.F.
+        </a>
+
+        <a
+            href="/order-tracking"
+            class="failed-track-link"
+        >
+            Track Order
+        </a>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="failed-main">
+
+        <section class="failed-card">
+
+            <!-- ICON -->
+
+            <div
+                class="failed-icon"
+                aria-hidden="true"
+            >
+                ×
+            </div>
+
+            <!-- TITLE -->
+
+            <p class="failed-eyebrow">
+                Payment Status
+            </p>
+
+            <h1 id="failedTitle">
+                Payment Not Completed
+            </h1>
+
+            <p class="failed-message" id="failedMessage">
+                We were unable to process your payment.
+                Your order has been saved and you can try again.
+            </p>
+
+
+            <!-- ORDER ID -->
+
+            <div class="failed-order-box" id="orderInfoBox" hidden>
+
+                <div class="failed-order-row">
+                    <span>
+                        Order ID
+                    </span>
+                    <strong id="failedOrderId">
+                        —
+                    </strong>
+                </div>
+
+                <div class="failed-order-row">
+                    <span>
+                        Payment Status
+                    </span>
+                    <strong id="failedPaymentStatus">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL INPUT (for retry) -->
+
+            <div
+                class="failed-email-section"
+                id="emailSection"
+                hidden
+            >
+
+                <label for="retryEmail">
+                    Enter your email to retry payment
+                </label>
+
+                <input
+                    type="email"
+                    id="retryEmail"
+                    name="retryEmail"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                >
+
+                <small
+                    class="failed-error"
+                    id="retryEmailError"
+                ></small>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            <div
+                class="failed-loading"
+                id="failedLoading"
+                hidden
+            >
+                <span class="loading-symbol">
+                    ◌
+                </span>
+                <p>
+                    Processing...
+                </p>
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="failed-actions">
+
+                <button
+                    type="button"
+                    class="failed-btn primary"
+                    id="retryPaymentBtn"
+                    hidden
+                >
+                    <span>
+                        Try Again
+                    </span>
+                    <span aria-hidden="true">
+                        →
+                    </span>
+                </button>
+
+                <a
+                    href="/order-tracking"
+                    class="failed-btn secondary"
+                    id="trackOrderBtn"
+                >
+                    Track Your Order
+                </a>
+
+                <a
+                    href="/shop"
+                    class="failed-btn secondary"
+                >
+                    Continue Shopping
+                </a>
+
+                <a
+                    href="/"
+                    class="failed-btn secondary"
+                >
+                    Back to Home
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="failed-footer">
+
+        <p>
+            © 2026 A.F. Bookstore
+        </p>
+
+        <p>
+            Read something unforgettable.
+        </p>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="/js/payment-failed.js"></script>
+
+</body>
+
+</html>

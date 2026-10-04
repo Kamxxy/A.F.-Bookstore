@@ -16,6 +16,10 @@ const ORDERS_API_URL =
     `${API_BASE_URL}/api/orders`;
 
 
+const PAYMENTS_API_URL =
+    `${API_BASE_URL}/api/payments/initialize`;
+
+
 /*
     Temporary delivery fee.
 
@@ -1368,23 +1372,92 @@ if (checkoutForm) {
 
 
                 /*
-                    Clear cart ONLY after the
-                    backend successfully created
-                    the order.
+                    Initialize payment with Paystack.
+                    Do NOT clear the cart yet —
+                    it will be cleared only after
+                    payment is successfully verified.
                 */
 
-                cart = [];
+                const email =
+                    document.getElementById(
+                        "email"
+                    ).value.trim();
 
 
-                localStorage.removeItem(
-                    CART_STORAGE_KEY
+                /*
+                    Store email for payment retry.
+                    This is needed if the customer
+                    needs to retry payment later.
+                */
+
+                sessionStorage.setItem(
+                    "afLastOrderEmail",
+                    email
                 );
 
-                /* Render to prper order confirmation page */
+
+                const paymentResponse =
+                    await fetch(
+                        PAYMENTS_API_URL,
+                        {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    orderId:
+                                        createdOrder.id,
+                                    email: email
+                                })
+
+                        }
+                    );
 
 
-                renderSummary();
-                window.location.href = "/order-success";
+                let paymentData = null;
+
+
+                try {
+
+                    paymentData =
+                        await paymentResponse.json();
+
+                } catch (error) {
+
+                    paymentData = null;
+
+                }
+
+
+                if (
+                    !paymentResponse.ok ||
+                    !paymentData?.success ||
+                    !paymentData?.data?.authorization_url
+                ) {
+
+                    throw new Error(
+
+                        paymentData?.message ||
+                        "Unable to initialize payment. Please try again."
+
+                    );
+
+                }
+
+
+                /*
+                    Redirect to Paystack for payment.
+                    Cart is preserved until payment
+                    is successfully verified.
+                */
+
+                window.location.href =
+                    paymentData.data.authorization_url;
 
                 const checkoutNote =
                     document.querySelector(

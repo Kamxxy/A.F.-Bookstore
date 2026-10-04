@@ -11,6 +11,9 @@ const {
     "../controllers/orderController"
 );
 
+const adminAuth =
+    require("../middleware/adminAuth");
+
 
 const router =
     express.Router();
@@ -58,6 +61,7 @@ router.get(
 
 router.put(
     "/:id",
+    adminAuth,
     updateStatus
 );
 

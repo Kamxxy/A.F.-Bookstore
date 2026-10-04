@@ -692,6 +692,33 @@ function viewOrder(
                 </strong>
             </p>
 
+            ${
+                order.paymentStatus === "unpaid" &&
+                (
+                    order.status === "cancelled" ||
+                    order.reservationReleasedAt ||
+                    (
+                        order.reservationExpiresAt &&
+                        new Date(order.reservationExpiresAt) <= new Date()
+                    )
+                )
+                    ? `
+            <p>
+                Reservation:
+                <strong>Expired</strong>
+            </p>
+            `
+                    : order.paymentStatus === "unpaid" &&
+                      order.reservationExpiresAt
+                        ? `
+            <p>
+                Reservation:
+                <strong>Active until ${escapeHTML(new Date(order.reservationExpiresAt).toLocaleString())}</strong>
+            </p>
+            `
+                        : ""
+            }
+
             <p>
                 Subtotal:
                 ₦${subtotal.toLocaleString(

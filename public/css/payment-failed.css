@@ -1,12 +1,12 @@
 /* =========================================================
    A.F. BOOKSTORE
-   ORDER SUCCESS PAGE
-========================================================= */
+   PAYMENT FAILED PAGE
+======================================================== */
 
 
 /* =========================================================
    PAGE
-========================================================= */
+======================================================== */
 
 body {
 
@@ -22,18 +22,16 @@ body {
 }
 
 
-
 /* =========================================================
    HEADER
-========================================================= */
+======================================================== */
 
-.success-header {
+.failed-header {
 
     width: 100%;
 
     padding:
-        30px
-        6%;
+        30px 6%;
 
     display: flex;
 
@@ -47,7 +45,7 @@ body {
 }
 
 
-.success-logo {
+.failed-logo {
 
     color: #fff;
 
@@ -63,14 +61,14 @@ body {
 }
 
 
-.success-logo:hover {
+.failed-logo:hover {
 
     color: #aaa;
 
 }
 
 
-.back-shop {
+.failed-track-link {
 
     color: #888;
 
@@ -86,20 +84,18 @@ body {
 }
 
 
-.back-shop:hover,
-.back-shop:focus-visible {
+.failed-track-link:hover {
 
     color: #fff;
 
 }
 
 
-
 /* =========================================================
    MAIN
-========================================================= */
+======================================================== */
 
-.success-main {
+.failed-main {
 
     flex: 1;
 
@@ -117,12 +113,11 @@ body {
 }
 
 
-
 /* =========================================================
-   SUCCESS CARD
-========================================================= */
+   CARD
+======================================================== */
 
-.success-card {
+.failed-card {
 
     width: min(
         620px,
@@ -147,12 +142,11 @@ body {
 }
 
 
-
 /* =========================================================
-   CHECKMARK
-========================================================= */
+   ICON
+======================================================== */
 
-.success-icon {
+.failed-icon {
 
     width: 70px;
 
@@ -182,12 +176,11 @@ body {
 }
 
 
-
 /* =========================================================
    EYEBROW
-========================================================= */
+======================================================== */
 
-.success-eyebrow {
+.failed-eyebrow {
 
     margin-bottom: 15px;
 
@@ -202,12 +195,11 @@ body {
 }
 
 
-
 /* =========================================================
    TITLE
-========================================================= */
+======================================================== */
 
-.success-card h1 {
+.failed-card h1 {
 
     margin: 0;
 
@@ -229,12 +221,11 @@ body {
 }
 
 
-
 /* =========================================================
    MESSAGE
-========================================================= */
+======================================================== */
 
-.success-message {
+.failed-message {
 
     max-width: 420px;
 
@@ -255,12 +246,11 @@ body {
 }
 
 
-
 /* =========================================================
-   ORDER ID
-========================================================= */
+   ORDER INFO
+======================================================== */
 
-.order-id-box {
+.failed-order-box {
 
     padding:
         25px;
@@ -273,10 +263,68 @@ body {
     border-bottom:
         1px solid #242424;
 
+    text-align: left;
+
 }
 
 
-.order-id-box span {
+.failed-order-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        8px 0;
+
+}
+
+
+.failed-order-row span {
+
+    color: #555;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+}
+
+
+.failed-order-row strong {
+
+    color: #fff;
+
+    font-family:
+        monospace;
+
+    font-size: 13px;
+
+    font-weight: 400;
+
+    word-break: break-word;
+
+}
+
+
+/* =========================================================
+   EMAIL SECTION
+======================================================== */
+
+.failed-email-section {
+
+    margin-bottom: 35px;
+
+    text-align: left;
+
+}
+
+
+.failed-email-section label {
 
     display: block;
 
@@ -293,130 +341,123 @@ body {
 }
 
 
-.order-id-box strong {
+.failed-email-section input {
 
-    display: block;
+    width: 100%;
 
-    color: #fff;
-
-    font-family:
-        monospace;
-
-    font-size: 13px;
-
-    font-weight: 400;
-
-    word-break: break-word;
-
-}
-
-
-
-/* =========================================================
-   DETAILS
-========================================================= */
-
-.success-details {
-
-    margin-bottom: 40px;
-
-}
-
-
-.success-details p {
-
-    margin:
-        6px 0;
-
-    color: #777;
-
-    font-size: 10px;
-
-    line-height: 1.6;
-
-}
-
-
-
-/* =========================================================
-   PAYMENT STATUS BADGE
-========================================================= */
-
-.payment-status-badge {
-
-    display: inline-block;
+    min-height: 52px;
 
     padding:
-        8px 16px;
+        0 15px;
 
-    margin-bottom: 20px;
+    background: #101010;
 
     border:
         1px solid #333;
 
-    color: #888;
+    outline: none;
 
-    font-size: 8px;
+    color: #f5f5f5;
 
-    letter-spacing: 2px;
+    font-family:
+        inherit;
 
-    text-transform: uppercase;
+    font-size: 12px;
 
-}
-
-
-.payment-status-badge.paid {
-
-    border-color: #4a7;
-
-    color: #4a7;
+    transition:
+        border-color .3s ease;
 
 }
 
 
-.payment-status-badge.unpaid {
+.failed-email-section input:focus {
 
-    border-color: #a87373;
+    border-color: #666;
+
+}
+
+
+.failed-error {
+
+    display: block;
+
+    min-height: 15px;
+
+    margin-top: 6px;
 
     color: #a87373;
 
-}
-
-
-.payment-status-badge.failed {
-
-    border-color: #a87373;
-
-    color: #a87373;
+    font-size: 9px;
 
 }
 
 
 /* =========================================================
-   PAYMENT MESSAGE
-========================================================= */
+   LOADING
+======================================================== */
 
-.payment-message {
+.failed-loading {
 
-    max-width: 420px;
+    padding:
+        30px 0;
 
-    margin:
-        0 auto 35px;
+    text-align: center;
 
-    color: #777;
+}
+
+
+.failed-loading[hidden] {
+
+    display: none;
+
+}
+
+
+.loading-symbol {
+
+    display: block;
+
+    color: #666;
+
+    font-size: 45px;
+
+    animation:
+        failedSpin 1.5s
+        linear infinite;
+
+}
+
+
+.failed-loading p {
+
+    margin-top:
+        15px;
+
+    color: #666;
 
     font-size: 10px;
 
-    line-height: 1.6;
+}
+
+
+@keyframes failedSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 
 }
 
 
 /* =========================================================
    ACTIONS
-========================================================= */
+======================================================== */
 
-.success-actions {
+.failed-actions {
 
     display: flex;
 
@@ -427,7 +468,7 @@ body {
 }
 
 
-.success-btn {
+.failed-btn {
 
     min-height: 52px;
 
@@ -448,30 +489,44 @@ body {
 
     text-transform: uppercase;
 
+    text-decoration: none;
+
     transition:
         all .3s ease;
 
 }
 
 
-.success-btn.primary {
+.failed-btn.primary {
 
     background: #fff;
 
     color: #080808;
 
+    border: none;
+
+    cursor: pointer;
+
 }
 
 
-.success-btn.primary:hover,
-.success-btn.primary:focus-visible {
+.failed-btn.primary:hover {
 
     background: #ccc;
 
 }
 
 
-.success-btn.secondary {
+.failed-btn.primary:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+}
+
+
+.failed-btn.secondary {
 
     border:
         1px solid #333;
@@ -481,8 +536,7 @@ body {
 }
 
 
-.success-btn.secondary:hover,
-.success-btn.secondary:focus-visible {
+.failed-btn.secondary:hover {
 
     border-color: #666;
 
@@ -491,12 +545,11 @@ body {
 }
 
 
-
 /* =========================================================
    FOOTER
-========================================================= */
+======================================================== */
 
-.success-footer {
+.failed-footer {
 
     padding:
         25px 6%;
@@ -519,21 +572,20 @@ body {
 }
 
 
-.success-footer p {
+.failed-footer p {
 
     margin: 0;
 
 }
 
 
-
 /* =========================================================
    RESPONSIVE
-========================================================= */
+======================================================== */
 
 @media (max-width: 600px) {
 
-    .success-header {
+    .failed-header {
 
         padding:
             25px 6%;
@@ -541,21 +593,14 @@ body {
     }
 
 
-    .success-logo {
+    .failed-logo {
 
         font-size: 27px;
 
     }
 
 
-    .back-shop {
-
-        font-size: 8px;
-
-    }
-
-
-    .success-main {
+    .failed-main {
 
         min-height: auto;
 
@@ -565,7 +610,7 @@ body {
     }
 
 
-    .success-card {
+    .failed-card {
 
         padding:
             55px 25px;
@@ -573,7 +618,7 @@ body {
     }
 
 
-    .success-icon {
+    .failed-icon {
 
         width: 60px;
 
@@ -584,21 +629,21 @@ body {
     }
 
 
-    .success-card h1 {
+    .failed-card h1 {
 
         font-size: 48px;
 
     }
 
 
-    .success-message {
+    .failed-message {
 
         font-size: 18px;
 
     }
 
 
-    .success-footer {
+    .failed-footer {
 
         flex-direction: column;
 

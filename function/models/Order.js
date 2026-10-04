@@ -60,14 +60,13 @@ const orderSchema = new mongoose.Schema(
         status: {
             type: String,
             enum: [
-                "pending_payment",
                 "pending",
                 "processing",
                 "shipped",
                 "delivered",
                 "cancelled"
             ],
-            default: "pending_payment"
+            default: "pending"
         },
 
         paymentStatus: {
@@ -75,10 +74,35 @@ const orderSchema = new mongoose.Schema(
             enum: [
                 "unpaid",
                 "paid",
-                "failed",
-                "refunded"
+                "failed"
             ],
             default: "unpaid"
+        },
+
+        transactionReference: {
+            type: String,
+            unique: true,
+            sparse: true
+        },
+
+        paymentMethod: {
+            type: String,
+            default: null
+        },
+
+        paidAt: {
+            type: Date,
+            default: null
+        },
+
+        reservationExpiresAt: {
+            type: Date,
+            default: null
+        },
+
+        reservationReleasedAt: {
+            type: Date,
+            default: null
         },
 
         customer: {

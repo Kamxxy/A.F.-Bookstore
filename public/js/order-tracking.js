@@ -1,12 +1,12 @@
 /* =========================================================
    A.F. BOOKSTORE
    ORDER TRACKING JAVASCRIPT
-========================================================= */
+======================================================== */
 
 
 /* =========================================================
    CONFIGURATION
-========================================================= */
+======================================================== */
 
 const API_BASE_URL =
     "";
@@ -19,7 +19,7 @@ const TRACK_ORDER_URL =
 
 /* =========================================================
    ELEMENTS
-========================================================= */
+======================================================== */
 
 const trackingForm =
     document.getElementById(
@@ -74,10 +74,72 @@ const cancelledOrderMessage =
     );
 
 
+const paymentStatusIndicator =
+    document.getElementById(
+        "paymentStatusIndicator"
+    );
+
+
+const paymentStatusIcon =
+    document.getElementById(
+        "paymentStatusIcon"
+    );
+
+
+const paymentStatusTitle =
+    document.getElementById(
+        "paymentStatusTitle"
+    );
+
+
+const paymentStatusDescription =
+    document.getElementById(
+        "paymentStatusDescription"
+    );
+
+
+const paymentAction =
+    document.getElementById(
+        "paymentAction"
+    );
+
+
+const paymentActionNote =
+    document.getElementById(
+        "paymentActionNote"
+    );
+
+
+const paymentActionBtn =
+    document.getElementById(
+        "paymentActionBtn"
+    );
+
+
+const paymentActionError =
+    document.getElementById(
+        "paymentActionError"
+    );
+
+
+const paymentActionShopLink =
+    document.getElementById(
+        "paymentActionShopLink"
+    );
+
+
+/*
+    The order currently displayed on the
+    tracking page. Reused for payment retry.
+*/
+
+let currentOrder = null;
+
+
 
 /* =========================================================
    FORMAT PRICE
-========================================================= */
+======================================================== */
 
 function formatPrice(value) {
 
@@ -93,7 +155,7 @@ function formatPrice(value) {
 
 /* =========================================================
    ESCAPE HTML
-========================================================= */
+======================================================== */
 
 function escapeHtml(value) {
 
@@ -132,13 +194,16 @@ function escapeHtml(value) {
 
 /* =========================================================
    STATUS LABEL
-========================================================= */
+======================================================== */
 
 function getStatusLabel(
     status
 ) {
 
     const labels = {
+
+        pending:
+            "Pending",
 
         pending_payment:
             "Pending Payment",
@@ -170,9 +235,11 @@ function getStatusLabel(
 
 /* =========================================================
    STATUS ORDER
-========================================================= */
+======================================================== */
 
 const statusOrder = [
+
+    "pending",
 
     "pending_payment",
 
@@ -188,7 +255,7 @@ const statusOrder = [
 
 /* =========================================================
    UPDATE STATUS TIMELINE
-========================================================= */
+======================================================== */
 
 function updateTimeline(
     currentStatus
@@ -202,7 +269,7 @@ function updateTimeline(
 
     /* =============================================
        CANCELLED ORDER
-    ============================================== */
+       ============================================== */
 
     if (
         currentStatus === "cancelled"
@@ -247,7 +314,7 @@ function updateTimeline(
 
     /* =============================================
        NORMAL ORDER
-    ============================================== */
+       ============================================== */
 
     if (timeline) {
 
@@ -334,8 +401,287 @@ function updateTimeline(
 
 
 /* =========================================================
+   UPDATE PAYMENT STATUS
+   Displays payment status separately from order status.
+======================================================== */
+
+function updatePaymentStatus(
+    order
+) {
+
+    if (!paymentStatusIndicator) {
+
+        return;
+
+    }
+
+    const paymentStatus =
+        order.paymentStatus;
+
+    const windowExpired =
+        paymentStatus === "unpaid" &&
+        order.reservationExpiresAt &&
+        new Date(
+            order.reservationExpiresAt
+        ) <= new Date();
+
+    const reservationExpired =
+        paymentStatus === "unpaid" &&
+        (
+            order.status === "cancelled" ||
+            !!order.reservationReleasedAt ||
+            windowExpired
+        );
+
+
+    /*
+        Reset classes.
+    */
+
+    paymentStatusIndicator.className =
+        "payment-status-indicator";
+
+
+    /*
+        Update based on payment status.
+    */
+
+    if (paymentStatus === "paid") {
+
+        paymentStatusIndicator.classList.add(
+            "paid"
+        );
+
+
+        if (paymentStatusIcon) {
+
+            paymentStatusIcon.textContent =
+                "✓";
+
+        }
+
+
+        if (paymentStatusTitle) {
+
+            paymentStatusTitle.textContent =
+                "Paid";
+
+        }
+
+
+        if (paymentStatusDescription) {
+
+            paymentStatusDescription.textContent =
+                "Payment has been confirmed.";
+
+        }
+
+
+    } else if (paymentStatus === "failed") {
+
+        paymentStatusIndicator.classList.add(
+            "failed"
+        );
+
+
+        if (paymentStatusIcon) {
+
+            paymentStatusIcon.textContent =
+                "×";
+
+        }
+
+
+        if (paymentStatusTitle) {
+
+            paymentStatusTitle.textContent =
+                "Failed";
+
+        }
+
+
+        if (paymentStatusDescription) {
+
+            paymentStatusDescription.textContent =
+                "The previous payment attempt was unsuccessful.";
+
+        }
+
+
+    } else {
+
+        /*
+            unpaid
+        */
+
+        paymentStatusIndicator.classList.add(
+            "unpaid"
+        );
+
+
+        if (paymentStatusIcon) {
+
+            paymentStatusIcon.textContent =
+                "◌";
+
+        }
+
+
+        if (paymentStatusTitle) {
+
+            paymentStatusTitle.textContent =
+                reservationExpired
+                    ? "Payment window expired"
+                    : "Payment not completed";
+
+        }
+
+
+        if (paymentStatusDescription) {
+
+            paymentStatusDescription.textContent =
+                reservationExpired
+                    ? "The reservation for this order has expired and the reserved stock has been released."
+                    : "This order has been created, but payment has not yet been confirmed.";
+
+        }
+
+    }
+
+
+    /*
+        Payment recovery action — reused the SAME
+        order, never creates a new one.
+    */
+
+    if (!paymentAction) {
+
+        return;
+
+    }
+
+
+    if (paymentStatus === "unpaid") {
+
+        if (reservationExpired) {
+
+            paymentAction.hidden =
+                false;
+
+            if (paymentActionNote) {
+
+                paymentActionNote.textContent =
+                    "The payment window for this order has expired and the reserved stock has been released. Please place a new order from the shop.";
+
+            }
+
+            if (paymentActionBtn) {
+
+                paymentActionBtn.hidden =
+                    true;
+
+            }
+
+            if (paymentActionShopLink) {
+
+                paymentActionShopLink.hidden =
+                    false;
+
+            }
+
+            return;
+
+        }
+
+        paymentAction.hidden =
+            false;
+
+
+        if (paymentActionNote) {
+
+            paymentActionNote.textContent =
+                order.reservationExpiresAt
+                    ? `Your order is reserved until ${new Date(order.reservationExpiresAt).toLocaleString()}. Complete your payment to proceed.`
+                    : "Your order has been created, but payment has not yet been confirmed. Complete your payment to proceed.";
+
+        }
+
+
+        if (paymentActionBtn) {
+
+            paymentActionBtn.hidden =
+                false;
+
+            paymentActionBtn.textContent =
+                "Complete Payment";
+
+        }
+
+        if (paymentActionShopLink) {
+
+            paymentActionShopLink.hidden =
+                true;
+
+        }
+
+
+    } else if (paymentStatus === "failed") {
+
+        paymentAction.hidden =
+            false;
+
+
+        if (paymentActionNote) {
+
+            paymentActionNote.textContent =
+                "The previous payment attempt was unsuccessful. You can try again using the same order.";
+
+        }
+
+
+        if (paymentActionBtn) {
+
+            paymentActionBtn.hidden =
+                false;
+
+            paymentActionBtn.textContent =
+                "Try Again";
+
+        }
+
+        if (paymentActionShopLink) {
+
+            paymentActionShopLink.hidden =
+                true;
+
+        }
+
+
+    } else {
+
+        /*
+            paid — no payment recovery action.
+        */
+
+        paymentAction.hidden =
+            true;
+
+        if (paymentActionError) {
+
+            paymentActionError.textContent =
+                "";
+
+        }
+
+    }
+
+}
+
+
+
+/* =========================================================
    SHOW LOADING
-========================================================= */
+======================================================== */
 
 function showLoading(
     loading
@@ -343,6 +689,7 @@ function showLoading(
 
     trackingLoading.hidden =
         !loading;
+
 
     trackOrderBtn.disabled =
         loading;
@@ -352,6 +699,7 @@ function showLoading(
 
         orderResult.hidden =
             true;
+
 
         trackingNotFound.hidden =
             true;
@@ -364,7 +712,7 @@ function showLoading(
 
 /* =========================================================
    SHOW ERROR
-========================================================= */
+======================================================== */
 
 function showError(
     message
@@ -379,7 +727,7 @@ function showError(
 
 /* =========================================================
    CLEAR ERROR
-========================================================= */
+======================================================== */
 
 function clearError() {
 
@@ -392,15 +740,19 @@ function clearError() {
 
 /* =========================================================
    RENDER ORDER
-========================================================= */
+======================================================== */
 
 function renderOrder(
     order
 ) {
 
+    currentOrder =
+        order;
+
+
     /* =============================================
        HEADER
-    ============================================== */
+       ============================================== */
 
     document.getElementById(
         "displayOrderId"
@@ -423,7 +775,7 @@ function renderOrder(
 
     /* =============================================
        STATUS
-    ============================================== */
+       ============================================== */
 
     updateTimeline(
         order.status
@@ -432,8 +784,18 @@ function renderOrder(
 
 
     /* =============================================
+       PAYMENT STATUS
+       ============================================== */
+
+    updatePaymentStatus(
+        order
+    );
+
+
+
+    /* =============================================
        CUSTOMER
-    ============================================== */
+       ============================================== */
 
     document.getElementById(
         "customerName"
@@ -456,7 +818,7 @@ function renderOrder(
 
     /* =============================================
        DELIVERY
-    ============================================== */
+       ============================================== */
 
     document.getElementById(
         "deliveryAddress"
@@ -484,7 +846,7 @@ function renderOrder(
 
     /* =============================================
        ITEMS
-    ============================================== */
+       ============================================== */
 
     const orderItems =
         document.getElementById(
@@ -595,7 +957,7 @@ function renderOrder(
 
     /* =============================================
        TOTALS
-    ============================================== */
+       ============================================== */
 
     document.getElementById(
         "orderSubtotal"
@@ -624,10 +986,11 @@ function renderOrder(
 
     /* =============================================
        SHOW RESULT
-    ============================================== */
+       ============================================== */
 
     orderResult.hidden =
         false;
+
 
     trackingNotFound.hidden =
         true;
@@ -637,8 +1000,180 @@ function renderOrder(
 
 
 /* =========================================================
+   PAYMENT RETRY
+   Reuses the existing order — never creates a new one.
+======================================================== */
+
+async function handlePaymentAction() {
+
+    if (!currentOrder) {
+
+        return;
+
+    }
+
+    const email =
+        currentOrder.customer?.email;
+
+
+    if (!email) {
+
+        if (paymentActionError) {
+
+            paymentActionError.textContent =
+                "No customer email is associated with this order.";
+
+        }
+
+        return;
+
+    }
+
+
+    if (paymentActionBtn) {
+
+        paymentActionBtn.disabled =
+            true;
+
+    }
+
+
+    if (paymentActionError) {
+
+        paymentActionError.textContent =
+            "";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/payments/initialize`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            orderId:
+                                currentOrder.id,
+                            email: email
+                        })
+                }
+            );
+
+
+        let data = null;
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (error) {
+
+            data = null;
+
+        }
+
+
+        if (
+            !response.ok ||
+            !data?.success ||
+            !data?.data?.authorization_url
+        ) {
+
+            const error =
+                new Error(
+                    data?.message ||
+                    "Unable to initialize payment. Please try again."
+                );
+
+            error.code =
+                data?.code;
+
+            throw error;
+
+        }
+
+        window.location.href =
+            data.data.authorization_url;
+
+    } catch (error) {
+
+        console.error(
+            "Payment initialization error:",
+            error
+        );
+
+        if (paymentActionBtn) {
+
+            paymentActionBtn.disabled =
+                false;
+
+        }
+
+        if (paymentActionError) {
+
+            paymentActionError.textContent =
+                error.message ||
+                "Unable to initialize payment. Please try again.";
+
+        }
+
+        if (
+            error.code ===
+            "reservation_expired"
+        ) {
+
+            if (paymentActionBtn) {
+
+                paymentActionBtn.hidden =
+                    true;
+
+            }
+
+            if (paymentActionShopLink) {
+
+                paymentActionShopLink.hidden =
+                    false;
+
+            }
+
+            if (paymentActionNote) {
+
+                paymentActionNote.textContent =
+                    "The payment window for this order has expired and the reserved stock has been released. Please place a new order from the shop.";
+
+            }
+
+        }
+
+    }
+
+}
+
+
+if (paymentActionBtn) {
+
+    paymentActionBtn.addEventListener(
+        "click",
+        handlePaymentAction
+    );
+
+}
+
+
+
+/* =========================================================
    FETCH ORDER
-========================================================= */
+======================================================== */
 
 async function fetchOrder(
     orderId
@@ -704,7 +1239,7 @@ async function fetchOrder(
 
 /* =========================================================
    FORM SUBMISSION
-========================================================= */
+======================================================== */
 
 if (trackingForm) {
 
@@ -727,6 +1262,7 @@ if (trackingForm) {
                 showError(
                     "Please enter your order ID."
                 );
+
 
                 orderIdInput.focus();
 
@@ -776,6 +1312,7 @@ if (trackingForm) {
                     "Unable to find this order."
                 );
 
+
             }
 
             finally {
@@ -795,7 +1332,7 @@ if (trackingForm) {
 
 /* =========================================================
    TRACK ANOTHER ORDER
-========================================================= */
+======================================================== */
 
 if (trackAnotherBtn) {
 
@@ -806,15 +1343,20 @@ if (trackAnotherBtn) {
             orderResult.hidden =
                 true;
 
+
             trackingNotFound.hidden =
                 true;
+
 
             orderIdInput.value =
                 "";
 
+
             clearError();
 
+
             orderIdInput.focus();
+
 
             window.scrollTo({
 
@@ -833,12 +1375,20 @@ if (trackAnotherBtn) {
 
 /* =========================================================
    AUTO LOAD LAST ORDER
-========================================================= */
+======================================================== */
+
+const urlOrderId =
+    new URLSearchParams(
+        window.location.search
+    ).get("order");
+
 
 const lastOrderId =
+    urlOrderId ||
     sessionStorage.getItem(
         "afLastOrderId"
     );
+
 
 
 if (
@@ -848,5 +1398,18 @@ if (
 
     orderIdInput.value =
         lastOrderId;
+
+
+    /*
+        When arriving with an order ID in the URL
+        (e.g. from success/failed pages), load it
+        immediately.
+    */
+
+    if (urlOrderId) {
+
+        trackingForm?.requestSubmit();
+
+    }
 
 }

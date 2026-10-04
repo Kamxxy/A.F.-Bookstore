@@ -331,7 +331,7 @@ function renderRecentOrders(
 
                     const status =
                         order.status ||
-                        "pending_payment";
+                        "pending";
 
 
                     return `
@@ -414,8 +414,8 @@ function formatStatus(status) {
 
     const labels = {
 
-        pending_payment:
-            "Pending Payment",
+        pending:
+            "Pending",
 
         processing:
             "Processing",

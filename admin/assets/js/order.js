@@ -95,22 +95,13 @@ function updateStats() {
         orders.length;
 
 
-    /*
-        Orders awaiting payment.
-
-        The backend currently creates
-        orders with:
-
-        status: "pending_payment"
-    */
-
     const pending =
         orders.filter(
             order =>
                 String(
                     order.status || ""
                 ).toLowerCase() ===
-                "pending_payment"
+                "pending"
         ).length;
 
 
@@ -257,7 +248,7 @@ function renderOrders(
 
                 const status =
                     order.status ||
-                    "pending_payment";
+                    "pending";
 
 
                 const customer =
@@ -408,7 +399,7 @@ function filterOrders() {
                 const orderStatus =
                     String(
                         order.status ||
-                        "pending_payment"
+                        "pending"
                     ).toLowerCase();
 
 
@@ -514,7 +505,7 @@ function viewOrder(
 
     const status =
         order.status ||
-        "pending_payment";
+        "pending";
 
 
     const paymentStatus =
@@ -766,15 +757,15 @@ function viewOrder(
             >
 
                 <option
-                    value="pending_payment"
+                    value="pending"
                     ${
                         status ===
-                        "pending_payment"
+                        "pending"
                             ? "selected"
                             : ""
                     }
                 >
-                    Pending Payment
+                    Pending
                 </option>
 
 
@@ -952,8 +943,8 @@ function formatStatus(
 
     const labels = {
 
-        pending_payment:
-            "Pending Payment",
+        pending:
+            "Pending",
 
         processing:
             "Processing",

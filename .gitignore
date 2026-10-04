@@ -27,3 +27,5 @@ Thumbs.db
 # Debug / dump files
 *.txt
 image/
+# Allow robots.txt
+!public/robots.txt

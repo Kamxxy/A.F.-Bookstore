@@ -19,6 +19,23 @@ router.get('/', (req, res) => {
 
 });
 
+/* =========================================================
+   INDEX ALIAS
+   "/" is the canonical homepage URL. This alias keeps the
+   old "/index" path working without making it canonical.
+========================================================= */
+
+router.get('/index', (req, res) => {
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            '../../public/index.html'
+        )
+    );
+
+});
+
 
 /* =========================================================
    SHOP PAGE
@@ -98,6 +115,56 @@ router.get('/order-success', (req, res) => {
 router.get('/payment-failed', (req, res) => {
     res.sendFile(
         path.join(__dirname, '../../public/payment-failed.html')
+    );
+});
+
+/* =========================================================
+   CONTACT PAGE
+========================================================= */
+
+router.get('/contact', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../../public/contact.html')
+    );
+});
+
+/* =========================================================
+   SHIPPING PAGE
+========================================================= */
+
+router.get('/shipping', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../../public/shipping.html')
+    );
+});
+
+/* =========================================================
+   RETURNS PAGE
+========================================================= */
+
+router.get('/returns', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../../public/returns.html')
+    );
+});
+
+/* =========================================================
+   PRIVACY PAGE
+========================================================= */
+
+router.get('/privacy', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../../public/privacy.html')
+    );
+});
+
+/* =========================================================
+   TERMS PAGE
+========================================================= */
+
+router.get('/terms', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, '../../public/terms.html')
     );
 });
 

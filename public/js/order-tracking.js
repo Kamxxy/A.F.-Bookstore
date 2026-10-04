@@ -205,9 +205,6 @@ function getStatusLabel(
         pending:
             "Pending",
 
-        pending_payment:
-            "Pending Payment",
-
         processing:
             "Processing",
 
@@ -240,8 +237,6 @@ function getStatusLabel(
 const statusOrder = [
 
     "pending",
-
-    "pending_payment",
 
     "processing",
 

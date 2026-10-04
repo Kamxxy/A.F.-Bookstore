@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/</loc>
+        <priority>1.0</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/shop</loc>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/about</loc>
+        <priority>0.7</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/contact</loc>
+        <priority>0.6</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/shipping</loc>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/returns</loc>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/privacy</loc>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/terms</loc>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://a-f-bookstore.onrender.com/order-tracking</loc>
+        <priority>0.4</priority>
+    </url>
+
+</urlset>

@@ -1,0 +1,108 @@
+/* =========================================================
+   A.F. BOOKSTORE — INFO PAGES
+   Shared styles for contact/shipping/returns/privacy/terms
+======================================================== */
+
+.info-page {
+    width: var(--content-width);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 140px 0 100px;
+}
+
+.info-hero {
+    margin-bottom: 56px;
+}
+
+.info-hero .eyebrow {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.info-hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 20px;
+}
+
+.info-hero h1 em {
+    font-style: italic;
+    color: var(--white-soft);
+}
+
+.info-hero p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 640px;
+}
+
+.info-section {
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+}
+
+.info-section h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 16px;
+}
+
+.info-section p,
+.info-section li {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.info-section ul {
+    padding-left: 20px;
+}
+
+.info-section li {
+    margin-bottom: 8px;
+}
+
+.info-section a {
+    color: var(--white-soft);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.info-note {
+    margin-top: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    background: var(--dark);
+    color: var(--muted-dark);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.info-contact-card {
+    margin-top: 16px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    background: var(--dark);
+}
+
+.info-contact-card h3 {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 10px;
+}
+
+.info-contact-card p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+}

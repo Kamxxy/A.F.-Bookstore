@@ -129,7 +129,7 @@ async function main() {
         const timestamp = Date.now();
 
         for (let i = 1; i <= 2; i++) {
-            const orderId = `AF-TEST-${timestamp}-${i}`;
+            const orderId = `AFORDER-TEST-${timestamp}-${i}`;
             const newOrder = {
                 id: orderId,
                 status: 'pending',
@@ -182,7 +182,7 @@ async function main() {
         }
 
         // Clean up test orders
-        await collection.deleteMany({ id: { $regex: '^AF-TEST-' } });
+        await collection.deleteMany({ id: { $regex: '^AFORDER-TEST-' } });
         console.log('Test orders cleaned up.');
 
         // ============================================

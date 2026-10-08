@@ -131,7 +131,7 @@ function generateOrderId() {
             Math.random() * 9000
         );
 
-    return `AF-${timestamp}-${random}`;
+    return `AFORDER-${timestamp}-${random}`;
 
 }
 

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'af-bookstore-';
-const CACHE_NAME = `${CACHE_PREFIX}offline-v1`;
+const CACHE_NAME = `${CACHE_PREFIX}offline-v2`;
 const OFFLINE_URL = '/offline.html';
 const APP_ASSETS = [
   OFFLINE_URL,

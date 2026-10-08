@@ -216,57 +216,9 @@
                     </div>
 
 
-                    <!-- ADDRESS -->
-
-                    <div class="form-group">
-
-                        <label for="address">
-                            Delivery Address
-                        </label>
-
-                        <textarea
-                            id="address"
-                            name="address"
-                            rows="4"
-                            placeholder="Enter your delivery address"
-                            autocomplete="street-address"
-                            required
-                        ></textarea>
-
-                        <small
-                            class="form-error"
-                            id="addressError"
-                        ></small>
-
-                    </div>
-
-
-                    <!-- CITY + STATE -->
+                    <!-- STATE + LGA -->
 
                     <div class="form-row">
-
-                        <div class="form-group">
-
-                            <label for="city">
-                                City
-                            </label>
-
-                            <input
-                                type="text"
-                                id="city"
-                                name="city"
-                                placeholder="City"
-                                autocomplete="address-level2"
-                                required
-                            >
-
-                            <small
-                                class="form-error"
-                                id="cityError"
-                            ></small>
-
-                        </div>
-
 
                         <div class="form-group">
 
@@ -274,14 +226,14 @@
                                 State
                             </label>
 
-                            <input
-                                type="text"
+                            <select
                                 id="state"
                                 name="state"
-                                placeholder="State"
                                 autocomplete="address-level1"
                                 required
                             >
+                                <option value="">Select state</option>
+                            </select>
 
                             <small
                                 class="form-error"
@@ -289,6 +241,130 @@
                             ></small>
 
                         </div>
+
+
+                        <div class="form-group">
+
+                            <label for="lga">
+                                LGA
+                            </label>
+
+                            <select
+                                id="lga"
+                                name="lga"
+                                autocomplete="address-level2"
+                                required
+                                disabled
+                            >
+                                <option value="">Select LGA</option>
+                            </select>
+
+                            <small
+                                class="form-error"
+                                id="lgaError"
+                            ></small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AREA -->
+
+                    <div class="form-group">
+
+                        <label for="area">
+                            Area / District
+                        </label>
+
+                        <input
+                            type="text"
+                            id="area"
+                            name="area"
+                            placeholder="e.g. Wuse 2"
+                            autocomplete="address-level3"
+                            required
+                        >
+
+                        <small
+                            class="form-error"
+                            id="areaError"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- STREET + HOUSE NUMBER -->
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="street">
+                                Street / Road
+                            </label>
+
+                            <input
+                                type="text"
+                                id="street"
+                                name="street"
+                                placeholder="e.g. Adetokunbo Ademola Crescent"
+                                autocomplete="address-line2"
+                                required
+                            >
+
+                            <small
+                                class="form-error"
+                                id="streetError"
+                            ></small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="houseNumber">
+                                House / Building Number (if available)
+                            </label>
+
+                            <input
+                                type="text"
+                                id="houseNumber"
+                                name="houseNumber"
+                                placeholder="e.g. 12"
+                                autocomplete="address-line1"
+                            >
+
+                            <small
+                                class="form-error"
+                                id="houseNumberError"
+                            ></small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DETAILS -->
+
+                    <div class="form-group">
+
+                        <label for="details">
+                            Detailed delivery instructions
+                            (optional)
+                        </label>
+
+                        <textarea
+                            id="details"
+                            name="details"
+                            rows="3"
+                            placeholder="Landmarks, gate colour, floor, etc."
+                        ></textarea>
+
+                        <small
+                            class="form-error"
+                            id="detailsError"
+                        ></small>
 
                     </div>
 

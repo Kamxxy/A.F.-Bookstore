@@ -25,6 +25,9 @@ const ordersRouter =
 const paymentsRouter =
     require('./routes/payments');
 
+const divisionsRouter =
+    require('./routes/divisions');
+
 
 
 const app = express();
@@ -130,6 +133,11 @@ app.use(
 app.use(
     '/api/payments',
     paymentsRouter
+);
+
+app.use(
+    '/api/divisions',
+    divisionsRouter
 );
 
 app.use(

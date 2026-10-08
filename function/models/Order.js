@@ -127,18 +127,35 @@ const orderSchema = new mongoose.Schema(
         delivery: {
 
             address: {
-                type: String,
-                required: true
+                type: String
             },
 
             city: {
-                type: String,
-                required: true
+                type: String
             },
 
             state: {
-                type: String,
-                required: true
+                type: String
+            },
+
+            lga: {
+                type: String
+            },
+
+            area: {
+                type: String
+            },
+
+            street: {
+                type: String
+            },
+
+            houseNumber: {
+                type: String
+            },
+
+            details: {
+                type: String
             }
 
         },

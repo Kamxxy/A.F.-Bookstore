@@ -815,27 +815,44 @@ function renderOrder(
        DELIVERY
        ============================================== */
 
+    const deliveryCityState =
+        [
+            order.delivery?.city,
+
+            order.delivery?.state
+        ]
+            .filter(Boolean)
+            .join(", ") || "—";
+
+
+    const hasStructuredDelivery =
+        Boolean(
+            order.delivery?.lga ||
+            order.delivery?.area ||
+            order.delivery?.street
+        );
+
+
     document.getElementById(
         "deliveryAddress"
-    ).textContent =
-        `DELIVERY ADDRESS: ${order.delivery?.address || "—"}`;
+    ).textContent = hasStructuredDelivery
+        ? `DELIVERY ADDRESS: ${[
+            order.delivery?.houseNumber,
+            order.delivery?.street,
+            order.delivery?.area,
+            order.delivery?.lga,
+            order.delivery?.state
+        ].filter(Boolean).join(", ")}`
+        : `DELIVERY ADDRESS: ${order.delivery?.address || "—"}`;
 
 
     document.getElementById(
         "deliveryLocation"
-    ).textContent = `DELIVERY LOCATION: ${[
-
-        order.delivery?.city,
-
-        order.delivery?.state
-
-    ]
-
-        .filter(Boolean)
-
-        .join(
-            ", "
-        ) || "—"}`;
+    ).textContent = `DELIVERY LOCATION: ${deliveryCityState}${
+        order.delivery?.details
+            ? ` — NOTE: ${order.delivery.details}`
+            : ""
+    }`;
 
 
 

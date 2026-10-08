@@ -517,21 +517,39 @@ function validateForm() {
         );
 
 
-    const address =
-        document.getElementById(
-            "address"
-        );
-
-
-    const city =
-        document.getElementById(
-            "city"
-        );
-
-
     const state =
         document.getElementById(
             "state"
+        );
+
+
+    const lga =
+        document.getElementById(
+            "lga"
+        );
+
+
+    const area =
+        document.getElementById(
+            "area"
+        );
+
+
+    const street =
+        document.getElementById(
+            "street"
+        );
+
+
+    const houseNumber =
+        document.getElementById(
+            "houseNumber"
+        );
+
+
+    const details =
+        document.getElementById(
+            "details"
         );
 
 
@@ -603,55 +621,88 @@ function validateForm() {
 
 
     /*
-        ADDRESS
-    */
-
-    if (
-        address.value.trim().length <
-        5
-    ) {
-
-        setError(
-            "address",
-            "Please enter your delivery address."
-        );
-
-        valid = false;
-
-    }
-
-
-    /*
-        CITY
-    */
-
-    if (
-        city.value.trim().length <
-        2
-    ) {
-
-        setError(
-            "city",
-            "Please enter your city."
-        );
-
-        valid = false;
-
-    }
-
-
-    /*
         STATE
     */
 
+    if (!state.value) {
+
+        setError(
+            "state",
+            "Please select your state."
+        );
+
+        valid = false;
+
+    }
+
+
+    /*
+        LGA
+    */
+
+    if (!lga.value) {
+
+        setError(
+            "lga",
+            "Please select your LGA."
+        );
+
+        valid = false;
+
+    }
+
+
+    /*
+        AREA
+    */
+
     if (
-        state.value.trim().length <
+        area.value.trim().length <
         2
     ) {
 
         setError(
-            "state",
-            "Please enter your state."
+            "area",
+            "Please enter your area / district."
+        );
+
+        valid = false;
+
+    }
+
+
+    /*
+        STREET
+    */
+
+    if (
+        street.value.trim().length <
+        2
+    ) {
+
+        setError(
+            "street",
+            "Please enter your street / road."
+        );
+
+        valid = false;
+
+    }
+
+
+    /*
+        HOUSE NUMBER (optional — validated only when given)
+    */
+
+    if (
+        houseNumber.value.trim().length > 0 &&
+        houseNumber.value.trim().length >
+        100
+    ) {
+
+        setError(
+            "houseNumber",
+            "House number is too long."
         );
 
         valid = false;
@@ -681,13 +732,135 @@ const checkoutFields = [
 
     document.getElementById("phone"),
 
-    document.getElementById("address"),
+    document.getElementById("state"),
 
-    document.getElementById("city"),
+    document.getElementById("lga"),
 
-    document.getElementById("state")
+    document.getElementById("area"),
+
+    document.getElementById("street")
 
 ].filter(Boolean);
+
+
+/* =========================================================
+   NIGERIAN STATE / LGA DROPDOWNS
+
+   Data is served locally from the bundled dataset via
+   GET /api/divisions. No external API or key required.
+   Source: open-admin-data/nigeria-administrative-divisions
+   License: CC-BY-4.0
+   ========================================================= */
+
+let nigeriaStates = [];
+
+
+async function loadDivisions() {
+
+    const stateSelect =
+        document.getElementById("state");
+
+    const lgaSelect =
+        document.getElementById("lga");
+
+    if (!stateSelect || !lgaSelect) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch("/api/divisions");
+
+        const data =
+            await response.json();
+
+        if (!data || !Array.isArray(data.states)) {
+            throw new Error("Invalid divisions data");
+        }
+
+        nigeriaStates = data.states;
+
+        stateSelect.innerHTML =
+            '<option value="">Select state</option>' +
+            nigeriaStates
+                .map(
+                    (state) =>
+                        `<option value="${state.name}">${state.name}</option>`
+                )
+                .join("");
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load Nigerian states:",
+            error
+        );
+
+    }
+
+}
+
+
+function populateLgas(stateName) {
+
+    const lgaSelect =
+        document.getElementById("lga");
+
+    if (!lgaSelect) {
+        return;
+    }
+
+    const state =
+        nigeriaStates.find(
+            (entry) => entry.name === stateName
+        );
+
+    lgaSelect.innerHTML =
+        '<option value="">Select LGA</option>';
+
+    if (state && Array.isArray(state.lgas)) {
+
+        lgaSelect.innerHTML +=
+            state.lgas
+                .map(
+                    (lga) =>
+                        `<option value="${lga}">${lga}</option>`
+                )
+                .join("");
+
+        lgaSelect.disabled = false;
+
+    } else {
+
+        lgaSelect.disabled = true;
+
+    }
+
+}
+
+
+const stateSelectEl =
+    document.getElementById("state");
+
+if (stateSelectEl) {
+
+    stateSelectEl.addEventListener(
+        "change",
+        (event) => {
+            populateLgas(event.target.value);
+        }
+    );
+
+}
+
+
+loadDivisions();
+
+
+/* =========================================================
+   VALIDATE FIELD WHILE TYPING
+   ========================================================= */
 
 
 /* =========================================================
@@ -876,17 +1049,20 @@ function validateSingleField(field) {
 
 
     /*
-        ADDRESS
+        STATE / LGA
     */
 
     if (
-        field.id === "address" &&
-        value.length < 5
+        (
+            field.id === "state" ||
+            field.id === "lga"
+        ) &&
+        !value
     ) {
 
         markFieldInvalid(
             field,
-            "Please enter your delivery address."
+            "Please make a selection."
         );
 
         return false;
@@ -895,25 +1071,32 @@ function validateSingleField(field) {
 
 
     /*
-        CITY / STATE
+        AREA / STREET
     */
 
     if (
         (
-            field.id === "city" ||
-            field.id === "state"
+            field.id === "area" ||
+            field.id === "street"
         ) &&
         value.length < 2
     ) {
 
         markFieldInvalid(
             field,
-            "Please enter a valid location."
+            "Please enter a valid value."
         );
 
         return false;
 
     }
+
+
+    /*
+        HOUSE NUMBER — optional field.
+        Kept out of live required validation so an empty
+        value is always allowed.
+    */
 
 
     /*
@@ -1015,21 +1198,39 @@ function createOrderPayload() {
         ).value.trim();
 
 
-    const address =
-        document.getElementById(
-            "address"
-        ).value.trim();
-
-
-    const city =
-        document.getElementById(
-            "city"
-        ).value.trim();
-
-
     const state =
         document.getElementById(
             "state"
+        ).value.trim();
+
+
+    const lga =
+        document.getElementById(
+            "lga"
+        ).value.trim();
+
+
+    const area =
+        document.getElementById(
+            "area"
+        ).value.trim();
+
+
+    const street =
+        document.getElementById(
+            "street"
+        ).value.trim();
+
+
+    const houseNumber =
+        document.getElementById(
+            "houseNumber"
+        ).value.trim();
+
+
+    const details =
+        document.getElementById(
+            "details"
         ).value.trim();
 
 
@@ -1048,11 +1249,17 @@ function createOrderPayload() {
 
         delivery: {
 
-            address: address,
+            state: state,
 
-            city: city,
+            lga: lga,
 
-            state: state
+            area: area,
+
+            street: street,
+
+            houseNumber: houseNumber,
+
+            details: details
 
         },
 

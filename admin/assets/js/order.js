@@ -485,6 +485,40 @@ function viewOrder(
         "—";
 
 
+    const lga =
+        order.delivery?.lga ||
+        "";
+
+
+    const area =
+        order.delivery?.area ||
+        "";
+
+
+    const street =
+        order.delivery?.street ||
+        "";
+
+
+    const houseNumber =
+        order.delivery?.houseNumber ||
+        "";
+
+
+    const details =
+        order.delivery?.details ||
+        "";
+
+
+    const hasStructuredDelivery =
+        Boolean(
+            lga ||
+            area ||
+            street ||
+            houseNumber
+        );
+
+
     const total =
         Number(
             order.total || 0
@@ -636,6 +670,25 @@ function viewOrder(
                 )}
             </p>
 
+            ${hasStructuredDelivery
+                ? `
+                <p>
+                    Street:
+                    ${escapeHTML(street)}
+                </p>
+
+                <p>
+                    Area:
+                    ${escapeHTML(area)}
+                </p>
+
+                <p>
+                    LGA:
+                    ${escapeHTML(lga)}
+                </p>
+                `
+                : ""}
+
             <p>
                 City:
                 ${escapeHTML(
@@ -649,6 +702,15 @@ function viewOrder(
                     state
                 )}
             </p>
+
+            ${details
+                ? `
+                <p>
+                    Instructions:
+                    ${escapeHTML(details)}
+                </p>
+                `
+                : ""}
 
         </div>
 

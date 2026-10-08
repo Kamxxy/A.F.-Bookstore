@@ -534,18 +534,7 @@ async function createOrder(
 
                         },
 
-                        delivery: {
-
-                            address:
-                                delivery.address,
-
-                            city:
-                                delivery.city,
-
-                            state:
-                                delivery.state
-
-                        },
+                        delivery,
 
                         items:
                             orderItems,
@@ -673,18 +662,7 @@ async function createOrder(
 
         },
 
-        delivery: {
-
-            address:
-                delivery.address,
-
-            city:
-                delivery.city,
-
-            state:
-                delivery.state
-
-        },
+        delivery,
 
         items:
             orderItems,

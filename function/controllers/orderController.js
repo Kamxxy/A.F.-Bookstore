@@ -6,6 +6,11 @@ const {
     getPublicOrderById
 } = require("../services/orderService");
 
+const {
+    validateStructuredDelivery,
+    buildDeliveryRecord
+} = require("../services/deliveryService");
+
 
 /* =========================================================
    CREATE ORDER
@@ -85,18 +90,19 @@ async function create(
         }
 
 
-        if (
-            !delivery.address ||
-            !delivery.city ||
-            !delivery.state
-        ) {
+        const deliveryCheck =
+            validateStructuredDelivery(
+                delivery
+            );
+
+        if (!deliveryCheck.valid) {
 
             return res.status(400).json({
 
                 success: false,
 
                 message:
-                    "Delivery address, city and state are required"
+                    deliveryCheck.message
 
             });
 
@@ -144,18 +150,10 @@ async function create(
 
                 },
 
-                delivery: {
-
-                    address:
-                        delivery.address.trim(),
-
-                    city:
-                        delivery.city.trim(),
-
-                    state:
-                        delivery.state.trim()
-
-                },
+                delivery:
+                    buildDeliveryRecord(
+                        delivery
+                    ),
 
                 items
 

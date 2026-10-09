@@ -100,7 +100,7 @@
 .error-eyebrow {
     margin-bottom: 25px;
 
-    color: #777572;
+    color: var(--muted);
 
     font-size: 9px;
 
@@ -142,7 +142,7 @@
 
     margin-top: 38px;
 
-    color: #85837f;
+    color: var(--muted);
 
     font-size: 13px;
 

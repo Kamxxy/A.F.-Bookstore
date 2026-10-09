@@ -47,6 +47,142 @@ const orderItemSchema = new mongoose.Schema(
 );
 
 
+/* =========================================================
+   EMAIL NOTIFICATION TRACKER
+   Optional, Brevo transactional side effects only.
+   Each event records claim/send state so duplicate
+   callback/webhook executions cannot send twice.
+   Absent on historical orders — no migration required.
+========================================================= */
+
+const emailNotificationSchema = new mongoose.Schema(
+
+    {
+
+        status: {
+            type: String,
+            enum: [
+                "pending",
+                "sending",
+                "sent"
+            ]
+        },
+
+        claimedAt: {
+            type: Date
+        },
+
+        sentAt: {
+            type: Date
+        },
+
+        messageId: {
+            type: String
+        }
+
+    },
+
+    {
+        _id: false
+    }
+
+);
+
+
+const emailNotificationsSchema = new mongoose.Schema(
+
+    {
+
+        orderReceived: {
+            type: emailNotificationSchema,
+            required: false
+        },
+
+        paymentConfirmed: {
+            type: emailNotificationSchema,
+            required: false
+        },
+
+        paymentFailed: {
+            type: emailNotificationSchema,
+            required: false
+        },
+
+        shipped: {
+            type: emailNotificationSchema,
+            required: false
+        },
+
+        delivered: {
+            type: emailNotificationSchema,
+            required: false
+        },
+
+        cancelled: {
+            type: emailNotificationSchema,
+            required: false
+        }
+
+    },
+
+    {
+        _id: false
+    }
+
+);
+
+
+/* =========================================================
+   LATE PAYMENT EVIDENCE
+   Verified-successful Paystack transactions that arrived
+   after cancellation/expiry and therefore were NOT applied
+   as payment. Records evidence for manual reconciliation
+   without changing status or paymentStatus meaning.
+   Absent on historical orders — no migration required.
+========================================================= */
+
+const latePaymentSchema = new mongoose.Schema(
+
+    {
+
+        reference: {
+            type: String,
+            required: true
+        },
+
+        amount: {
+            type: Number
+        },
+
+        channel: {
+            type: String,
+            default: null
+        },
+
+        paidAt: {
+            type: Date,
+            default: null
+        },
+
+        receivedAt: {
+            type: Date,
+            default: null
+        },
+
+        source: {
+            type: String,
+            default: null
+        }
+
+    },
+
+    {
+        _id: false
+    }
+
+);
+
+
 const orderSchema = new mongoose.Schema(
 
     {
@@ -102,6 +238,26 @@ const orderSchema = new mongoose.Schema(
 
         reservationReleasedAt: {
             type: Date,
+            default: null
+        },
+
+        cancelledAt: {
+            type: Date,
+            default: null
+        },
+
+        cancelledBy: {
+            type: String,
+            enum: [
+                "buyer",
+                "admin",
+                "system"
+            ],
+            default: null
+        },
+
+        cancellationReason: {
+            type: String,
             default: null
         },
 
@@ -190,6 +346,18 @@ const orderSchema = new mongoose.Schema(
         currency: {
             type: String,
             default: "NGN"
+        },
+
+        emailNotifications: {
+            type: emailNotificationsSchema,
+            required: false,
+            default: undefined
+        },
+
+        latePayments: {
+            type: [latePaymentSchema],
+            required: false,
+            default: undefined
         }
 
     },

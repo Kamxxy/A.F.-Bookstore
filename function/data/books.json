@@ -8,8 +8,8 @@
         "rating": 5,
         "description": "A psychological mystery surrounding a woman who refuses to speak after being accused of murdering her husband.",
         "cover": "/images/books/silent-patient.jpg",
-        "stockStatus": "In Stock",
-        "stockNumber": 10
+        "stockStatus": "Out of Stock",
+        "stockNumber": 0
     },
     {
         "id": 2,

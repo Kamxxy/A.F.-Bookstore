@@ -15,9 +15,9 @@ body {
     display: flex;
     flex-direction: column;
 
-    background: #080808;
+    background: var(--black);
 
-    color: #f5f5f5;
+    color: var(--white);
 
 }
 
@@ -42,14 +42,15 @@ body {
     justify-content: space-between;
 
     border-bottom:
-        1px solid #1d1d1d;
+
+        1px solid var(--line);
 
 }
 
 
 .success-logo {
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -72,7 +73,7 @@ body {
 
 .back-shop {
 
-    color: #888;
+    color: var(--muted);
 
     font-size: 9px;
 
@@ -89,7 +90,7 @@ body {
 .back-shop:hover,
 .back-shop:focus-visible {
 
-    color: #fff;
+    color: var(--white);
 
 }
 
@@ -135,10 +136,10 @@ body {
     text-align: center;
 
     border:
-        1px solid #242424;
+        1px solid var(--line);
 
     background:
-        #0d0d0d;
+        var(--dark);
 
     box-shadow:
         0 30px 80px
@@ -168,11 +169,11 @@ body {
     justify-content: center;
 
     border:
-        1px solid #555;
+        1px solid var(--line);
 
     border-radius: 50%;
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -191,7 +192,7 @@ body {
 
     margin-bottom: 15px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -211,7 +212,7 @@ body {
 
     margin: 0;
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -241,7 +242,7 @@ body {
     margin:
         25px auto 40px;
 
-    color: #999;
+    color: var(--muted);
 
     font-family:
         var(--serif);
@@ -268,10 +269,10 @@ body {
     margin-bottom: 35px;
 
     border-top:
-        1px solid #242424;
+        1px solid var(--line);
 
     border-bottom:
-        1px solid #242424;
+        1px solid var(--line);
 
 }
 
@@ -282,7 +283,7 @@ body {
 
     margin-bottom: 10px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -297,7 +298,7 @@ body {
 
     display: block;
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         monospace;
@@ -328,7 +329,7 @@ body {
     margin:
         6px 0;
 
-    color: #777;
+    color: var(--muted);
 
     font-size: 10px;
 
@@ -352,9 +353,9 @@ body {
     margin-bottom: 20px;
 
     border:
-        1px solid #333;
+        1px solid var(--line);
 
-    color: #888;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -403,7 +404,7 @@ body {
     margin:
         0 auto 35px;
 
-    color: #777;
+    color: var(--muted);
 
     font-size: 10px;
 
@@ -474,9 +475,9 @@ body {
 .success-btn.secondary {
 
     border:
-        1px solid #333;
+        1px solid var(--line);
 
-    color: #777;
+    color: var(--muted);
 
 }
 
@@ -484,9 +485,9 @@ body {
 .success-btn.secondary:hover,
 .success-btn.secondary:focus-visible {
 
-    border-color: #666;
+    border-color: var(--line-light);
 
-    color: #fff;
+    color: var(--white);
 
 }
 
@@ -510,7 +511,7 @@ body {
     border-top:
         1px solid #1d1d1d;
 
-    color: #444;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -607,5 +608,45 @@ body {
         text-align: center;
 
     }
+
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   Surfaces follow the shared tokens above; only accents
+   that fail on light panels are adapted here.
+========================================================= */
+
+body.light-theme .payment-status-badge.paid {
+
+    border-color: #27673f;
+
+    color: #27673f;
+
+}
+
+
+body.light-theme .back-shop:hover,
+body.light-theme .back-shop:focus-visible {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .success-logo:hover {
+
+    color: var(--muted);
+
+}
+
+
+body.light-theme .payment-status-badge.unpaid,
+body.light-theme .payment-status-badge.failed {
+
+    border-color: #8a4f4f;
+
+    color: #8a4f4f;
 
 }

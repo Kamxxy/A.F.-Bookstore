@@ -1,11 +1,15 @@
 const express =
     require("express");
 
+const rateLimit =
+    require("express-rate-limit");
+
 const {
     create,
     getOrder,
     getOrders,
     updateStatus,
+    cancelByBuyer,
     trackOrder
 } = require(
     "../controllers/orderController"
@@ -17,6 +21,26 @@ const adminAuth =
 
 const router =
     express.Router();
+
+
+/* =========================================================
+   BUYER CANCELLATION LIMITER
+   Dedicated stricter budget for the public cancellation
+   endpoint (ownership-guessing protection), on top of
+   the global /api limiter.
+========================================================= */
+
+const cancelLimiter =
+    rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 30,
+        message: {
+            success: false,
+            message: "Too many cancellation attempts, please try again later."
+        },
+        standardHeaders: true,
+        legacyHeaders: false
+    });
 
 
 /* =========================================================
@@ -44,6 +68,18 @@ router.get(
 router.get(
     "/track/:id",
     trackOrder
+);
+
+/* =========================================================
+   BUYER ORDER CANCELLATION
+   Guest ownership check (order ID + saved email),
+   enforced again inside the shared service.
+========================================================= */
+
+router.post(
+    "/:id/cancel",
+    cancelLimiter,
+    cancelByBuyer
 );
 
 /* =========================================================

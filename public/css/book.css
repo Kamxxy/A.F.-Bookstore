@@ -98,7 +98,7 @@
 
     margin-bottom: 25px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 9px;
     letter-spacing: 3px;
@@ -120,7 +120,7 @@
 .product-author {
     margin-top: 25px;
 
-    color: #777;
+    color: var(--muted);
 
     font-size: 10px;
     letter-spacing: 2px;
@@ -130,7 +130,7 @@
 .product-rating {
     margin-top: 30px;
 
-    color: #aaa;
+    color: var(--muted);
 
     font-size: 13px;
     letter-spacing: 4px;
@@ -139,7 +139,7 @@
 .product-rating span {
     margin-left: 10px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 9px;
     letter-spacing: 1px;
@@ -158,7 +158,7 @@
 
     margin-top: 30px;
 
-    color: #777;
+    color: var(--muted);
 
     font-size: 12px;
     line-height: 2;
@@ -189,14 +189,14 @@
     display: flex;
     align-items: center;
 
-    border: 1px solid #333;
+    border: 1px solid var(--line);
 }
 
 .quantity button {
     width: 45px;
     height: 100%;
 
-    color: #888;
+    color: var(--muted);
 
     font-size: 18px;
 
@@ -283,7 +283,7 @@
 }
 
 .meta-label {
-    color: #444;
+    color: var(--muted);
 
     font-size: 7px;
 
@@ -292,7 +292,7 @@
 }
 
 .meta-value {
-    color: #aaa;
+    color: var(--muted);
 
     font-size: 10px;
 }
@@ -337,7 +337,7 @@
 }
 
 .related-header > a {
-    color: #777;
+    color: var(--muted);
 
     font-size: 9px;
     letter-spacing: 1px;
@@ -416,7 +416,7 @@
 .related-author {
     margin-top: 5px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -442,7 +442,7 @@
 
     text-align: center;
 
-    color: #555;
+    color: var(--muted);
 
     font-family: var(--serif);
 

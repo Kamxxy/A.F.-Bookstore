@@ -3,6 +3,7 @@ const {
     getOrderById,
     getAllOrders,
     updateOrderStatus,
+    cancelOrder,
     getPublicOrderById
 } = require("../services/orderService");
 
@@ -10,6 +11,12 @@ const {
     validateStructuredDelivery,
     buildDeliveryRecord
 } = require("../services/deliveryService");
+
+const {
+    sendOrderReceivedEmail,
+    sendOrderStatusEmail,
+    sendOrderCancellationEmail
+} = require("../services/emailService");
 
 
 /* =========================================================
@@ -162,7 +169,12 @@ async function create(
 
         /* =================================================
            RESPONSE
+           Business operation has committed. Fire the
+           order-received notification without blocking
+           the response and without affecting it.
         ================================================= */
+
+        sendOrderReceivedEmail(order).catch(() => {});
 
         return res.status(201).json({
 
@@ -347,7 +359,8 @@ async function updateStatus(
     try {
 
         const {
-            status
+            status,
+            reason
         } = req.body;
 
 
@@ -361,6 +374,115 @@ async function updateStatus(
                     "Order status is required"
 
             });
+
+        }
+
+
+        /* =================================================
+           ADMIN CANCELLATION
+           Delegates to the shared cancellation service so
+           buyer and admin cancellations share one mutation,
+           one stock safeguard, and one notification event.
+        ================================================= */
+
+        if (
+            status === "cancelled"
+        ) {
+
+            let result;
+
+            try {
+
+                result =
+                    await cancelOrder(
+                        req.params.id,
+                        {
+                            actor: "admin",
+                            reason: reason
+                        }
+                    );
+
+            } catch (cancelError) {
+
+                if (
+                    cancelError.code === "not_found"
+                ) {
+
+                    return res.status(404).json({
+
+                        success: false,
+
+                        message:
+                            "Order not found"
+
+                    });
+
+                }
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        cancelError.message ||
+                        "Unable to cancel order"
+
+                });
+
+            }
+
+
+            if (
+                result.status === "cancelled"
+            ) {
+
+                sendOrderCancellationEmail(
+                    result.order,
+                    "admin"
+                ).catch(() => {});
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    result.status === "already_cancelled"
+                        ? "Order is already cancelled"
+                        : "Order cancelled successfully",
+
+                order:
+                    result.order
+
+            });
+
+        }
+
+
+        /* =================================================
+           PREVIOUS STATUS (best effort, for notification
+           transition detection only)
+        ================================================= */
+
+        let previousStatus =
+            null;
+
+        try {
+
+            const existing =
+                await getOrderById(
+                    req.params.id
+                );
+
+            previousStatus =
+                existing?.status || null;
+
+        } catch (lookupError) {
+
+            previousStatus =
+                null;
 
         }
 
@@ -385,6 +507,30 @@ async function updateStatus(
                     "Order not found"
 
             });
+
+        }
+
+
+        /* =================================================
+           STATUS NOTIFICATION (fire-and-forget)
+           Only on an actual transition into shipped or
+           delivered. Same-status no-ops and other
+           statuses never notify.
+        ================================================= */
+
+        if (
+            previousStatus &&
+            previousStatus !== order.status &&
+            (
+                order.status === "shipped" ||
+                order.status === "delivered"
+            )
+        ) {
+
+            sendOrderStatusEmail(
+                order,
+                order.status
+            ).catch(() => {});
 
         }
 
@@ -417,6 +563,220 @@ async function updateStatus(
             message:
                 error.message ||
                 "Unable to update order status"
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   SAFE CANCELLATION VIEW
+   Minimal public subset — no customer PII, no items.
+========================================================= */
+
+function toSafeCancelView(
+    order
+) {
+
+    return {
+
+        id:
+            order.id,
+
+        status:
+            order.status,
+
+        paymentStatus:
+            order.paymentStatus,
+
+        cancelledAt:
+            order.cancelledAt ||
+            null,
+
+        cancelledBy:
+            order.cancelledBy ||
+            null,
+
+        updatedAt:
+            order.updatedAt ||
+            null
+
+    };
+
+}
+
+
+/* =========================================================
+   BUYER CANCEL ORDER
+   POST /api/orders/:id/cancel
+   Guest-friendly ownership check: the caller must supply
+   the order's saved customer email. The server verifies
+   ownership and eligibility on every request via the
+   shared cancellation service.
+========================================================= */
+
+async function cancelByBuyer(
+    req,
+    res
+) {
+
+    try {
+
+        const {
+            email,
+            reason
+        } = req.body || {};
+
+
+        if (
+            !email ||
+            typeof email !== "string" ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                email.trim()
+            )
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "A valid email address is required to cancel this order"
+
+            });
+
+        }
+
+
+        let result;
+
+        try {
+
+            result =
+                await cancelOrder(
+                    req.params.id,
+                    {
+                        actor: "buyer",
+                        email: email.trim(),
+                        reason: reason
+                    }
+                );
+
+        } catch (cancelError) {
+
+            const code =
+                cancelError.code;
+
+
+            if (
+                code === "not_found"
+            ) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Order not found"
+
+                });
+
+            }
+
+            if (
+                code === "forbidden"
+            ) {
+
+                return res.status(403).json({
+
+                    success: false,
+
+                    message:
+                        "Email does not match this order"
+
+                });
+
+            }
+
+            if (
+                code === "paid" ||
+                code === "ineligible"
+            ) {
+
+                return res.status(409).json({
+
+                    success: false,
+
+                    code,
+
+                    message:
+                        cancelError.message
+
+                });
+
+            }
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    cancelError.message ||
+                    "Unable to cancel order"
+
+            });
+
+        }
+
+
+        if (
+            result.status === "cancelled"
+        ) {
+
+            sendOrderCancellationEmail(
+                result.order,
+                "buyer"
+            ).catch(() => {});
+
+        }
+
+
+        return res.json({
+
+            success: true,
+
+            message:
+                result.status === "already_cancelled"
+                    ? "Order is already cancelled"
+                    : "Order cancelled successfully",
+
+            already:
+                result.status === "already_cancelled" ||
+                undefined,
+
+            order:
+                toSafeCancelView(result.order)
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Buyer cancellation error:",
+            error.message
+        );
+
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Unable to cancel order"
 
         });
 
@@ -501,6 +861,8 @@ module.exports = {
     getOrders,
 
     updateStatus,
+
+    cancelByBuyer,
 
     trackOrder
 

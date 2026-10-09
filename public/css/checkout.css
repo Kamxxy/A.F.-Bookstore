@@ -8,21 +8,21 @@
    VARIABLES
 ========================================================= */
 
-:root {
+body {
 
-    --checkout-black: #0b0b0b;
+    --checkout-black: var(--black);
 
-    --checkout-panel: #151515;
+    --checkout-panel: var(--dark);
 
-    --checkout-border: #292929;
+    --checkout-border: var(--line);
 
-    --checkout-border-light: #3a3a3a;
+    --checkout-border-light: var(--line-light);
 
-    --checkout-white: #f4f3ef;
+    --checkout-white: var(--white);
 
-    --checkout-muted: #85837f;
+    --checkout-muted: var(--muted);
 
-    --checkout-dark-muted: #555;
+    --checkout-dark-muted: var(--muted-dark);
 
 }
 
@@ -224,7 +224,7 @@ body {
 
 .section-title > span {
 
-    color: #555;
+    color: var(--checkout-muted);
 
     font-size: 9px;
 
@@ -330,7 +330,7 @@ body {
 .form-group input::placeholder,
 .form-group textarea::placeholder {
 
-    color: #4f4f4f;
+    color: #807c76;
 
 }
 
@@ -438,11 +438,18 @@ body {
 
     margin-top: 18px;
 
-    color: #555;
+    color: var(--checkout-muted);
 
     font-size: 9px;
 
     line-height: 1.7;
+
+}
+
+
+.checkout-note.note-error {
+
+    color: #a87373;
 
 }
 
@@ -555,7 +562,7 @@ body {
 
     background: #222;
 
-    color: #111;
+    color: #8c8a86;
 
     font-family: var(--serif);
 
@@ -592,7 +599,7 @@ body {
 
     margin-top: 4px;
 
-    color: #666;
+    color: var(--checkout-muted);
 
     font-size: 9px;
 
@@ -961,7 +968,7 @@ body {
 
 .field-valid + .form-error {
 
-    color: #777;
+    color: #8c8a86;
 
 }
 
@@ -969,5 +976,64 @@ body {
 .field-invalid + .form-error {
 
     color: #a87373;
+
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   Page surfaces follow the shared tokens above; only the
+   remaining hardcoded colours are adapted here.
+========================================================= */
+
+body.light-theme .form-group input,
+body.light-theme .form-group textarea {
+
+    background:
+        #ffffff;
+
+    color:
+        #151515;
+
+}
+
+
+body.light-theme .form-group input::placeholder,
+body.light-theme .form-group textarea::placeholder {
+
+    color:
+        #5f5b55;
+
+}
+
+
+body.light-theme .place-order-btn:hover {
+
+    background:
+        #333;
+
+}
+
+
+body.light-theme .field-valid + .form-error {
+
+    color:
+        #5f5b55;
+
+}
+
+
+body.light-theme .field-invalid + .form-error {
+
+    color:
+        #8a4f4f;
+
+}
+
+
+body.light-theme .checkout-note.note-error {
+
+    color:
+        #8a4f4f;
 
 }

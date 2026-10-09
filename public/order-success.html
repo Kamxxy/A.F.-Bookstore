@@ -33,6 +33,14 @@
         href="css/order-success.css"
     >
 
+
+    <!-- THEME STYLES -->
+
+    <link
+        rel="stylesheet"
+        href="css/theme.css"
+    >
+
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     <meta name="theme-color" content="#0b0b0b">
@@ -57,12 +65,21 @@
         </a>
 
 
-        <a
-            href="/shop"
-            class="back-shop"
-        >
-            Continue Shopping
-        </a>
+        <div class="header-actions">
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Switch to light mode">
+                <span>☀</span>
+            </button>
+
+
+            <a
+                href="/shop"
+                class="back-shop"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
 
     </header>
 
@@ -239,6 +256,8 @@
     <script
         src="js/order-success.js"
     ></script>
+
+    <script src="/js/theme.js"></script>
 
     <script src="/js/app.js"></script>
 </body>

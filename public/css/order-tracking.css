@@ -4,21 +4,19 @@
 ========================================================= */
 
 
-:root {
+body {
 
-    --tracking-black: #0b0b0b;
+    --tracking-black: var(--black);
 
-    --tracking-panel: #151515;
+    --tracking-panel: var(--dark);
 
-    --tracking-border: #292929;
+    --tracking-border: var(--line);
 
-    --tracking-border-light: #3a3a3a;
+    --tracking-border-light: var(--line-light);
 
-    --tracking-white: #f4f3ef;
+    --tracking-white: var(--white);
 
-    --tracking-muted: #85837f;
-
-    --tracking-dark-muted: #555;
+    --tracking-muted: var(--muted);
 
 }
 
@@ -122,6 +120,17 @@ body {
 
     color:
         var(--tracking-white);
+
+}
+
+
+.tracking-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
 
 }
 
@@ -314,7 +323,7 @@ body {
 .tracking-input-group input::placeholder {
 
     color:
-        #4f4f4f;
+        #807c76;
 
 }
 
@@ -378,7 +387,7 @@ body {
         15px;
 
     color:
-        var(--tracking-dark-muted);
+        var(--tracking-muted);
 
     font-size: 9px;
 
@@ -535,6 +544,63 @@ body {
     text-transform:
         uppercase;
 
+    white-space: nowrap;
+
+}
+
+
+.order-status-badge.st-processing,
+.order-status-badge.st-shipped {
+
+    border-color:
+        var(--tracking-white);
+
+    color:
+        var(--tracking-white);
+
+}
+
+
+.order-status-badge.st-delivered {
+
+    border-color:
+        #5f7a5f;
+
+    color:
+        #9db89d;
+
+}
+
+
+.order-status-badge.st-cancelled {
+
+    border-color:
+        #a87373;
+
+    color:
+        #c08f8f;
+
+}
+
+
+.order-meta {
+
+    margin-top:
+        8px;
+
+    color:
+        var(--tracking-muted);
+
+    font-size: 10px;
+
+}
+
+
+.order-result-header h2 {
+
+    overflow-wrap:
+        anywhere;
+
 }
 
 
@@ -633,7 +699,7 @@ body {
         var(--tracking-border-light);
 
     color:
-        var(--tracking-dark-muted);
+        var(--tracking-muted);
 
     font-size: 7px;
 
@@ -687,7 +753,7 @@ body {
         5px;
 
     color:
-        var(--tracking-dark-muted);
+        var(--tracking-muted);
 
     font-size: 9px;
 
@@ -801,7 +867,7 @@ body {
 
     margin-top: 5px;
 
-    color: var(--tracking-dark-muted);
+    color: var(--tracking-muted);
 
     font-size: 10px;
 
@@ -825,7 +891,7 @@ body {
 
     margin-bottom: 14px;
 
-    color: var(--tracking-dark-muted);
+    color: var(--tracking-muted);
 
     font-size: 12px;
 
@@ -835,6 +901,8 @@ body {
 
 
 .payment-action-btn {
+
+    min-height: 48px;
 
     padding: 14px 28px;
 
@@ -878,6 +946,222 @@ body {
     margin-top: 10px;
 
     color: #a87373;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   CANCEL ORDER
+========================================================= */
+
+.cancel-section {
+
+    padding:
+        40px 35px;
+
+    border-bottom:
+        1px solid
+        var(--tracking-border);
+
+}
+
+
+.cancel-section[hidden] {
+
+    display: none;
+
+}
+
+
+.cancel-note {
+
+    margin-bottom: 14px;
+
+    color: var(--tracking-muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+.cancel-label {
+
+    display: block;
+
+    margin: 12px 0 6px 0;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--tracking-muted);
+
+}
+
+
+.cancel-input {
+
+    width: 100%;
+
+    max-width: 600px;
+
+    box-sizing: border-box;
+
+    min-height: 52px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 4px;
+
+    background: #101010;
+
+    border: 1px solid
+        var(--tracking-border);
+
+    outline: none;
+
+    color: var(--tracking-white);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    transition:
+        border-color .25s ease;
+
+}
+
+
+textarea.cancel-input {
+
+    min-height: 84px;
+
+    line-height: 1.6;
+
+    resize: vertical;
+
+}
+
+
+.cancel-input:focus {
+
+    border-color:
+        var(--tracking-border-light);
+
+}
+
+
+.cancel-input::placeholder {
+
+    color:
+        #807c76;
+
+}
+
+
+.cancel-btn {
+
+    min-height: 48px;
+
+    margin-top: 14px;
+    margin-right: 10px;
+
+    padding: 14px 28px;
+
+    border: 1px solid
+        var(--tracking-border-light);
+
+    background: transparent;
+
+    color: var(--tracking-white);
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition: background 0.25s ease;
+
+}
+
+
+.cancel-btn:hover {
+
+    background: #1e1e1e;
+
+}
+
+
+.cancel-btn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+.cancel-btn.confirm {
+
+    border-color:
+        #7c4444;
+
+    background:
+        #7c4444;
+
+    color:
+        #ffffff;
+
+}
+
+
+.cancel-btn.confirm:hover {
+
+    background:
+        #633636;
+
+    border-color:
+        #633636;
+
+}
+
+
+.cancel-btn.keep {
+
+    border-color:
+        transparent;
+
+    color:
+        var(--tracking-muted);
+
+}
+
+
+.cancel-error {
+
+    margin-top: 10px;
+
+    color: #a87373;
+
+    font-size: 12px;
+
+}
+
+
+.cancel-success {
+
+    margin-top: 10px;
+
+    color: #7ba47b;
 
     font-size: 12px;
 
@@ -1042,7 +1326,7 @@ body {
         5px;
 
     color:
-        var(--tracking-dark-muted);
+        var(--tracking-muted);
 
     font-size: 9px;
 
@@ -1365,6 +1649,72 @@ body {
 }
 
 
+.cancelled-detail {
+
+    color:
+        var(--tracking-muted);
+
+}
+
+
+.order-empty-note {
+
+    padding:
+        18px 0;
+
+    border-top:
+        1px solid
+        var(--tracking-border);
+
+    color:
+        var(--tracking-muted);
+
+    font-size: 10px;
+
+}
+
+
+/* =========================================================
+   FOCUS VISIBILITY + REDUCED MOTION
+========================================================= */
+
+.tracking-page button:focus-visible,
+.tracking-page input:focus-visible,
+.tracking-page a:focus-visible {
+
+    outline:
+        2px solid
+        var(--tracking-white);
+
+    outline-offset:
+        3px;
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    .loading-symbol {
+
+        animation:
+            none;
+
+    }
+
+
+    .tracking-page button,
+    .tracking-page input,
+    .tracking-back,
+    .track-another {
+
+        transition:
+            none;
+
+    }
+
+}
+
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -1415,6 +1765,8 @@ body {
 
 
     .order-status-section,
+    .payment-status-section,
+    .cancel-section,
     .order-items-section {
 
         padding:
@@ -1527,5 +1879,129 @@ body {
             20px;
 
     }
+
+
+    .payment-action-btn,
+    .cancel-btn {
+
+        width: 100%;
+
+        margin-right: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   Page surfaces follow the shared tokens above; only the
+   remaining hardcoded colours are adapted here so text,
+   inputs, badges, and actions stay readable in both themes.
+========================================================= */
+
+body.light-theme .cancel-input {
+
+    background:
+        #ffffff;
+
+    color:
+        #151515;
+
+}
+
+
+body.light-theme .cancel-input::placeholder {
+
+    color:
+        #5f5b55;
+
+}
+
+
+body.light-theme .tracking-input-group input {
+
+    background:
+        #ffffff;
+
+    color:
+        #151515;
+
+}
+
+
+body.light-theme .tracking-input-group input::placeholder {
+
+    color:
+        #5f5b55;
+
+}
+
+
+body.light-theme .tracking-not-found span {
+
+    color:
+        var(--muted-dark);
+
+}
+
+
+body.light-theme .payment-status-indicator.paid .payment-status-icon {
+
+    border-color:
+        #2e7d4f;
+
+    color:
+        #2e7d4f;
+
+}
+
+
+body.light-theme .order-status-badge.st-delivered {
+
+    color:
+        #3f6b3f;
+
+}
+
+
+body.light-theme .order-status-badge.st-cancelled {
+
+    color:
+        #8a4f4f;
+
+}
+
+
+body.light-theme .cancel-error,
+body.light-theme .payment-action-error,
+body.light-theme .tracking-error {
+
+    color:
+        #8a4f4f;
+
+}
+
+
+body.light-theme .cancel-success {
+
+    color:
+        #3f6b3f;
+
+}
+
+
+body.light-theme .payment-action-btn:hover {
+
+    background:
+        #333;
+
+}
+
+
+body.light-theme .cancel-btn:hover {
+
+    background:
+        var(--dark-light);
 
 }

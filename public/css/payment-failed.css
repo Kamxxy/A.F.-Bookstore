@@ -15,9 +15,9 @@ body {
     display: flex;
     flex-direction: column;
 
-    background: #080808;
+    background: var(--black);
 
-    color: #f5f5f5;
+    color: var(--white);
 
 }
 
@@ -40,14 +40,15 @@ body {
     justify-content: space-between;
 
     border-bottom:
-        1px solid #1d1d1d;
+
+        1px solid var(--line);
 
 }
 
 
 .failed-logo {
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -70,7 +71,7 @@ body {
 
 .failed-track-link {
 
-    color: #888;
+    color: var(--muted);
 
     font-size: 9px;
 
@@ -86,7 +87,7 @@ body {
 
 .failed-track-link:hover {
 
-    color: #fff;
+    color: var(--white);
 
 }
 
@@ -130,10 +131,10 @@ body {
     text-align: center;
 
     border:
-        1px solid #242424;
+        1px solid var(--line);
 
     background:
-        #0d0d0d;
+        var(--dark);
 
     box-shadow:
         0 30px 80px
@@ -162,11 +163,11 @@ body {
     justify-content: center;
 
     border:
-        1px solid #555;
+        1px solid var(--line);
 
     border-radius: 50%;
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -184,7 +185,7 @@ body {
 
     margin-bottom: 15px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -203,7 +204,7 @@ body {
 
     margin: 0;
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         var(--serif);
@@ -232,7 +233,7 @@ body {
     margin:
         25px auto 40px;
 
-    color: #999;
+    color: var(--muted);
 
     font-family:
         var(--serif);
@@ -258,10 +259,10 @@ body {
     margin-bottom: 35px;
 
     border-top:
-        1px solid #242424;
+        1px solid var(--line);
 
     border-bottom:
-        1px solid #242424;
+        1px solid var(--line);
 
     text-align: left;
 
@@ -284,7 +285,7 @@ body {
 
 .failed-order-row span {
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -297,7 +298,7 @@ body {
 
 .failed-order-row strong {
 
-    color: #fff;
+    color: var(--white);
 
     font-family:
         monospace;
@@ -330,7 +331,7 @@ body {
 
     margin-bottom: 10px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -350,14 +351,14 @@ body {
     padding:
         0 15px;
 
-    background: #101010;
+    background: var(--black);
 
     border:
-        1px solid #333;
+        1px solid var(--line);
 
     outline: none;
 
-    color: #f5f5f5;
+    color: var(--white);
 
     font-family:
         inherit;
@@ -372,7 +373,7 @@ body {
 
 .failed-email-section input:focus {
 
-    border-color: #666;
+    border-color: var(--line-light);
 
 }
 
@@ -417,7 +418,7 @@ body {
 
     display: block;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 45px;
 
@@ -433,7 +434,7 @@ body {
     margin-top:
         15px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 10px;
 
@@ -529,18 +530,18 @@ body {
 .failed-btn.secondary {
 
     border:
-        1px solid #333;
+        1px solid var(--line);
 
-    color: #777;
+    color: var(--muted);
 
 }
 
 
 .failed-btn.secondary:hover {
 
-    border-color: #666;
+    border-color: var(--line-light);
 
-    color: #fff;
+    color: var(--white);
 
 }
 
@@ -563,7 +564,7 @@ body {
     border-top:
         1px solid #1d1d1d;
 
-    color: #444;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -652,5 +653,43 @@ body {
         text-align: center;
 
     }
+
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   Surfaces follow the shared tokens above; failed-state
+   accents are adapted so badges and errors stay readable
+   on light panels.
+========================================================= */
+
+body.light-theme .failed-btn.secondary:hover,
+body.light-theme .failed-btn.secondary:focus-visible {
+
+    border-color: var(--line-light);
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .failed-error {
+
+    color: #8a4f4f;
+
+}
+
+
+body.light-theme .failed-track-link:hover {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .failed-logo:hover {
+
+    color: var(--muted);
 
 }

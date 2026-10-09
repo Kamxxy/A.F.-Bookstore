@@ -212,6 +212,17 @@ a {
 }
 
 
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+}
+
+
 /* =========================================================
    LOGO
 ========================================================= */
@@ -398,7 +409,7 @@ a {
 .eyebrow {
     margin-bottom: 22px;
 
-    color: #777572;
+    color: var(--muted);
 
     font-size: 9px;
     font-weight: 500;
@@ -591,7 +602,7 @@ h2 em {
     align-items: center;
     gap: 15px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
     letter-spacing: 3px;
@@ -620,7 +631,7 @@ h2 em {
 }
 
 .intro-number {
-    color: #4b4b4b;
+    color: var(--muted);
 
     font-size: 11px;
     letter-spacing: 2px;
@@ -999,7 +1010,7 @@ h2 em {
 .home-book-author {
     margin-top: 6px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -1044,7 +1055,7 @@ h2 em {
 }
 
 .categories .eyebrow {
-    color: #777;
+    color: #5f5b55;
 }
 
 .category-grid {
@@ -1075,7 +1086,7 @@ h2 em {
 }
 
 .category-card span {
-    color: #999;
+    color: #5f5b55;
     font-size: 9px;
 }
 
@@ -1091,7 +1102,7 @@ h2 em {
 .category-card p {
     margin-top: 8px;
 
-    color: #777;
+    color: #5f5b55;
 
     font-size: 10px;
 }
@@ -1157,7 +1168,7 @@ blockquote {
 .quote-section p {
     margin-top: 35px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 9px;
     letter-spacing: 3px;
@@ -1256,7 +1267,7 @@ blockquote {
 .footer-brand p {
     margin-top: 20px;
 
-    color: #555;
+    color: var(--muted);
 
     font-family: var(--serif);
 
@@ -1278,7 +1289,7 @@ blockquote {
 .footer-links h4 {
     margin-bottom: 10px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
     letter-spacing: 2px;
@@ -1306,7 +1317,7 @@ blockquote {
 
     border-top: 1px solid #202020;
 
-    color: #444;
+    color: var(--muted);
 
     font-size: 8px;
     letter-spacing: 1px;

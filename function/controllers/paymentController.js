@@ -12,6 +12,38 @@ const {
     toKobo
 } = require("../services/paymentService");
 
+const {
+    sendPaymentConfirmedEmail,
+    sendPaymentFailedEmail
+} = require("../services/emailService");
+
+/* =========================================================
+   HELPER — NOTIFY PAID ORDER
+   Single shared notification path for callback and
+   webhook. Called ONLY when markOrderAsPaid() returns
+   status === "paid". The atomic email claim prevents
+   callback/webhook races from duplicating it.
+   Fire-and-forget: never blocks redirects/responses.
+========================================================= */
+
+function notifyPaidOrder(
+    order
+) {
+
+    if (
+        !order?.id
+    ) {
+
+        return;
+
+    }
+
+    sendPaymentConfirmedEmail(
+        order
+    ).catch(() => {});
+
+}
+
 /* =========================================================
    HELPER — VALIDATE VERIFIED TRANSACTION
    Shared between callback and webhook handlers.
@@ -391,13 +423,25 @@ async function handleCallback(
                 failureResult.valid
             ) {
 
-                await markPaymentFailed(
-                    failureResult.order.id
-                );
+                const failedOrder =
+                    await markPaymentFailed(
+                        failureResult.order.id
+                    );
 
                 console.log(
                     `Payment marked as failed for order ${failureResult.order.id}`
                 );
+
+                /* =====================================
+                   FAILURE NOTIFICATION (fire-and-forget)
+                   Only after the definitive failure has
+                   committed. Atomic claim suppresses
+                   duplicate callbacks for same failure.
+                ===================================== */
+
+                sendPaymentFailedEmail(
+                    failedOrder || failureResult.order
+                ).catch(() => {});
 
                 return res.redirect(
                     `/payment-failed?reason=payment_failed&order=${failureResult.order.id}`
@@ -447,7 +491,8 @@ async function handleCallback(
                     amount: verified.amount,
                     currency: verified.currency,
                     channel: verified.channel,
-                    paidAt: verified.paid_at
+                    paidAt: verified.paid_at,
+                    source: "callback"
                 }
             );
 
@@ -469,6 +514,24 @@ async function handleCallback(
 
             return res.redirect(
                 `/payment-failed?reason=reservation_expired&order=${result.order.id}`
+            );
+
+        }
+
+        /* =================================================
+           PAYMENT NOTIFICATION (fire-and-forget)
+           Only the payment-confirmation winner
+           (status === "paid") notifies. already_paid,
+           duplicate_paid, and reservation_expired never
+           notify here.
+        ================================================= */
+
+        if (
+            paymentResult.status === "paid"
+        ) {
+
+            notifyPaidOrder(
+                paymentResult.order
             );
 
         }
@@ -675,7 +738,8 @@ async function handleWebhook(
                     amount: verified.amount,
                     currency: verified.currency,
                     channel: verified.channel,
-                    paidAt: verified.paid_at
+                    paidAt: verified.paid_at,
+                    source: "webhook"
                 }
             );
 
@@ -699,6 +763,42 @@ async function handleWebhook(
                 `Webhook: payment success arrived for order ${result.order.id} ` +
                 `after reservation expiry (reference ${verified.reference}). ` +
                 `NOT marked paid. Manual review/refund required.`
+            );
+
+
+            /* Do NOT acknowledge when the evidence required
+               for recovery could not be persisted: a 503 lets
+               Paystack retry, and the record is idempotent, so
+               a retry can only complete the evidence, never
+               duplicate state. */
+
+            if (
+                paymentResult.evidence === "failed"
+            ) {
+
+                return res.status(503).json({
+                    success: false,
+                    message: "Payment evidence could not be recorded"
+                });
+
+            }
+
+        }
+
+        /* =================================================
+           PAYMENT NOTIFICATION (fire-and-forget)
+           Same shared path as the callback. Only the
+           winner (status === "paid") notifies; the
+           atomic email claim prevents duplicates when
+           both callback and webhook converge.
+        ================================================= */
+
+        if (
+            paymentResult.status === "paid"
+        ) {
+
+            notifyPaidOrder(
+                paymentResult.order
             );
 
         }

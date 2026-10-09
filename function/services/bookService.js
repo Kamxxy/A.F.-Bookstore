@@ -79,6 +79,59 @@ function saveBooksToJSON(
 
 
 /* =========================================================
+   STOCK STATUS
+   Single source of truth for the display label.
+   The Mongoose Book schema stores only stockNumber, so
+   MongoDB records never carry stockStatus while JSON
+   records do. Derive the label at read time whenever it
+   is missing so every consumer sees a valid value.
+   Never invents stock: label follows the stored count.
+========================================================= */
+
+function resolveStockStatus(
+    book
+) {
+
+    if (
+        !book ||
+        typeof book !== "object"
+    ) {
+
+        return book;
+
+    }
+
+    const stored =
+        typeof book.stockStatus === "string"
+            ? book.stockStatus.trim()
+            : "";
+
+
+    if (
+        stored !== ""
+    ) {
+
+        return book;
+
+    }
+
+
+    const stock =
+        Number(book.stockNumber) || 0;
+
+
+    return {
+        ...book,
+        stockStatus:
+            stock > 0
+                ? "In Stock"
+                : "Out of Stock"
+    };
+
+}
+
+
+/* =========================================================
    GET ALL BOOKS
 ========================================================= */
 
@@ -90,10 +143,16 @@ async function getAllBooks() {
 
         try {
 
-            return await Book
-                .find()
-                .sort({ id: 1 })
-                .lean();
+            const books =
+                await Book
+                    .find()
+                    .sort({ id: 1 })
+                    .lean();
+
+
+            return books.map(
+                resolveStockStatus
+            );
 
         }
 
@@ -111,7 +170,9 @@ async function getAllBooks() {
     }
 
 
-    return readBooksFromJSON();
+    return readBooksFromJSON().map(
+        resolveStockStatus
+    );
 
 }
 
@@ -166,7 +227,9 @@ async function getBookById(
             }
 
 
-            return await query.lean();
+            return resolveStockStatus(
+                await query.lean()
+            );
 
         }
 
@@ -191,12 +254,14 @@ async function getBookById(
     const books =
         readBooksFromJSON();
 
-    return books.find(
+    return resolveStockStatus(
+        books.find(
 
-        book =>
-            Number(book.id) ===
-            bookId
+            book =>
+                Number(book.id) ===
+                bookId
 
+        )
     );
 
 }
@@ -1065,6 +1130,8 @@ module.exports = {
 
     updateBook,
 
-    deleteBook
+    deleteBook,
+
+    resolveStockStatus
 
 };

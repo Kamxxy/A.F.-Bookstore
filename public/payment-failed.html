@@ -22,6 +22,11 @@
         href="/css/payment-failed.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="/css/theme.css"
+    >
+
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     <meta name="theme-color" content="#0b0b0b">
@@ -43,12 +48,21 @@
             A.F.
         </a>
 
-        <a
-            href="/order-tracking"
-            class="failed-track-link"
-        >
-            Track Order
-        </a>
+        <div class="header-actions">
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Switch to light mode">
+                <span>☀</span>
+            </button>
+
+
+            <a
+                href="/order-tracking"
+                class="failed-track-link"
+            >
+                Track Order
+            </a>
+
+        </div>
 
     </header>
 
@@ -232,6 +246,8 @@
     ====================================================== -->
 
     <script src="/js/payment-failed.js"></script>
+
+    <script src="/js/theme.js"></script>
 
     <script src="/js/app.js"></script>
 </body>

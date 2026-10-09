@@ -795,6 +795,63 @@ function viewOrder(
                 </strong>
             </p>
 
+
+            ${order.status === "cancelled"
+                ? `
+            <p>
+                Cancelled:
+                <strong>
+                    ${escapeHTML(
+                        order.cancelledAt
+                            ? new Date(order.cancelledAt).toLocaleString("en-NG")
+                            : "—"
+                    )}
+                </strong>
+            </p>
+
+            <p>
+                Cancelled by:
+                <strong>
+                    ${escapeHTML(
+                        formatCancelledBy(
+                            order.cancelledBy
+                        )
+                    )}
+                </strong>
+            </p>
+            ${order.cancellationReason
+                ? `
+            <p>
+                Reason:
+                ${escapeHTML(
+                    order.cancellationReason
+                )}
+            </p>
+            `
+                : ""}
+            `
+                : ""}
+
+
+            ${uniqueLatePayments(order).length > 0
+                ? `
+            <p>
+                Late payment evidence:
+                <strong>manual review required</strong>
+            </p>
+            ${uniqueLatePayments(order).map(
+                late => `
+            <p>
+                ${escapeHTML(late.reference || "—")} —
+                ₦${Number(late.amount / 100 || 0).toLocaleString("en-NG")}
+                ${late.receivedAt
+                    ? `(${escapeHTML(new Date(late.receivedAt).toLocaleString("en-NG"))})`
+                    : ""}
+            </p>`
+            ).join("")}
+            `
+                : ""}
+
         </div>
 
 
@@ -885,6 +942,23 @@ function viewOrder(
             </select>
 
 
+            <label
+                for="orderCancelReason"
+                class="sr-only"
+            >
+                Cancellation reason (optional)
+            </label>
+
+
+            <input
+                id="orderCancelReason"
+                class="status-reason-input"
+                type="text"
+                maxlength="500"
+                placeholder="Cancellation reason (optional)"
+            />
+
+
             <button
                 class="save-status-btn"
                 onclick="updateOrderStatus('${escapeHTML(
@@ -924,6 +998,18 @@ async function updateOrderStatus(
         ).value;
 
 
+    const reasonInput =
+        document.getElementById(
+            "orderCancelReason"
+        );
+
+
+    const reason =
+        reasonInput
+            ? reasonInput.value.trim()
+            : "";
+
+
     try {
 
         const response =
@@ -940,9 +1026,16 @@ async function updateOrderStatus(
                     },
 
                     body:
-                        JSON.stringify({
-                            status
-                        })
+                        JSON.stringify(
+                            status === "cancelled" && reason
+                                ? {
+                                    status,
+                                    reason
+                                }
+                                : {
+                                    status
+                                }
+                        )
 
                 }
             );
@@ -1059,6 +1152,82 @@ function formatPaymentStatus(
     return (
         labels[status] ||
         status
+    );
+
+}
+
+
+function uniqueLatePayments(
+    order
+) {
+
+    const seen = [];
+
+
+    const entries =
+        Array.isArray(order?.latePayments)
+            ? order.latePayments
+            : [];
+
+
+    for (
+        const late of entries
+    ) {
+
+        if (
+            !late ||
+            !late.reference
+        ) {
+
+            continue;
+
+        }
+
+        if (
+            !seen.some(
+                entry =>
+                    entry.reference ===
+                    late.reference
+            )
+        ) {
+
+            seen.push(late);
+
+        }
+
+    }
+
+
+    return seen;
+
+}
+
+
+/* =========================================================
+   FORMAT CANCELLED BY
+========================================================= */
+
+function formatCancelledBy(
+    actor
+) {
+
+    const labels = {
+
+        buyer:
+            "Buyer",
+
+        admin:
+            "Admin",
+
+        system:
+            "System (reservation expired)"
+
+    };
+
+
+    return (
+        labels[actor] ||
+        "—"
     );
 
 }

@@ -43,8 +43,10 @@
 }
 
 
-.search-result h3 {
+.search-overlay .search-result h3 {
     font-family: var(--serif);
+
+    color: var(--white);
 
     font-size: 24px;
 
@@ -54,12 +56,12 @@
 }
 
 
-.search-result small {
+.search-overlay .search-result small {
     display: block;
 
     margin-top: 5px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 9px;
 
@@ -69,12 +71,12 @@
 }
 
 
-.search-result span {
+.search-overlay .search-result span {
     display: block;
 
     margin-top: 5px;
 
-    color: #555;
+    color: var(--muted);
 
     font-size: 8px;
 
@@ -84,14 +86,14 @@
 }
 
 
-.search-add-btn {
+.search-overlay .search-add-btn {
     flex-shrink: 0;
 
     min-width: 60px;
 
     padding: 10px 14px;
 
-    border: 1px solid #444;
+    border: 1px solid var(--line);
 
     color: var(--white);
 
@@ -116,10 +118,10 @@
 }
 
 
-.search-no-results {
+.search-overlay .search-no-results {
     padding: 30px 0;
 
-    color: #666;
+    color: var(--muted);
 
     font-family: var(--serif);
 
@@ -165,16 +167,16 @@
     width: min(800px, 100%);
 }
 
-.search-container p {
+.search-overlay .search-container p {
     margin-bottom: 20px;
 
-    color: #666;
+    color: var(--muted);
 
     font-size: 9px;
     letter-spacing: 3px;
 }
 
-.search-container input {
+.search-overlay .search-container input {
     width: 100%;
 
     padding: 20px 0;
@@ -182,23 +184,25 @@
     background: transparent;
 
     border: none;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid var(--line);
 
     outline: none;
 
-    color: white;
+    color: var(--white);
 
     font-family: var(--serif);
 
     font-size: 40px;
 }
 
-.search-container input:focus {
+.search-overlay .search-container input:focus {
     border-bottom-color: var(--white);
 }
 
-.close-search {
+.search-overlay .close-search {
     position: absolute;
+
+    color: var(--white);
 
     top: -70px;
     right: 0;

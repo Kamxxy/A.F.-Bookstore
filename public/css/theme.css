@@ -16,7 +16,7 @@ body.light-theme {
     --white: #151515;
     --white-soft: #2f2d2a;
 
-    --muted: #6f6b64;
+    --muted: #6a6259;
     --muted-dark: #8b867d;
 
     --line: #d2cdc3;
@@ -60,11 +60,14 @@ body.light-theme .nav-links a {
 }
 
 
-body.light-theme .nav-links a:hover,
+body.light-theme .nav-links a:hover {
+    color: var(--white);
+}
+
 body.light-theme .nav-links a:focus-visible,
 body.light-theme .nav-links a.active {
 
-    color: var(--black);
+    color: var(--muted);
 
 }
 
@@ -153,5 +156,308 @@ body.light-theme .mobile-links a {
 body.light-theme .header {
 
     background: transparent;
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — FOCUS
+   The global white focus ring is invisible on light
+   surfaces, so it follows the theme tokens instead.
+========================================================= */
+
+body.light-theme :focus-visible {
+
+    outline-color:
+        var(--white);
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — SHARED CONTROLS
+========================================================= */
+
+body.light-theme .icon-btn {
+
+    color: #555;
+
+}
+
+
+body.light-theme .checkout-btn:hover,
+body.light-theme .checkout-btn:focus-visible {
+
+    background: #333;
+
+}
+
+
+body.light-theme .quick-add:hover,
+body.light-theme .quick-add:focus-visible {
+
+    background: #333;
+
+    color: #fff;
+
+}
+
+
+body.light-theme .home-book-info h3 a:hover,
+body.light-theme .home-book-info h3 a:focus-visible {
+
+    color: var(--muted);
+
+}
+
+
+body.light-theme .mobile-links a:hover,
+body.light-theme .mobile-links a:focus-visible {
+
+    color: var(--muted);
+
+}
+
+
+body.light-theme .filter select {
+
+    border-bottom-color: var(--line);
+
+}
+
+
+body.light-theme .filter select option {
+
+    background: #fff;
+
+    color: #151515;
+
+}
+
+
+body.light-theme .footer-links a {
+
+    color: #555;
+
+}
+
+
+body.light-theme .category-card:hover {
+
+    color: #f1eee8;
+
+}
+
+
+body.light-theme .category-card:hover h3,
+body.light-theme .category-card:hover b {
+
+    color: #f1eee8;
+
+}
+
+
+body.light-theme .category-card:hover span {
+
+    color: #8c8a86;
+
+}
+
+
+body.light-theme .category-card span {
+
+    color: #5f5b55;
+
+}
+
+
+body.light-theme .collection-card span,
+body.light-theme .collection-card strong,
+body.light-theme .collection-card small {
+
+    color: #161616;
+
+}
+
+
+body.light-theme .related-header > a:hover,
+body.light-theme .related-header > a:focus-visible {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .book-add-btn:hover,
+body.light-theme .book-add-btn:focus-visible {
+
+    background: #333;
+
+}
+
+
+body.light-theme .text-link:hover,
+body.light-theme .text-link:focus-visible {
+
+    color: var(--white);
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — SHOP HERO
+   The hero keeps its dark band in both themes, so its
+   supporting text uses the measured dark-band value.
+========================================================= */
+
+body.light-theme .shop-hero > div > p:last-child {
+
+    color: var(--muted);
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — HERO AND DETAIL BANDS
+   These sections use dark radial gradients by default. In
+   light mode they use a matching cream vignette so page
+   surfaces stay light while keeping the same composition.
+========================================================= */
+
+body.light-theme .hero {
+
+    background:
+        radial-gradient(
+            circle at 70% 45%,
+            #ffffff 0%,
+            #f0ede6 35%,
+            #e4ded1 70%
+        );
+
+}
+
+
+body.light-theme .hero h1 {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .shop-hero {
+
+    background:
+        radial-gradient(
+            circle at 75% 50%,
+            #ffffff 0%,
+            #f0ede6 40%,
+            #e4ded1 75%
+        );
+
+}
+
+
+body.light-theme .shop-hero h1 {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .about-hero {
+
+    background:
+        radial-gradient(
+            circle at 70% 45%,
+            #ffffff 0%,
+            #f0ede6 40%,
+            #e4ded1 75%
+        );
+
+}
+
+
+body.light-theme .about-hero h1 {
+
+    color: var(--white);
+
+}
+
+
+body.light-theme .book-details {
+
+    background:
+        radial-gradient(
+            circle at 25% 50%,
+            #ffffff 0%,
+            #f0ede6 35%,
+            #e4ded1 70%
+        );
+
+}
+
+
+body.light-theme .collection-visual {
+
+    background:
+        radial-gradient(
+            circle,
+            #e6e1d5,
+            #d9d3c6
+        );
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — SEARCH OVERLAY AND HOME STORY BAND
+   The overlay becomes a light scrim and the home story
+   band becomes a light panel; content already uses
+   adaptive tokens.
+========================================================= */
+
+body.light-theme .search-overlay {
+
+    background: rgba(245, 242, 236, .97);
+
+}
+
+
+body.light-theme .about,
+body.light-theme .collection-section {
+
+    background: var(--dark);
+
+}
+
+
+body.light-theme .about-image {
+
+    background:
+        radial-gradient(
+            circle,
+            #e6e1d5,
+            #d9d3c6
+        );
+
+}
+
+
+/* =========================================================
+   LIGHT THEME — BOOK ART BACKDROP
+   The cover backdrop is a dark vignette by default; in
+   light mode it uses a matching light vignette so covers
+   do not sit in black boxes on light pages.
+========================================================= */
+
+body.light-theme .book-image {
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #e2ded4 0%,
+            #ece8de 55%,
+            #f5f2ec 100%
+        );
 
 }

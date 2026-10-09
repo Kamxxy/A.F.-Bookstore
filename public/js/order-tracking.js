@@ -128,6 +128,90 @@ const paymentActionShopLink =
     );
 
 
+const cancelSection =
+    document.getElementById(
+        "cancelSection"
+    );
+
+
+const cancelInfo =
+    document.getElementById(
+        "cancelInfo"
+    );
+
+
+const cancelActionNote =
+    document.getElementById(
+        "cancelActionNote"
+    );
+
+
+const cancelActionWrap =
+    document.getElementById(
+        "cancelActionWrap"
+    );
+
+
+const cancelEmail =
+    document.getElementById(
+        "cancelEmail"
+    );
+
+
+const cancelReason =
+    document.getElementById(
+        "cancelReason"
+    );
+
+
+const cancelBtn =
+    document.getElementById(
+        "cancelBtn"
+    );
+
+
+const cancelConfirmWrap =
+    document.getElementById(
+        "cancelConfirmWrap"
+    );
+
+
+const confirmCancelBtn =
+    document.getElementById(
+        "confirmCancelBtn"
+    );
+
+
+const keepOrderBtn =
+    document.getElementById(
+        "keepOrderBtn"
+    );
+
+
+const cancelError =
+    document.getElementById(
+        "cancelError"
+    );
+
+
+const cancelSuccess =
+    document.getElementById(
+        "cancelSuccess"
+    );
+
+
+const orderDate =
+    document.getElementById(
+        "orderDate"
+    );
+
+
+const cancelledDetail =
+    document.getElementById(
+        "cancelledDetail"
+    );
+
+
 /*
     The order currently displayed on the
     tracking page. Reused for payment retry.
@@ -282,6 +366,10 @@ function updateTimeline(
                         "completed"
                     );
 
+                    step.removeAttribute(
+                        "aria-current"
+                    );
+
                 }
             );
 
@@ -356,6 +444,11 @@ function updateTimeline(
                 );
 
 
+                step.removeAttribute(
+                    "aria-current"
+                );
+
+
                 if (
                     currentIndex === -1
                 ) {
@@ -386,6 +479,11 @@ function updateTimeline(
                         "active"
                     );
 
+                    step.setAttribute(
+                        "aria-current",
+                        "step"
+                    );
+
                 }
 
             }
@@ -396,9 +494,130 @@ function updateTimeline(
 
 
 /* =========================================================
+   UPDATE CANCELLED DETAIL
+   Shows when, who, and why from the public order response only.
+   Never exposes admin-only information.
+========================================================= */
+
+function updateCancelledDetail(
+    order
+) {
+
+    if (!cancelledDetail) {
+
+        return;
+
+    }
+
+
+    if (
+        !order ||
+        order.status !== "cancelled"
+    ) {
+
+        cancelledDetail.hidden =
+            true;
+
+        cancelledDetail.textContent =
+            "";
+
+        return;
+
+    }
+
+
+    const parts = [];
+
+
+    if (order.cancelledAt) {
+
+        const when =
+            new Date(
+                order.cancelledAt
+            );
+
+        if (
+            !isNaN(
+                when.getTime()
+            )
+        ) {
+
+            parts.push(
+                `Cancelled on ${when.toLocaleString()}.`
+            );
+
+        }
+
+    }
+
+
+    if (
+        order.cancelledBy === "buyer"
+    ) {
+
+        parts.push(
+            "You cancelled this order."
+        );
+
+    } else if (
+        order.cancelledBy === "admin"
+    ) {
+
+        parts.push(
+            "Our team cancelled this order."
+        );
+
+    } else if (
+        order.cancelledBy === "system"
+    ) {
+
+        parts.push(
+            "The payment window expired before payment could be completed."
+        );
+
+    }
+
+
+    if (
+        typeof order.cancellationReason === "string" &&
+        order.cancellationReason.trim() !== ""
+    ) {
+
+        parts.push(
+            `Reason given: “${order.cancellationReason.trim()}”`
+        );
+
+    }
+
+
+    if (
+        parts.length === 0
+    ) {
+
+        cancelledDetail.hidden =
+            true;
+
+        cancelledDetail.textContent =
+            "";
+
+        return;
+
+    }
+
+
+    cancelledDetail.textContent =
+        parts.join(" ");
+
+    cancelledDetail.hidden =
+        false;
+
+}
+
+
+/* =========================================================
    UPDATE PAYMENT STATUS
    Displays payment status separately from order status.
-======================================================== */
+======================================================= */
 
 function updatePaymentStatus(
     order
@@ -467,7 +686,7 @@ function updatePaymentStatus(
         if (paymentStatusDescription) {
 
             paymentStatusDescription.textContent =
-                "Payment has been confirmed.";
+                "Payment has been confirmed and your order is queued for processing.";
 
         }
 
@@ -767,6 +986,36 @@ function renderOrder(
         );
 
 
+    statusBadge.className =
+        "order-status-badge st-" +
+        String(
+            order.status || ""
+        ).toLowerCase().replace(
+            /[^a-z]/g,
+            ""
+        );
+
+
+    if (orderDate) {
+
+        const placed =
+            order.createdAt
+                ? new Date(
+                    order.createdAt
+                )
+                : null;
+
+        orderDate.textContent =
+            placed &&
+            !isNaN(
+                placed.getTime()
+            )
+                ? placed.toLocaleString()
+                : "—";
+
+    }
+
+
 
     /* =============================================
        STATUS
@@ -777,12 +1026,27 @@ function renderOrder(
     );
 
 
+    updateCancelledDetail(
+        order
+    );
+
+
 
     /* =============================================
        PAYMENT STATUS
        ============================================== */
 
     updatePaymentStatus(
+        order
+    );
+
+
+
+    /* =============================================
+       BUYER CANCELLATION
+       ============================================== */
+
+    updateCancelSection(
         order
     );
 
@@ -879,6 +1143,16 @@ function renderOrder(
 
 
     let itemCount = 0;
+
+
+    if (
+        items.length === 0
+    ) {
+
+        orderItems.innerHTML =
+            `<p class="order-empty-note">No items listed for this order.</p>`;
+
+    }
 
 
     items.forEach(
@@ -1177,6 +1451,566 @@ if (paymentActionBtn) {
     paymentActionBtn.addEventListener(
         "click",
         handlePaymentAction
+    );
+
+}
+
+
+
+/* =========================================================
+   BUYER CANCELLATION
+   Eligibility is derived from the server-returned order
+   (authoritative). The server independently verifies
+   ownership (order email) and eligibility on every
+   request — the UI only decides what to display.
+========================================================= */
+
+let cancelInFlight =
+    false;
+
+
+function isBuyerCancellable(
+    order
+) {
+
+    return Boolean(order) &&
+        order.status === "pending";
+
+}
+
+
+function resetCancelControls() {
+
+    cancelInFlight =
+        false;
+
+    if (cancelConfirmWrap) {
+
+        cancelConfirmWrap.hidden =
+            true;
+
+    }
+
+    if (cancelBtn) {
+
+        cancelBtn.hidden =
+            false;
+
+        cancelBtn.disabled =
+            false;
+
+    }
+
+    if (confirmCancelBtn) {
+
+        confirmCancelBtn.disabled =
+            false;
+
+    }
+
+    if (keepOrderBtn) {
+
+        keepOrderBtn.disabled =
+            false;
+
+    }
+
+    if (cancelError) {
+
+        cancelError.textContent =
+            "";
+
+    }
+
+    if (cancelSuccess) {
+
+        cancelSuccess.hidden =
+            true;
+
+        cancelSuccess.textContent =
+            "";
+
+    }
+
+}
+
+
+function showCancelInfo(
+    message
+) {
+
+    if (!cancelSection) {
+
+        return;
+
+    }
+
+    cancelSection.hidden =
+        false;
+
+    if (cancelActionWrap) {
+
+        cancelActionWrap.hidden =
+            true;
+
+    }
+
+    if (cancelInfo) {
+
+        cancelInfo.hidden =
+            false;
+
+        cancelInfo.textContent =
+            message;
+
+    }
+
+}
+
+
+function updateCancelSection(
+    order
+) {
+
+    if (!cancelSection) {
+
+        return;
+
+    }
+
+    resetCancelControls();
+
+    if (cancelActionWrap) {
+
+        cancelActionWrap.hidden =
+            true;
+
+    }
+
+    if (cancelInfo) {
+
+        cancelInfo.hidden =
+            true;
+
+    }
+
+
+    if (!order) {
+
+        cancelSection.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    if (
+        isBuyerCancellable(order)
+    ) {
+
+        cancelSection.hidden =
+            false;
+
+        cancelActionWrap.hidden =
+            false;
+
+        if (cancelActionNote) {
+
+            cancelActionNote.textContent =
+                order.paymentStatus === "paid"
+                    ? "Cancelling stops fulfilment of this order. " +
+                      "It does not automatically refund your payment — " +
+                      "please contact the bookstore about your payment. " +
+                      "This cannot be undone."
+                    : "Cancelling releases your reserved books and " +
+                      "stops this order. No payment will be taken. " +
+                      "This cannot be undone.";
+
+        }
+
+        if (cancelEmail) {
+
+            cancelEmail.value =
+                order.customer?.email || "";
+
+        }
+
+        if (cancelReason) {
+
+            cancelReason.value =
+                "";
+
+        }
+
+        return;
+
+    }
+
+
+    if (
+        order.status === "processing" ||
+        order.status === "shipped"
+    ) {
+
+        showCancelInfo(
+            "This order is already " +
+            order.status +
+            " and cannot be cancelled online. Please contact " +
+            "the bookstore for help."
+        );
+
+        return;
+
+    }
+
+
+    cancelSection.hidden =
+        true;
+
+}
+
+
+async function submitBuyerCancel() {
+
+    if (
+        cancelInFlight ||
+        !currentOrder
+    ) {
+
+        return;
+
+    }
+
+
+    const email =
+        cancelEmail
+            ? cancelEmail.value.trim()
+            : "";
+
+
+    const reason =
+        cancelReason
+            ? cancelReason.value.trim()
+            : "";
+
+
+    if (
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+
+        if (cancelError) {
+
+            cancelError.textContent =
+                "Please enter a valid email address.";
+
+        }
+
+        return;
+
+    }
+
+
+    if (
+        reason.length > 500
+    ) {
+
+        if (cancelError) {
+
+            cancelError.textContent =
+                "Reason is too long (maximum 500 characters).";
+
+        }
+
+        return;
+
+    }
+
+
+    cancelInFlight =
+        true;
+
+
+    if (confirmCancelBtn) {
+
+        confirmCancelBtn.disabled =
+            true;
+
+        confirmCancelBtn.textContent =
+            "Cancelling...";
+
+    }
+
+    if (keepOrderBtn) {
+
+        keepOrderBtn.disabled =
+            true;
+
+    }
+
+    if (cancelError) {
+
+        cancelError.textContent =
+            "";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/orders/${encodeURIComponent(
+                    currentOrder.id
+                )}/cancel`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            email: email,
+                            reason: reason
+                        })
+                }
+            );
+
+
+        let data =
+            null;
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (error) {
+
+            data =
+                null;
+
+        }
+
+
+        if (
+            !response.ok
+        ) {
+
+            const failed =
+                new Error(
+                    data?.message ||
+                    "Unable to cancel this order."
+                );
+
+            failed.status =
+                response.status;
+
+            throw failed;
+
+        }
+
+
+        if (
+            !data ||
+            data.success !== true ||
+            !data.order
+        ) {
+
+            throw new Error(
+                "The server returned an unexpected response."
+            );
+
+        }
+
+
+        const message =
+            data.message ||
+            "Order cancelled successfully.";
+
+
+        const fresh =
+            await fetchOrder(
+                currentOrder.id
+            );
+
+        renderOrder(
+            fresh
+        );
+
+
+        cancelSection.hidden =
+            false;
+
+        if (cancelActionWrap) {
+
+            cancelActionWrap.hidden =
+                true;
+
+        }
+
+        if (cancelInfo) {
+
+            cancelInfo.hidden =
+                true;
+
+        }
+
+        if (cancelSuccess) {
+
+            cancelSuccess.hidden =
+                false;
+
+            cancelSuccess.textContent =
+                message;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Order cancellation error:",
+            error
+        );
+
+
+        const message =
+            error.message ||
+            "Unable to cancel this order.";
+
+
+        /* The order may have become ineligible between loading
+           and submitting (paid, shipped, or cancelled elsewhere).
+           Refresh from the server so the page reflects the
+           authoritative state alongside the error. Rendering
+           resets the form, so the message is set afterwards. */
+
+        if (
+            error.status === 404 ||
+            error.status === 409 ||
+            error.status === 410
+        ) {
+
+            try {
+
+                const fresh =
+                    await fetchOrder(
+                        currentOrder.id
+                    );
+
+                renderOrder(
+                    fresh
+                );
+
+            } catch (refreshError) {
+
+                console.error(
+                    "Order refresh error:",
+                    refreshError
+                );
+
+            }
+
+        }
+
+
+        if (cancelError) {
+
+            cancelError.textContent =
+                message;
+
+        }
+
+    } finally {
+
+        cancelInFlight =
+            false;
+
+        if (confirmCancelBtn) {
+
+            confirmCancelBtn.disabled =
+                false;
+
+            confirmCancelBtn.textContent =
+                "Yes, cancel my order";
+
+        }
+
+        if (keepOrderBtn) {
+
+            keepOrderBtn.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+if (cancelBtn) {
+
+    cancelBtn.addEventListener(
+        "click",
+        () => {
+
+            if (cancelError) {
+
+                cancelError.textContent =
+                    "";
+
+            }
+
+            if (cancelConfirmWrap) {
+
+                cancelConfirmWrap.hidden =
+                    false;
+
+            }
+
+            cancelBtn.hidden =
+                true;
+
+        }
+    );
+
+}
+
+
+if (keepOrderBtn) {
+
+    keepOrderBtn.addEventListener(
+        "click",
+        () => {
+
+            if (cancelConfirmWrap) {
+
+                cancelConfirmWrap.hidden =
+                    true;
+
+            }
+
+            if (cancelBtn) {
+
+                cancelBtn.hidden =
+                    false;
+
+            }
+
+        }
+    );
+
+}
+
+
+if (confirmCancelBtn) {
+
+    confirmCancelBtn.addEventListener(
+        "click",
+        submitBuyerCancel
     );
 
 }

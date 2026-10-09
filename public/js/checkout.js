@@ -1368,8 +1368,9 @@ function showApiError(
         checkoutNote.textContent =
             message;
 
-        checkoutNote.style.color =
-            "#a87373";
+        checkoutNote.classList.add(
+            "note-error"
+        );
 
         return;
 
@@ -1677,8 +1678,9 @@ if (checkoutForm) {
                     checkoutNote.textContent =
                         `Order created successfully. Order ID: ${createdOrder.id}`;
 
-                    checkoutNote.style.color =
-                        "var(--checkout-muted)";
+                    checkoutNote.classList.remove(
+                        "note-error"
+                    );
 
                 }
 

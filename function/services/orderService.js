@@ -4,6 +4,9 @@ const fs =
 const path =
     require("path");
 
+const crypto =
+    require("crypto");
+
 const mongoose =
     require("mongoose");
 
@@ -1309,12 +1312,671 @@ async function updateOrderStatus(
 
 
 /* =========================================================
+   CANCEL ORDER (SHARED SERVICE)
+   Single cancellation operation for buyer, admin, and
+   future callers. Owns eligibility checks, the atomic
+   cancellation claim, reservation release, and stock
+   restoration. Controllers only handle authorization
+   shape, responses, and notifications.
+   Buyer cancellation is allowed for pending orders in any
+   payment state (unpaid, failed, or paid); paid orders keep
+   their payment state and never trigger an automatic refund.
+   Returns { order, status } where status is one of:
+   - "cancelled"        → cancellation performed now
+   - "already_cancelled" → idempotent repeat, no changes
+   Throws an Error with .code of:
+     "not_found" | "forbidden" |
+     "ineligible" | "invalid_reason" | "invalid_actor"
+========================================================= */
+
+const CANCEL_ACTORS = [
+    "buyer",
+    "admin",
+    "system"
+];
+
+const MAX_CANCEL_REASON_LENGTH =
+    500;
+
+
+function newCancelError(
+    message,
+    code
+) {
+
+    const error =
+        new Error(message);
+
+    error.code =
+        code;
+
+    return error;
+
+}
+
+
+function normalizeCancelReason(
+    reason
+) {
+
+    if (
+        reason === undefined ||
+        reason === null
+    ) {
+
+        return null;
+
+    }
+
+    if (
+        typeof reason !== "string"
+    ) {
+
+        throw newCancelError(
+            "Invalid cancellation reason.",
+            "invalid_reason"
+        );
+
+    }
+
+    const trimmed =
+        reason.trim();
+
+    if (
+        trimmed.length > MAX_CANCEL_REASON_LENGTH
+    ) {
+
+        throw newCancelError(
+            "Cancellation reason is too long.",
+            "invalid_reason"
+        );
+
+    }
+
+    return trimmed === ""
+        ? null
+        : trimmed;
+
+}
+
+
+/* Constant-time email comparison for buyer ownership
+   checks. Length mismatch short-circuits safely. */
+
+function emailsMatch(
+    supplied,
+    stored
+) {
+
+    const left =
+        Buffer.from(
+            String(supplied || "").toLowerCase()
+        );
+
+    const right =
+        Buffer.from(
+            String(stored || "").toLowerCase()
+        );
+
+    if (
+        left.length !== right.length
+    ) {
+
+        return false;
+
+    }
+
+    return crypto.timingSafeEqual(
+        left,
+        right
+    );
+
+}
+
+
+async function cancelOrder(
+    orderId,
+    options = {}
+) {
+
+    const {
+        actor = "admin",
+        email = null,
+        reason = null
+    } = options;
+
+
+    if (
+        !CANCEL_ACTORS.includes(actor)
+    ) {
+
+        throw newCancelError(
+            "Invalid cancellation actor.",
+            "invalid_actor"
+        );
+
+    }
+
+
+    const cleanReason =
+        normalizeCancelReason(reason);
+
+
+    /* =====================================================
+       LOAD + ELIGIBILITY (friendly errors; the atomic
+       claim below re-enforces buyer eligibility)
+    ===================================================== */
+
+    const order =
+        await getOrderById(
+            orderId
+        );
+
+
+    if (
+        !order
+    ) {
+
+        throw newCancelError(
+            "Order not found.",
+            "not_found"
+        );
+
+    }
+
+
+    if (
+        order.status === "cancelled"
+    ) {
+
+        return {
+            order: order,
+            status: "already_cancelled"
+        };
+
+    }
+
+
+    if (
+        actor === "buyer"
+    ) {
+
+        if (
+            !email ||
+            typeof email !== "string" ||
+            !emailsMatch(
+                email.trim(),
+                order.customer?.email || ""
+            )
+        ) {
+
+            throw newCancelError(
+                "Email does not match this order.",
+                "forbidden"
+            );
+
+        }
+
+        if (
+            order.status !== "pending"
+        ) {
+
+            throw newCancelError(
+                "This order can no longer be cancelled online. " +
+                "Please contact the bookstore for help.",
+                "ineligible"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JSON FALLBACK MODE
+       Reuse the existing guarded mutation, then record
+       cancellation metadata on the same record.
+    ===================================================== */
+
+    if (
+        !isMongoConnected()
+    ) {
+
+        await updateOrderStatus(
+            orderId,
+            "cancelled"
+        );
+
+        const orders =
+            readOrdersFromJSON();
+
+        const index =
+            orders.findIndex(
+
+                entry =>
+                    String(entry.id) ===
+                    String(orderId)
+
+            );
+
+        if (
+            index === -1
+        ) {
+
+            throw newCancelError(
+                "Order not found.",
+                "not_found"
+            );
+
+        }
+
+        const nowIso =
+            new Date().toISOString();
+
+        orders[index].cancelledAt =
+            orders[index].cancelledAt ||
+            nowIso;
+
+        orders[index].cancelledBy =
+            orders[index].cancelledBy ||
+            actor;
+
+        if (
+            cleanReason &&
+            !orders[index].cancellationReason
+        ) {
+
+            orders[index].cancellationReason =
+                cleanReason;
+
+        }
+
+        orders[index].updatedAt =
+            nowIso;
+
+        saveOrdersToJSON(
+            orders
+        );
+
+        return {
+            order: orders[index],
+            status: "cancelled"
+        };
+
+    }
+
+
+    /* =====================================================
+       ATOMIC CANCELLATION CLAIM
+       Exactly one concurrent caller wins. Buyer claims
+       re-enforce status pending (any known payment state:
+       unpaid, failed, or paid) so a concurrent fulfilment
+       transition cannot be silently overwritten by a
+       cancellation. Payment-state races are resolved by
+       the release claim and markOrderAsPaid guard below.
+    ===================================================== */
+
+    const now =
+        new Date();
+
+    const claimFilter = {
+        id: String(orderId),
+        status: {
+            $ne: "cancelled"
+        }
+    };
+
+    if (
+        actor === "buyer"
+    ) {
+
+        claimFilter.status =
+            "pending";
+
+        claimFilter.paymentStatus = {
+            $in: ["unpaid", "failed", "paid"]
+        };
+
+    }
+
+    const claimed =
+        await Order.findOneAndUpdate(
+
+            claimFilter,
+
+            {
+                $set: {
+                    status: "cancelled",
+                    cancelledAt: now,
+                    cancelledBy: actor,
+                    cancellationReason: cleanReason,
+                    updatedAt: now
+                }
+            },
+
+            {
+                new: false
+            }
+
+        ).lean();
+
+
+    if (
+        !claimed
+    ) {
+
+        const current =
+            await getOrderById(
+                orderId
+            );
+
+        if (
+            !current
+        ) {
+
+            throw newCancelError(
+                "Order not found.",
+                "not_found"
+            );
+
+        }
+
+        if (
+            current.status === "cancelled"
+        ) {
+
+            return {
+                order: current,
+                status: "already_cancelled"
+            };
+
+        }
+
+        throw newCancelError(
+            "This order can no longer be cancelled.",
+            "ineligible"
+        );
+
+    }
+
+
+    /* =====================================================
+       RESERVATION RELEASE + STOCK RESTORE (exactly once)
+       The release claim re-checks paymentStatus atomically:
+       stock is restored only if the order is still unpaid
+       or failed at that instant. A payment that commits
+       between the cancellation claim and this step keeps
+       its reservation permanent — no restore, no double
+       accounting. Paid cancellations preserve payment
+       state; any refund is a separate manual process.
+    ===================================================== */
+
+    if (
+        !claimed.reservationReleasedAt
+    ) {
+
+        const released =
+            await Order.findOneAndUpdate(
+
+                {
+                    id: String(orderId),
+                    paymentStatus: {
+                        $in: ["unpaid", "failed"]
+                    },
+                    $or: [
+                        { reservationReleasedAt: null },
+                        { reservationReleasedAt: { $exists: false } }
+                    ]
+                },
+
+                {
+                    $set: {
+                        reservationReleasedAt: now,
+                        updatedAt: new Date()
+                    }
+                },
+
+                {
+                    new: false
+                }
+
+            ).lean();
+
+        if (
+            released
+        ) {
+
+            for (
+                const item of released.items
+            ) {
+
+                await adjustBookStock(
+
+                    item.bookId,
+
+                    Number(item.quantity)
+
+                );
+
+            }
+
+            console.log(
+                `Order ${orderId} cancelled by ${actor}. Reserved stock released.`
+            );
+
+        }
+
+    }
+
+
+    const cancelled =
+        await getOrderById(
+            orderId
+        );
+
+
+    if (
+        cancelled?.paymentStatus === "paid"
+    ) {
+
+        console.log(
+            `Order ${orderId} cancelled by ${actor}. ` +
+            `Payment preserved (reference ${cancelled.transactionReference || "unknown"}). ` +
+            `Manual refund handling required.`
+        );
+
+    }
+
+
+    return {
+        order: cancelled,
+        status: "cancelled"
+    };
+
+}
+
+
+/* =========================================================
+   RECORD LATE PAYMENT EVIDENCE
+   Persists a Paystack-verified successful transaction that
+   could NOT be applied (cancelled/expired reservation) so
+   manual reconciliation stays possible. Changes NEITHER
+   status NOR paymentStatus and never touches inventory.
+   The single findOneAndUpdate is atomic: sequential
+   duplicate deliveries for the same reference record it
+   at most once. Truly simultaneous writers are outside
+   what update operators alone can serialize (see report);
+   any such duplicate rows carry the same reference and
+   reconciliation reads must dedupe by reference.
+   Returns { status } where status is one of:
+   - "recorded"        → evidence durably stored now
+   - "already_recorded" → same reference already stored
+   - "failed"          → nothing stored (DB error, missing
+                          order, or invalid reference)
+   Never throws into the payment flow.
+========================================================= */
+
+async function recordLatePayment(
+    orderId,
+    latePayment
+) {
+
+    if (
+        !isMongoConnected()
+    ) {
+
+        return {
+            status: "failed"
+        };
+
+    }
+
+    const {
+        reference,
+        amount,
+        channel,
+        paidAt,
+        source
+    } = latePayment || {};
+
+
+    if (
+        !reference ||
+        typeof reference !== "string"
+    ) {
+
+        return {
+            status: "failed"
+        };
+
+    }
+
+
+    let recorded =
+        null;
+
+    try {
+
+        recorded =
+            await Order.findOneAndUpdate(
+
+                {
+                    id: String(orderId),
+                    "latePayments.reference": {
+                        $ne: reference
+                    }
+                },
+
+                {
+                    $push: {
+                        latePayments: {
+                            reference: reference,
+                            amount: Number.isFinite(amount)
+                                ? amount
+                                : undefined,
+                            channel: channel || null,
+                            paidAt: paidAt
+                                ? new Date(paidAt)
+                                : null,
+                            receivedAt: new Date(),
+                            source: source || null
+                        }
+                    }
+                },
+
+                {
+                    new: true
+                }
+
+            ).lean();
+
+    } catch (error) {
+
+        console.error(
+            `Failed to record late payment evidence for order ${orderId}:`,
+            error.message
+        );
+
+        return {
+            status: "failed"
+        };
+
+    }
+
+
+    if (
+        recorded
+    ) {
+
+        return {
+            status: "recorded",
+            order: recorded
+        };
+
+    }
+
+
+    /* No write happened. Distinguish an already-recorded
+       duplicate from a genuine persistence failure. */
+
+    let existing =
+        null;
+
+    try {
+
+        existing =
+            await getOrderById(
+                orderId
+            );
+
+    } catch (lookupError) {
+
+        existing =
+            null;
+
+    }
+
+
+    if (
+        !existing
+    ) {
+
+        return {
+            status: "failed"
+        };
+
+    }
+
+
+    const already =
+        Array.isArray(existing.latePayments) &&
+        existing.latePayments.some(
+            entry =>
+                entry &&
+                entry.reference === reference
+        );
+
+
+    return {
+        status: already
+            ? "already_recorded"
+            : "failed"
+    };
+
+}
+
+
+/* =========================================================
    MARK ORDER AS PAID
    Atomic, idempotent payment state update.
    Returns { order, status } where status is one of:
    - "paid"           → payment recorded successfully
    - "already_paid"   → same reference, idempotent success
    - "duplicate_paid" → different reference, manual review needed
+   - "reservation_expired" → not applied; verified evidence is
+     recorded separately and the outcome travels as `evidence`
+     ("recorded" | "already_recorded" | "failed") so webhooks
+     need not acknowledge unpersisted evidence.
 ========================================================= */
 
 async function markOrderAsPaid(
@@ -1337,7 +1999,8 @@ async function markOrderAsPaid(
         amount,
         currency,
         channel,
-        paidAt
+        paidAt,
+        source
     } = paymentData;
 
     /* =====================================================
@@ -1500,6 +2163,24 @@ async function markOrderAsPaid(
                 `Order NOT marked paid. Manual review/refund required.`
             );
 
+            /* Preserve the verified transaction as reconcilable
+               evidence before returning. Status and payment
+               state are unchanged by this write. The outcome
+               travels with the result so the webhook can
+               refuse to acknowledge until evidence is durable. */
+
+            const evidence =
+                await recordLatePayment(
+                    orderId,
+                    {
+                        reference,
+                        amount,
+                        channel,
+                        paidAt,
+                        source
+                    }
+                );
+
             const currentOrder =
                 await getOrderById(
                     orderId
@@ -1507,7 +2188,8 @@ async function markOrderAsPaid(
 
             return {
                 order: currentOrder,
-                status: "reservation_expired"
+                status: "reservation_expired",
+                evidence: evidence.status
             };
 
         }
@@ -1517,7 +2199,11 @@ async function markOrderAsPaid(
     /* =====================================================
        CASE B: UNPAID — RECORD PAYMENT
        Use atomic conditional update to prevent race conditions.
-       Only succeeds if paymentStatus is still not "paid".
+       Only succeeds if paymentStatus is still not "paid" AND
+       the order has not been cancelled in the meantime, so a
+       concurrent cancellation can never be silently revived
+       as paid. Verification, webhook, and reservation-expiry
+       semantics are unchanged.
        NOTE: stock was already reserved at order creation;
        successful payment makes the reservation permanent
        and must NOT decrement stock again.
@@ -1535,6 +2221,9 @@ async function markOrderAsPaid(
                 id: String(orderId),
                 paymentStatus: {
                     $ne: "paid"
+                },
+                status: {
+                    $ne: "cancelled"
                 }
             },
 
@@ -1556,7 +2245,8 @@ async function markOrderAsPaid(
 
     /* =====================================================
        If no document was updated, another concurrent
-       request already marked the order as paid.
+       request already marked the order as paid, or a
+       concurrent cancellation won the race first.
     ===================================================== */
 
     if (
@@ -1593,6 +2283,41 @@ async function markOrderAsPaid(
                 order: currentOrder,
                 status: "duplicate_paid"
             };
+
+        }
+
+        /* A concurrent cancellation won: the order stays
+           cancelled and unpaid. Callers fail closed via the
+           existing error path (callback → payment-failed
+           page, webhook → retry converging on the expired
+           reservation path). */
+
+        if (
+            currentOrder &&
+            currentOrder.status === "cancelled" &&
+            currentOrder.paymentStatus !== "paid"
+        ) {
+
+            console.error(
+                `Payment success arrived for order ${orderId} ` +
+                `after cancellation (reference ${reference}). ` +
+                `Order NOT marked paid.`
+            );
+
+            /* Same evidence rule as CASE A: the verified
+               transaction must remain reconcilable even
+               though this call now fails closed. */
+
+            await recordLatePayment(
+                orderId,
+                {
+                    reference,
+                    amount,
+                    channel,
+                    paidAt,
+                    source
+                }
+            );
 
         }
 
@@ -1855,6 +2580,8 @@ async function expireOrderReservation(
                 $set: {
                     status: "cancelled",
                     reservationReleasedAt: new Date(),
+                    cancelledAt: new Date(),
+                    cancelledBy: "system",
                     updatedAt: new Date()
                 }
             },
@@ -2187,6 +2914,18 @@ async function prepareOrderForPayment(
                                 PAYMENT_RESERVATION_MS
                             ),
                         updatedAt: new Date()
+                    },
+
+                    /*
+                     * A reactivated order may genuinely fail
+                     * again on a later attempt. Clear the
+                     * previous failure notification claim so
+                     * a new failure event may notify once.
+                     * Duplicate callbacks for the SAME failure
+                     * remain suppressed by the atomic claim.
+                     */
+                    $unset: {
+                        "emailNotifications.paymentFailed": ""
                     }
                 },
 
@@ -2307,12 +3046,284 @@ async function getPublicOrderById(
             order.reservationReleasedAt ||
             null,
 
+        cancelledAt:
+            order.cancelledAt ||
+            null,
+
+        cancelledBy:
+            order.cancelledBy ||
+            null,
+
+        cancellationReason:
+            order.cancellationReason ||
+            null,
+
         reservationExpired:
             isReservationExpired(
                 order
             )
 
     };
+
+}
+
+
+/* =========================================================
+   EMAIL NOTIFICATION CLAIM
+   Atomic, MongoDB-backed idempotency for Brevo side
+   effects. Must be called ONLY after the authoritative
+   business state has committed. Never hold a DB
+   transaction open while waiting for Brevo.
+========================================================= */
+
+const EMAIL_NOTIFICATION_EVENTS = [
+    "orderReceived",
+    "paymentConfirmed",
+    "paymentFailed",
+    "shipped",
+    "delivered",
+    "cancelled"
+];
+
+/* A "sending" claim older than this may be reclaimed
+   (process may have crashed before Brevo responded).
+   No background retry worker — reclaim only happens
+   when the same event is triggered again. */
+
+const EMAIL_CLAIM_STALE_MS =
+    5 * 60 * 1000;
+
+
+function assertValidEmailEvent(
+    event
+) {
+
+    if (
+        !EMAIL_NOTIFICATION_EVENTS.includes(
+            event
+        )
+    ) {
+
+        throw new Error(
+            "Invalid email notification event."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CLAIM ORDER EMAIL NOTIFICATION
+   Returns { claimed: true } only for the single caller
+   that owns the send. All other concurrent callers
+   receive { claimed: false } and must NOT send.
+========================================================= */
+
+async function claimOrderEmailNotification(
+    orderId,
+    event
+) {
+
+    assertValidEmailEvent(
+        event
+    );
+
+    if (
+        !orderId
+    ) {
+
+        throw new Error(
+            "Order ID is required to claim a notification."
+        );
+
+    }
+
+
+    /* =====================================================
+       JSON FALLBACK MODE
+       No cross-process atomicity available. Allow the
+       send as best effort without persisting a claim.
+    ===================================================== */
+
+    if (
+        !isMongoConnected()
+    ) {
+
+        return {
+            claimed: true,
+            persistent: false
+        };
+
+    }
+
+
+    const now =
+        new Date();
+
+    const staleCutoff =
+        new Date(
+            now.getTime() -
+            EMAIL_CLAIM_STALE_MS
+        );
+
+    const statusPath =
+        `emailNotifications.${event}.status`;
+
+    const claimedAtPath =
+        `emailNotifications.${event}.claimedAt`;
+
+
+    const claimed =
+        await Order.findOneAndUpdate(
+
+            {
+                id: String(orderId),
+
+                $or: [
+
+                    /* Never claimed before */
+                    {
+                        [`emailNotifications.${event}`]: {
+                            $exists: false
+                        }
+                    },
+
+                    {
+                        [statusPath]: {
+                            $exists: false
+                        }
+                    },
+
+                    /* Claimed as pending, never sent */
+                    {
+                        [statusPath]: {
+                            $nin: [
+                                "sending",
+                                "sent"
+                            ]
+                        }
+                    },
+
+                    /* Stale sending claim — safe to reclaim */
+                    {
+                        [statusPath]: "sending",
+                        [claimedAtPath]: {
+                            $lt: staleCutoff
+                        }
+                    },
+
+                    /* Sending without timestamp — reclaim */
+                    {
+                        [statusPath]: "sending",
+                        [claimedAtPath]: {
+                            $exists: false
+                        }
+                    }
+
+                ]
+            },
+
+            {
+                $set: {
+                    [statusPath]: "sending",
+                    [claimedAtPath]: now
+                }
+            },
+
+            {
+                new: true
+            }
+
+        ).lean();
+
+
+    if (
+        !claimed
+    ) {
+
+        return {
+            claimed: false,
+            persistent: true
+        };
+
+    }
+
+
+    return {
+        claimed: true,
+        persistent: true
+    };
+
+}
+
+
+/* =========================================================
+   MARK ORDER EMAIL AS SENT
+   Best effort. Never throws into the caller — email
+   delivery must not roll back business operations.
+========================================================= */
+
+async function markOrderEmailSent(
+    orderId,
+    event,
+    messageId = null
+) {
+
+    assertValidEmailEvent(
+        event
+    );
+
+    if (
+        !isMongoConnected()
+    ) {
+
+        return null;
+
+    }
+
+    try {
+
+        const update = {
+            [`emailNotifications.${event}.status`]: "sent",
+            [`emailNotifications.${event}.sentAt`]: new Date()
+        };
+
+        if (
+            messageId
+        ) {
+
+            update[`emailNotifications.${event}.messageId`] =
+                String(messageId);
+
+        }
+
+        return await Order.findOneAndUpdate(
+
+            {
+                id: String(orderId)
+            },
+
+            {
+                $set: update
+            },
+
+            {
+                new: true
+            }
+
+        ).lean();
+
+    } catch (error) {
+
+        console.error(
+            `Failed to record email sent state for order ${orderId} event ${event}:`,
+            error.message
+        );
+
+        return null;
+
+    }
 
 }
 
@@ -2333,7 +3344,11 @@ module.exports = {
 
     updateOrderStatus,
 
+    cancelOrder,
+
     markOrderAsPaid,
+
+    recordLatePayment,
 
     markPaymentFailed,
 
@@ -2344,6 +3359,14 @@ module.exports = {
     expireOrderReservation,
 
     isReservationExpired,
+
+    claimOrderEmailNotification,
+
+    markOrderEmailSent,
+
+    EMAIL_NOTIFICATION_EVENTS,
+
+    EMAIL_CLAIM_STALE_MS,
 
     PAYMENT_RESERVATION_MINUTES
 

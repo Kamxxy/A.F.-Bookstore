@@ -670,7 +670,7 @@ function showNotFound() {
                     style="
                         display:inline-block;
                         margin-top:20px;
-                        color:#aaa;
+                        color:var(--muted);
                         font-family:
                             Inter,sans-serif;
                         font-size:10px;
